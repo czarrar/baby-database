@@ -1,0 +1,47 @@
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
+?>
+
+<form action="<?= $this->form->getAction() ?>" method="<?= $this->form->getMethod() ?>" accept-charset="utf-8">
+    <table>
+        <caption><?= $this->title ?></caption>
+        <tfoot>
+    		<tr>
+                <th align="center">
+                    
+                </th>
+                <td>
+                    <?= $this->form->submit->field() ?>
+                </td>
+    		</tr>
+    	</tfoot>
+    	<tbody>
+    	    <tr>
+    	        <th align="left" scope="row"><?= $this->form->date->label() ?></th>
+ 	           <td><?= $this->form->date->field() ?></td>
+    	    </tr>
+    	    <tr>
+    	        <th align="left" scope="row"><?= $this->form->researcher_id->label() ?></th>
+ 	           <td><?= $this->form->researcher_id->field() ?></td>
+    	    </tr>
+    	    <tr>
+    	        <th align="left" scope="row"><?= $this->form->study->label() ?></th>
+ 	           <td><?= $this->form->study->field() ?></td>
+    	    </tr>
+    	    <tr>
+    	        <th align="left" scope="row">Age Range</th>
+ 	           <td><?= $this->form->lower_age ?> &nbsp; <strong>TO</strong> &nbsp; <?= $this->form->upper_age ?></td>
+    	    </tr>
+    	  	<tr>
+    	       <th align="left" scope="row"><?= $this->form->gcal_calendar_id->label() ?></th>
+ 	           <td><?= $this->form->gcal_calendar_id->field() ?></td>
+    	    </tr>
+    	    <tr>
+    	        <th align="left" scope="row"><?= $this->form->to_use->label() ?></th>
+ 	           <td><?= $this->form->to_use->field() ?></td>
+    	    </tr>
+    	</tbody>
+    </table>
+</form>
+

@@ -1,0 +1,309 @@
+<?php
+
+
+class Appointment2Controller extends Zend_Controller_Action 
+{
+
+	// Numbers (ids in status table) corresponding to some status
+	const INACTIVE		= 1;
+	const ARCHIVED 		= 2;
+	const CONTACTING 	= 3;
+	const SCHEDULED		= 4;
+	const CONFIRMED 	= 5;
+	const RUN			= 6;
+	const CANCELED		= 7;
+	const NO_SHOW		= 8;
+	
+	// Number (ids in study_outcome_id) corresponding to some study outcome
+	const OUTCOME_RUN		= 1;
+	const OUTCOME_NOSHOW	= 2;
+	const OUTCOME_CANCELED	= 3;
+	
+	// record status
+	protected $_recordStatus = array(
+		'active'		=> array(4, 5),
+		'inactive'		=> array(1, 6, 7, 8),
+		'archived'		=> array(2),
+		'semi-active'	=> array(3)
+	);
+	
+	/**
+	 * Form
+	 *
+	 * @var Zend_Form
+	 **/
+	protected $_form;
+	
+	/**
+	 * Form Data from $this->_form->getValues() following form submission
+	 *
+	 * @var array
+	 **/
+	protected $_formData;
+
+	/**
+	 * Errors from form processing for user display
+	 *
+	 * @var array
+	 **/
+	protected $_errors = array();
+
+	/**
+	 * Db adapter
+	 *
+	 * @var Zend_Db
+	 **/
+	protected $_db;
+	
+	/**
+	 * Select query
+	 *
+	 * @var Zend_Db_Select
+	 **/
+	protected $_select;
+	
+
+/************************
+ * GENERAL FUNCTIONS	*
+ ************************/
+	
+	function init()
+	{
+		// Ghetto fix for formText problem
+		$this->view->addHelperPath(ROOT_DIR . '/library/Zarrar/View/HelperFix', 'Zarrar_View_HelperFix');
+	}
+	
+	public function indexAction()
+	{
+		$this->_forward("schedule");
+	}
+	
+	
+/****************************
+ * COMMON FORM FUNCTIONS	*
+ ****************************/		
+	
+	/**
+	 * Instantiates form element with some basic stuff
+	 *
+	 * @return obj Zend_Form
+	 **/
+	protected function _getForm()
+	{
+		$form = new Zend_Form();
+		$form->setAction("")
+			->setMethod("post");
+		$form->addElementPrefixPath('Zarrar_Decorator', 'Zarrar/Decorator', 'decorator');
+		$form->addElementPrefixPath('Zarrar_Validate', 'Zarrar/Validate', 'validate');
+		
+		return($form);
+	}
+	
+	/**
+	 * Prepares common form elements
+	 * 	for scheduling, confirming, and outcome pages
+	 * 
+	 * Common elements are:
+	 * 	study, records per page, and date of study fields
+	 * 
+	 * Default decorators: ViewHelper and Label
+	 * Default filters: StringTrim, StripTags
+	 * 
+	 * NOTE: Date of Study field is not subject to the default decorators or filters
+	 *
+	 * @param array $elements Optional
+	 * 	Additional elements to add before setting default decorators + filters
+	 * @param array $elementDecorators Optional
+	 * 	Additional decorators to set for all elements (added to defaults)
+	 * @param array $elementFilters Optional
+	 * 	Additional filters to set for all elements (added to defaults)
+	 * @return Zend_Form
+	 **/
+	protected function _prepareForm(array $elements = array(), array $elementDecorators = array(), array $elementFilters = array(), $form = NULL)
+	{	
+		# GET FORM
+		if (empty($form)) {
+			$form = $this->_getForm();
+		}
+		
+		#. Serial No.
+		$babyId = $form->createElement("text", "baby_id");
+		$babyId->setLabel("Serial No.")
+				->setAllowEmpty(true)
+				->addValidator("Digits");
+				
+		# Name
+		$firstName = $form->createElement("text", "first_name");
+		$firstName->setLabel("First Name")
+				->setAllowEmpty(true)
+				->setAttrib('size', 20)
+				->setAttrib('maxlength', 100);
+		$lastName = $form->createElement("text", "last_name");
+		$lastName->setLabel("Last Name")
+				->setAllowEmpty(true)
+				->setAttrib('size', 20)
+				->setAttrib('maxlength', 150);
+		
+		# 1. STUDY FIELD
+		// Get study options
+		$studyTbl = new Study();
+		$studyOptions = $studyTbl->getRecordOwners("long", false, array("" => "Choose"));
+		// Create select field
+		$study = $form->createElement("select", "study_id");
+		$study->setLabel("Study")
+				->setRequired(true)
+				->setMultiOptions($studyOptions);
+				
+		# 3. RECORDS PER PAGE
+		// Set options
+		$perPageOptions = array("1", "10", "25", "50", "100");
+		// Create select field
+		$perPage = $form->createElement("select", "per_page");
+		$perPage->setLabel("Records per page")
+				->setValue(50)
+				->setMultiOptions(array_combine($perPageOptions, $perPageOptions));
+				
+		$offRestrict = $form->createElement("select", "off_date_search");
+		$offRestrict->setLabel("Ignore Date Range")
+				->setAllowEmpty(true)
+				->setMultiOptions(array(
+					0 => "No",
+					1 => "Yes"
+				));
+		
+		# ADD ELEMENTS
+		$addElements = array_merge(array($offRestrict, $study, $babyId, $firstName, $lastName, $perPage), $elements);
+		$form->addElements($addElements);
+		
+		# SET DECORATORS
+		$setDecorators = array_merge(array('ViewHelper', 'Label'), $elementDecorators);
+		$form->setElementDecorators($setDecorators);
+		
+		# SET FILTERS
+		$setFilters = array_merge(array('StringTrim', 'StripTags'), $elementFilters);
+		$form->setElementFilters($setFilters);
+		
+		# 4. DATE OF STUDY - 2 FIELDS
+		// Specify year range (one year back and one year forward)
+		$yearRange = array("years" => 1);
+		// Beginning Date
+		$beginDate = new Zarrar_Form_SubForm_Date($yearRange);
+		$beginDate->setRequired(true, "Beginning date of study is required");
+		$form->addSubForm($beginDate, 'begin_date');
+		// Ending Date
+		$endDate = new Zarrar_Form_SubForm_Date($yearRange);
+		$endDate->setRequired(true, "Ending date of study is required");
+		$form->addSubForm($endDate, 'end_date');
+		
+		# SUBMIT
+		$submit = new Zend_Form_Element_Submit("submit", "Get Records ->");
+		$form->addElement($submit);
+		
+		// Make available
+		$this->_form = $form;
+	
+		return $form;
+	}
+	
+	/**
+	 * Processes form if something was posted (assumes data has been posted)
+	 * 
+	 * Assumes form is kept in $this->_form
+	 * Resets $this->_errors and puts any new errors into $this->_errors
+	 *
+	 * @param array $defaults Default value for form (when form is new)
+	 * @return boolean
+	 * 	FALSE if new form or form submitted but bad data, TRUE if form submitted and all is good
+	 **/
+	protected function _processForm($defaults = NULL)
+	{
+		# 1. SOMETHING SUBMITTED! SHIZNIT!
+		if ($this->getRequest()->isPost()) {	
+			// Get data
+			$formData = $this->getRequest()->getPost();
+		
+			// Reset errors
+			$this->_errors = array();
+
+			// Check for validity
+			$isValid = $this->_form->isValid($formData);
+			
+			// Save values
+			$this->_formData = $this->_form->getValues();
+			
+			// Save errors, else all good
+			if (!$isValid)
+				$this->_errors = array_merge($this->_errors, $this->_form->getMessages());
+			else
+				return TRUE; // form is good
+		}
+		# 2. SET DEFAULTS (if new form)
+		else if (!empty($defaults)) {
+			$this->_form->populate($defaults);
+		}
+	
+		# NEW FORM OR BAD FORM
+		return False;
+	}
+
+	
+/****************************
+ *	COMMON ACTION FUNCTIONS	*
+ ****************************/
+
+	/**
+	 * Prepares search page for display
+	 * 	e.g. put things into view
+	 *
+	 * @return void
+	 **/
+	protected function _prepareAction()
+	{
+		// Save vars into view (form and errors)
+		$this->view->form = $this->_form;
+		$this->view->errors = $this->_errors;
+	}
+
+
+/****************************
+ *	COMMON SEARCH FUNCTIONS	*
+ ****************************/
+
+	/**
+	 * Prepares $this->_select with the common things in life
+	 *
+	 * @param boolean $distinct Default is TRUE
+	 * @return boolean|Zend_Db_Select Will return false if there are errors in form submission
+	 **/
+	protected function _prepareQuery($distinct=true)
+	{
+		if (!empty($this->_errors))
+			return False;
+
+		// Get db adapter
+		$db = Zend_Registry::get('db');
+		$this->_db = $db;
+
+		// Instantiate select query
+		$select = $this->_db->select()
+	
+		// Want distinct rows
+			->distinct($distinct)
+		
+		// Group by baby id and study id (in case baby in 2+ studies)
+			->group("b.id")
+			->group("bs.study_id")
+	
+		// BASE TABLE: babies
+			->from(array('b' => 'babies'),
+	        	array('id' => 'id', 'last_name', 'first_name', 'dob', 'sex'))
+	
+		// Get baby languages spoken + percent
+		// Get through
+		//	a) concatanating language and percent per week into one field
+		//	b) group concatanation of multiple languages that one baby is exposed to
+		//	c) add group by id clause so each row is only one baby
+		    ->joinLeft(array('bl' => 'baby_languages'),
+		        'b.id = bl.baby_id', array())
+			->joinLeft(array('l' => 'languages'),
+				'bl.language_id = l.id', array("language" => new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT_WS(":", l.langu

@@ -1,0 +1,67 @@
+<div align="center">
+    <font face="verdana"><h1>Study History</h1></font>
+    <h3 align="left">
+        Serial No: <?= $this->babyId ?>
+        <?php if ($this->currentBabyStudies): ?>
+            <br />
+            Currently participating in <? echo (count($this->currentBabyStudies)==1) ? "1 study" : count($this->currentBabyStudies) . " studies" ?>
+        <?php endif ?>
+    </h3>
+    <table id="sortable_table" class="datagrid">
+        <thead>
+            <th>Study Name</th>
+            <th>Lab</th>
+            <th>Researcher</th>
+            <th>Date/Time</th>
+            <th>Comments</th>
+            <th>Outcome</th>
+            <th>Level Enthusiasm</th>
+            <th>Further Study?</th>
+        </thead>
+        <tfoot class="invisible">
+            <tr>
+                <td colspan="0"></td>
+            </tr>
+        </tfoot>
+        <tbody>
+            <?php if (isset($this->currentBabyStudies)): ?>
+            <?php foreach ($this->currentBabyStudies as $currentBabyStudy): ?>
+                <?php $row = $currentBabyStudy ?>
+                <tr>
+                    <td><?= $row->study ?></td>     
+                    <td><?= $row->lab ?></td>
+                    <td><?= $row->researcher ?></td>     
+                    <td><?= substr($row->appointment, 0, strlen($row->appointment)-3) ?></td>   
+                    <td><?= $row->comments ?></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>       
+                    <td>
+                        &nbsp;    
+                    </td>     
+                </tr>
+            <?php endforeach ?>
+            <?php endif ?>           
+            <?php foreach ($this->results as $row): ?>
+                <tr>
+                    <td><?= $row->study ?></td>     
+                    <td><?= $row->lab ?></td>
+                    <td><?= $row->researcher ?></td>     
+                    <td><?= substr($row->appointment, 0, strlen($row->appointment)-3) ?></td>   
+                    <td><?= $row->comments ?></td>
+                    <td><?= $row->outcome ?></td>
+                    <td><?= $row->enthusiasm ?></td>       
+                    <td>
+                        <?php
+                            if (isset($row->further)) {
+                                if($row->further)
+                                    echo "Y";
+                                else
+                                    echo "N";
+                            }
+                        ?>    
+                    </td>     
+                </tr>                               
+            <?php endforeach ?>                     
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,35 @@
+<table>
+    <caption><?= $this->title ?> Row</caption>
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Value</th>
+        </tr>
+    </thead>
+    <tfoot>
+		<tr>
+            <td colspan="2" align="center">
+                <?php if (array_key_exists("to_use", $this->columns) and $this->item["to_use"] == 0): ?>
+                    <a href="<?= $this->sUrl('undelete', $this->controller, null, true) ?>">Undelete</a> |
+                <?php else: ?>
+                    <a href="<?= $this->sUrl('edit', $this->controller, null, true) ?>">Edit</a> |
+                <?php endif ?>
+                <a href="<?= $this->sUrl('list', $this->controller, null, true) ?>">List</a>
+            </td>
+		</tr>
+	</tfoot>
+    <tbody>
+    <?php foreach ($this->item as $col => $value): ?>
+        <?php
+            if ($col == "to_use"):
+                continue;
+            endif;
+        ?>
+        <tr <?= ($isOdd) ? "class='odd'" : "" ?>>
+            <th scope="row"><?= $this->columns[$col] ?></th>
+            <td align="center"><?= $value ?></td>
+        </tr>
+        <? $isOdd = ($isOdd) ? False : True ?>
+    <?php endforeach ?>
+    </tbody>
+</table>

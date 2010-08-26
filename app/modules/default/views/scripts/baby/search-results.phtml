@@ -1,0 +1,102 @@
+<script language='JavaScript'>
+
+function call_popup(url) {  window.open(url,'StudyInfo','toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=yes,copyhistory=no,scrollbars=yes,width=700,height=500');
+}
+
+function edit_popup(url) {
+ window.open(url,'Profile','toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=yes,copyhistory=no,scrollbars=yes,width=1000,height=680');
+}
+
+</script>
+
+<h2 class=our_list> Baby Search Results </h2>
+
+<p>View as <a href="<?= $this->url(array('controller' => 'baby', 'action' => 'search-results-excel'), null, true)?>">Excel Spreadsheet</a></p>
+<p><em>Retrieved a total of <?= $this->rowCount ?> <?= ($this->rowCount > 1) ? "records" : "record" ?></em></p>
+<p align="center">Pages: &nbsp;&nbsp;&nbsp;<?= $this->links ?></p>
+
+<table width='96%' border='0' align='center' cellpadding="0" cellspacing='0'>
+    <tr id='dob_year3'>
+        <td><a href="<?= $this->url($this->link['baby_id']) ?>"> Serial No. </a></td>
+        <td> Contact History </td>
+        <td> Study History </td>
+        <td><a href="<?= $this->url($this->link['last_name']) ?>"> Baby Last&nbsp;Name </a></td>
+		<td><a href="<?= $this->url($this->link['first_name']) ?>"> Baby First&nbsp;Name </a></td>
+        <td><a href="<?= $this->url($this->link['dob']) ?>"> DOB </a></td>
+		<td><a href="<?= $this->url($this->link['sex']) ?>"> Sex </a></td>
+		<td><a href="<?= $this->url($this->link['mother_last_name']) ?>"> Mother's Last&nbsp;Name </a></td>
+		<td><a href="<?= $this->url($this->link['mother_first_name']) ?>"> Mother's First&nbsp;Name </a></td>
+		<td><a href="<?= $this->url($this->link['status']) ?>"> Scheduling Status </a></td>
+        <td><a href="<?= $this->url($this->link['record_status']) ?>"> Record Status </a></td>
+        <td><a href="<?= $this->url($this->link['record_owner']) ?>"> Record Owner </a></td>
+        <td><a href="<?= $this->url($this->link['language']) ?>"> Language </a></td>
+        <?php if ($this->link['telephone']): ?>
+            <td><a href="<?= $this->url($this->link['telephone']) ?>"> Telephone </a></td>
+        <?php endif ?>
+    </tr>
+    
+    <?php foreach ($this->results as $result): ?>
+        <tr id="dob_month3">
+            <td>
+                <a href="<?= $this->url(array("controller" => "baby", "action" => "common", "baby_id" => $result["baby_id"], "type" => $this->listType, "study_id" => $result["study_id"]), null, true) ?>" target="_blank">
+                    <?= ($result['baby_id']) ? $result['baby_id'] : "ERROR" ?>
+                </a>
+            </td>
+            <td>
+                <a href="javascript:edit_popup('<?= $this->url(array("controller" => 'contacthistory', "action" => 'new', "baby_id" => $result['baby_id']), null, true) ?>')">Contact History</a>
+            </td>
+            <td>
+                <a href="javascript:call_popup('<?= $this->url(array("controller" => 'study-history', "action" => 'list', "baby_id" => $result['baby_id']), null, true) ?>')">Study History</a>
+            </td>
+            <td>
+                <?= ($result['last_name']) ? $result['last_name'] : "ERROR" ?>
+            </td>
+            <td>
+                <?= ($result['first_name']) ? $result['first_name'] : "ERROR" ?>
+            </td>
+            <td>
+                <?= ($result['dob']) ? $result['dob'] : "ERROR" ?>
+            </td>
+            <td>
+                <?php
+                    switch ($result['sex']) {
+                        case '2':
+                            echo "M";
+                            break;
+                        case '1':
+                            echo "F";
+                            break;
+                        default:
+                            echo "";
+                            break;
+                    }
+                ?>
+            </td>
+            <td>
+                <?= ($result['mother_last_name']) ? $result['mother_last_name'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['mother_first_name']) ? $result['mother_first_name'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['status']) ? strtoupper($result['status']) : "NONE" ?>
+            </td>
+            <td>
+                <?= ($result['record_status'] == 1) ? "ACTIVE" : "INACTIVE"  ?>
+            </td>
+            <td>
+                <?= ($result['record_owner']) ? $result['record_owner'] : "NONE" ?>
+            </td>
+            <td>
+                <?= ($result['language']) ? $result['language'] : "" ?>
+            </td>
+            <?php if ($this->link['telephone']): ?>
+            <td>    
+                <?= ($result['telephone']) ? $result['telephone'] : "" ?>
+            </td>
+            <?php endif ?>
+        </tr>
+    <?php endforeach ?>
+</table>
+<br />
+<p align="center">Pages: &nbsp;&nbsp;&nbsp;<?= $this->links ?></p>

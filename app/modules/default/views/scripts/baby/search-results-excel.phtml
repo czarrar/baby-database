@@ -1,0 +1,84 @@
+<table width='96%' border='0' align='center' cellpadding="0" cellspacing='0'>
+    <tr id='dob_year3'>
+        <td><a href="<?= $this->url($this->link['baby_id']) ?>"> Serial No. </a></td>
+        <td> Contact History </td>
+        <td> Study History </td>
+        <td>Baby Last&nbsp;Name</td>
+		<td>Baby First&nbsp;Name</td>
+        <td>DOB</td>
+		<td>Sex</td>
+		<td>Mother's Last&nbsp;Name</td>
+		<td>Mother's First&nbsp;Name</td>
+		<td>Scheduling Status</td>
+        <td>Record Status</td>
+        <td>Record Owner</td>
+        <td>Language</td>
+        <?php if ($this->link['telephone']): ?>
+            <td>Telephone</td>
+        <?php endif ?>
+    </tr>
+    
+    <?php foreach ($this->results as $result): ?>
+        <tr id="dob_month3">
+            <td>
+                <a href="http://6wpl.info<?= $this->url(array("controller" => "baby", "action" => "common", "baby_id" => $result["baby_id"], "type" => $this->listType, "study_id" => $result["study_id"]), null, true) ?>" target="_blank">
+                    <?= ($result['baby_id']) ? $result['baby_id'] : "ERROR" ?>
+                </a>
+            </td>
+            <td>
+                <a href="http://6wpl.info<?= $this->url(array("controller" => 'contacthistory', "action" => 'new', "baby_id" => $result['baby_id']), null, true) ?>">Contact History</a>
+            </td>
+            <td>
+                <a href="http://6wpl.info<?= $this->url(array("controller" => 'study-history', "action" => 'list', "baby_id" => $result['baby_id']), null, true) ?>">Study History</a>
+            </td>
+            <td>
+                <?= ($result['last_name']) ? $result['last_name'] : "ERROR" ?>
+            </td>
+            <td>
+                <?= ($result['first_name']) ? $result['first_name'] : "ERROR" ?>
+            </td>
+            <td>
+                <?= ($result['dob']) ? $result['dob'] : "ERROR" ?>
+            </td>
+            <td>
+                <?php
+                    switch ($result['sex']) {
+                        case '2':
+                            echo "M";
+                            break;
+                        case '1':
+                            echo "F";
+                            break;
+                        default:
+                            echo "";
+                            break;
+                    }
+                ?>
+            </td>
+            <td>
+                <?= ($result['mother_last_name']) ? $result['mother_last_name'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['mother_first_name']) ? $result['mother_first_name'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['status']) ? strtoupper($result['status']) : "NONE" ?>
+            </td>
+            <td>
+                <?= ($result['record_status'] == 1) ? "ACTIVE" : "INACTIVE"  ?>
+            </td>
+            <td>
+                <?= ($result['record_owner']) ? $result['record_owner'] : "NONE" ?>
+            </td>
+            <td>
+                <?= ($result['language']) ? $result['language'] : "" ?>
+            </td>
+            <?php if ($this->link['telephone']): ?>
+            <td>    
+                <?= ($result['telephone']) ? $result['telephone'] : "" ?>
+            </td>
+            <?php endif ?>
+        </tr>
+    <?php endforeach ?>
+</table>
+

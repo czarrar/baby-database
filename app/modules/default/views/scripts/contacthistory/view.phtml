@@ -1,0 +1,86 @@
+<div align="center">
+<font face="verdana"><h1>Contact History</h1></font>
+
+<form action="<?= $this->sUrl('new', 'contacthistory') ?>" method="POST" accept-charset="utf-8">
+    
+    <table border="0" cellspacing="0" cellpadding="5" class="form" width="75%">
+        <tr>
+            <td class="label">Serial No</td>
+            <td width="60%"><a href="<?= $this->url(array('action' => 'view', "controller" => "baby", "id" => $this->babyId), null, true) ?>" title="Click here to see baby information"><?= $this->babyId ?></a></td>
+        </tr>
+        <tr>
+            <td class="label">Attempt #</td>
+            <td><?= $this->attempt ?></td>
+        </tr>
+        <tr>
+            <td class="label">Call Date/Time</td>
+            <td>
+                <?= $this->datetime ?>
+            </td>
+        </tr>
+    </table>
+    <br />
+    <br />
+    <table border="0" cellspacing="0" cellpadding="5" class="form" width="75%">
+        <tr>
+            <td class="label">Caller</td>
+            <td width="60%">
+                <?= $this->caller ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Contact Type
+            </td>
+            <td>
+                <?= $this->type ?>
+            </td>
+        <tr>
+            <td class="label">
+                Contact Method
+            </td>
+            <td>
+                <?= $this->method ?>
+            </td>
+        <tr>
+            <td class="label">
+                Contact Outcome
+            </td>
+            <td>
+                <?= $this->outcome ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Callback
+            </td>
+            <td>
+                We will callback at 
+                <?= $this->callback ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Study
+            </td>
+            <td>
+                <?= $this->study ?>
+            </td>
+        <tr>
+            <td class="label">
+                Researcher
+            </td>
+            <td>
+                <?= $this->researcher ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Comments:
+            </td>
+            <td>
+                <?= $this->comments ?>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,37 @@
+<h2 class=our_list> Schedule Appointments </h2>
+
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
+?>
+
+<form action="<?= $this->url(array("controller" => "appointment", "action" => "schedule"), null, true) ?>" method="post" accept-charset="utf-8">
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">Researcher Records</td>
+            <td width="70%"><?= $this->formSelect("researcher", $this->researcher, null, $this->researcherOptions) ?>
+                &nbsp;               
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Study Records</td>
+            <td width="70%"><?= $this->formSelect("study", $this->study, null, $this->studyOptions) ?>
+                &nbsp;               
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Callback :</td>
+            <td width="70%"><?= $this->formSelect("callback", $this->callback, null, $this->callbackOptions) ?>
+                &nbsp;               
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Records per page :</td>
+            <td width="70%"><?= $this->formSelect("per_page", ($this->per_page) ? $this->per_page : 10, null, $this->perPageOptions) ?>
+                &nbsp;               
+            </td>
+        </tr>
+    </table>
+    <br />
+    <input type="submit" value="Get Records &rarr;">&nbsp;&nbsp;&nbsp;<input type="reset" value="Reset" id="reset">
+</form>

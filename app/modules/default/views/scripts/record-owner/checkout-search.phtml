@@ -1,0 +1,137 @@
+<h2 class=our_list> Checkout Records </h2>
+
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_formErrorMsg.phtml', array('errors' => $this->errors));
+    if (!(empty($this->warnings)))
+        echo $this->partial('_formWarnMsg.phtml', array('warnings' => $this->warnings));
+?>
+
+<form action="<?= $this->url(array("controller" => 'record-owner', "action" => "checkout-search"), null, true) ?>" method="post" accept-charset="utf-8">
+<strong>Serial Number: </strong><?= $this->formText('baby_id', null, null, array("size" => 8, "maxlength" => 8)) ?>
+<br /><br />
+<b>Odd/Even Serial Nos: </b> <?= $this->formSelect("oddeven", null, null, array("" => "ALL", "odd" => "ODD", "even" => "EVEN")) ?>
+<br /><br />
+<b>Age from:</b> (Lower Value)<br>
+Years
+<input type= "text" name="lyears" size = 3 value=0> &nbsp;&nbsp;
+Months
+<input type= "text" name="lmonths" size = 3 value=0>&nbsp;&nbsp;
+Days
+<input type= "text" name="ldays" size = 3 value=0> <br>
+<b>Age to: </b> (Higher Value)<br>
+Years
+<input type= "text" name="hyears" size = 3 value=0> &nbsp;&nbsp;
+Months
+<input type= "text" name="hmonths" size = 3 value=0>&nbsp;&nbsp;
+Days
+<input type= "text" name="hdays" size = 3 value=0> <br> 
+<input type="checkbox" name="allages" value="1" checked="checked">
+<b>Select records for all ages</b>
+
+        <br><br><b>
+        Date of Entry (MM/DD/YYYY): <br>
+         <b>From</b>&nbsp;&nbsp;
+        <?= $this->formSelectDate(
+            array(
+                'fromDate_year',
+                'fromDate_month',
+                'fromDate_day'
+            ),
+            $this->fromDate,
+            null,
+            array(
+                'year_start'=>1990,
+                'year_end'=>date('Y')+1
+            )
+        ) ?>
+        <br>
+
+        <b>To</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <?= $this->formSelectDate(
+            array(
+                'toDate_year',
+                'toDate_month',
+                'toDate_day'
+            ),
+            $this->toDate,
+            null,
+            array(
+                'year_start'=>1990,
+                'year_end'=>date('Y')+1
+            )
+        ) ?>
+        <br><br>
+        <input type="checkbox" name="alldates" value="1" checked="checked">
+        <b>Select records with ALL date of entries.</b>
+        <br>
+        <br>
+        Sex : &nbsp;
+        <?= $this->formSelect('sex', $this->sex, null, array("" => 'M/F', 1 => 'Female', 2 => 'Male')) ?>
+        <br><br>
+        Language based Search : <br><br>
+        <?php for ($i=0; $i < 4; $i++): ?>
+            <?php $num = $i + 1 ?> 
+            Language <?= $num ?> &nbsp;
+            <?= $this->formSelect("language[$i][language_id]", $this->language[$i]["language_id"], null, $this->languageOptions) ?>
+            &nbsp;&nbsp;&nbsp;Degree&nbsp;
+            <input type="text" name="<?= "language[$i][rate]" ?>" value="<?= $this->language[$i]['rate'] ?>" size="3">
+            &nbsp;&nbsp;
+            <?= $this->formSelect("language[$i][moreorless]", $this->language[$i]['moreorless'], null, array("more" => "or more", "less" => "or less")) ?><br>            
+        <?php endfor ?>
+
+        Number of Languages &nbsp;
+        <input type="text" name="numlangs" size=3><br>
+
+        &nbsp;<br><b>Prior Study Name (if any) </b>  : &nbsp;&nbsp;
+        <?= $this->formSelect('studyname', $this->studyname, null, $this->studyOptions) ?>
+        <br><br>
+        
+        <?php for ($i=0; $i < 3; $i++): ?>
+            <? $num = $i + 1 ?> 
+            <strong><?= $num ?>. Has not been in study : </strong>&nbsp;&nbsp;
+            <?= $this->formSelect("notstudy[$i][study_id]", $this->notstudy[$i]['study_id'], null, $this->studyOptions) ?>
+            <br />
+        <?php endfor ?>
+        <br>
+        
+        <b>Has been in Study by (Researcher Name) </b>  : &nbsp;&nbsp;
+        <?= $this->formSelect('rname', $this->rname, null, $this->researcherOptions) ?>
+        <br><br>
+        
+        <?php for ($i=0; $i < 3; $i++): ?>
+            <? $num = $i + 1 ?> 
+            <strong><?= $num ?>. Has not been in study by researcher : </strong>&nbsp;&nbsp;
+            <?= $this->formSelect("notrname[$i][researcher_id]", $this->notrname[$i]['researcher_id'], null, $this->researcherOptions) ?>
+            <br />
+        <?php endfor ?>
+        <br>
+
+        <b>Level of Enthusiasm in a Prior Study (If Any)</b> : &nbsp;&nbsp;
+        <input type="text" name="enthusiasm" size=5> <br><br>
+        <b>Has NOT been in Study since (mm/dd/yyyy) : &nbsp;&nbsp;
+            <?= $this->formSelectDate(
+                array(
+                    'since_year',
+                    'since_month',
+                    'since_day'
+                ),
+                $this->since_date,
+                null,
+                array(
+                    'year_start'=>1990,
+                    'year_end'=>date('Y')+1
+                )
+            ) ?>
+        <br><br>
+        <tr>
+            <td class="label">Records per page :</td>
+            <td width="70%"><?= $this->formSelect("per_page", ($this->per_page) ? $this->per_page : 10, null, $this->perPageOptions) ?>
+                &nbsp;               
+            </td>
+        </tr>
+        <br><br><br>
+        <input type="submit" name="checkout" value="Get Records ->">
+        <input type="reset" value="reset" id="reset">        
+        
+        </form>

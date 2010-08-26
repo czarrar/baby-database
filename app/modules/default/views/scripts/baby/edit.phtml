@@ -1,0 +1,48 @@
+<script language="JavaScript">
+
+function call_popup() {
+    window.open('<?=$this->sUrl("new", "contacthistory")  ?>', 'CallInfo', 'toolbar=no, location=no, directories=no, status=yes, menubar=no, resizable=yes, copyhistory=no, scrollbars=yes, width=800, height=500');
+}
+
+function call_popup_study() {
+    window.open("<?= $this->sUrl("list", "study-history") ?>", 'StudyInfo', 'toolbar=no, location=no, directories=no, status=yes, menubar=no, resizable=yes, copyhistory=no, scrollbars=yes, width=800, height=400');
+}
+
+</script>
+
+<h2 class=our_list> Edit <em><?= $this->name ?>'s</em> Information </h2>
+:: <a href="javascript:call_popup()" title="Contact History">CONTACT HISTORY</a> | <a href="javascript:call_popup_study()">STUDY HISTORY</a> ::
+
+<br /><br /><br />
+Serial Number: <?= $this->baby_id ?> <strong>&nbsp;|&nbsp;</strong>
+Family Id:  <?= $this->family_id ?> <strong>&nbsp;|&nbsp;</strong>
+List: <?= $this->rlist ?> 
+<?php if (isset($this->caller)): ?>
+    <strong>&nbsp;|&nbsp;</strong>
+    Entered by Caller: <?= $this->caller ?>
+<?php endif ?>
+<br /><p class="br"></p>
+Record Status: <?= $this->record_status ?> <strong>&nbsp;|&nbsp;</strong>
+Scheduling Status: <?= $this->status ?> <strong>&nbsp;|&nbsp;</strong>
+Date Created: <?= $this->date_of_entry ?> <strong>&nbsp;|&nbsp;</strong>
+Last Updated: <?= $this->last_update ?>
+<br /><p class="br"></p>
+Sibling(s): 
+<? if ($this->numSiblings == 0): ?>
+	NONE
+<? else: ?>
+	<? foreach ($this->siblings as $sibling): ?>
+		<? if ($sibling->id != $this->baby_id): ?>
+		    <a href="<?= $this->url(array("controller" => "baby", "action" => "edit", "baby_id" => $sibling->id), null, true) ?>" target="_blank">
+		        <?= $sibling->id ?>
+		    </a>
+		<? endif ?>
+	<? endforeach ?>
+<? endif ?>
+
+<br /><br />
+:: <a href="#" onclick="Element.toggle('edit_form')">SHOW/HIDE Baby Information</a> ::
+<br /><br />
+<span id="edit_form">
+    <?= $this->partial('/baby/_form.phtml', $this) ?>
+</span>

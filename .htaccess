@@ -1,0 +1,5 @@
+#AddHandler x-httpd-php5 .php
+#AddHandler x-httpd-php .php4
+RewriteEngine on
+RewriteCond %{HTTP_HOST} .
+RewriteRule (.*) index.php [L]

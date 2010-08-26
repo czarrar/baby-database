@@ -1,0 +1,22 @@
+<div align="center">
+    <font face="verdana"><h1>Study List</h1></font>
+    <?php 
+    switch ($this->displayPartial):
+        case 'new':
+            echo $this->partial('/study/new.phtml', $this);
+            break;
+        case 'edit':
+            echo $this->partial('/study/edit.phtml', $this);
+            break;
+        case 'success':
+            echo "<strong>Database entry successfully completed! Great job.</strong>";
+            break;
+        case 'view':
+            echo $this->partial('/study/view.phtml', $this);
+            break;
+        case 'default':
+            break;
+    endswitch;
+    ?>
+    <?= $this->action('list', "study", null, array("is_crud" => 1)) ?>
+</div>

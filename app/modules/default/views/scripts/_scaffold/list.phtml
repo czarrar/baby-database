@@ -1,0 +1,65 @@
+<div align="right">
+    <a href="<?= $this->sUrl('new', $this->controller, null, true) ?>">Add New</a> |
+    <a href="<?= $this->url(array("action" => "list", "view_archive" => 2)) ?>" <?= ($this->viewActive) ? "style='font-style:italic'" : "" ?>>
+        View Only Active</a> | 
+    <a href="<?= $this->url(array("action" => "list", "view_archive" => 1)) ?>" <?= ($this->viewArchived) ? "style='font-style:italic'" : "" ?>>
+        View Only Archived</a> | 
+    <a href="<?= $this->url(array("action" => "list", "view_archive" => 0)) ?>" <?= ($this->viewAll) ? "style='font-style:italic'" : "" ?>>
+        View All</a> | 
+    <a href="javascript:window.close();">Close Window</a></div>
+<br />
+<table id="sortable_table" class="datagrid">
+    <caption><?= $this->title ?></caption>
+    <?php if(empty($this->items)): ?>
+        <tr>
+            <td>I am sorry there is nothing to display!</td>
+        </tr>
+    <?php else: ?>
+    <thead>
+        <tr>
+        <?php foreach ($this->columns as $key => $col): ?>
+            <?php if ($key == "to_use"): ?>
+                <? continue; ?>
+            <?php else: ?>
+                <th mochi:format="istr" scope="col"><?= $col ?></th>
+            <?php endif ?>
+        <?php endforeach ?>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tfoot>
+		<tr>
+            <td colspan="<?= count($this->columns)+1 ?>" align="center"><a href="<?= $this->sUrl('new', $this->controller, null, true) ?>">Add New</a> | <a href="javascript:window.close();">Close Window</a></td>
+		</tr>
+	</tfoot>
+    <tbody>
+    <?php foreach ($this->items as $key => $item): ?>
+        <tr <?= ($isOdd) ? "class='odd'" : "" ?>>
+        <?php foreach ($item as $col => $value): ?>
+            <?php if ($col == "to_use"): ?>
+                <? continue; ?>
+            <?php elseif ($col == "id"): ?>
+                <td><?= str_pad($value, $this->idPad, 0, STR_PAD_LEFT) ?></td>
+            <?php else: ?>
+                <td><?= $value ?></td>
+            <?php endif ?>
+
+        <?php endforeach ?>
+        <?php foreach ($this->primary as $col): ?>
+            <? $primarySet[$col] = $item[$col] ?>
+        <?php endforeach ?>
+            <td align="center">
+                <?php if ($this->toUse and $item["to_use"] == 0): ?>
+                    <a href="<?= $this->url(array('action' => 'undelete', 'controller' => $this->controller) + $primarySet, null, true) ?>">Unarchive</a>
+                <?php else: ?>
+                    <a href="<?= $this->url(array('action' => 'edit', "controller" => $this->controller) + $primarySet, null, true) ?>"> Edit </a> | 
+                    <a href="<?= $this->url(array('action' => 'delete', "controller" => $this->controller) + $primarySet, null, true) ?>"> Archive </a>
+                <?php endif ?>
+            </td>
+        </tr>
+        <? $isOdd = ($isOdd) ? False : True ?>
+    <?php endforeach ?>
+<?php endif ?>
+
+    </tbody>
+</table>

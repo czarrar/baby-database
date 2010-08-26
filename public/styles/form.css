@@ -1,0 +1,159 @@
+#Container #intro h1 {
+
+	line-height: normal;
+
+	}
+
+#Container #intro p {
+
+	padding-left:10px;
+
+	font-size: .95em;
+
+}
+
+ul.study {
+
+	list-style-type: none;
+
+	font-size: .75em;
+
+	margin-left: 20px;
+
+	padding-left: 0px;
+
+	border-left: 1px solid #999999;
+
+}
+
+ul.study li {	
+
+	padding: 2px 0 2px 10px;
+
+}
+
+#Container #intro blockquote {
+
+	padding-left:10px;
+
+	font-size: .85em;
+
+}	
+
+#errorBox {
+
+	background-color: #FFF5EE;
+
+	border: 1px solid #FFA07A;
+
+	margin: 0 10px 25px 10px;
+
+	padding: 0 10px 10px 10px;
+
+	}
+
+.error {
+
+	color: #DC143C;
+
+}
+
+.group {
+
+	background: url(../images/bg-form.gif) left bottom repeat-x;
+
+	margin: 10px 0 10px 0;
+
+	padding: 5px 5px 5px 5px;
+
+	border-top: 1px solid #C9DCA6;
+
+	font-size: .8em;
+
+	_height:0;
+
+	}
+
+.field,
+
+.fieldBottom {
+
+	padding: 5px 10px 8px 10px;
+
+	}
+
+.field {
+
+	background: url(../images/divider-form.gif) left bottom repeat-x;
+
+}
+
+#form1 {
+
+	padding-left:10px;
+
+	margin-top:30px;
+
+	}
+
+#form1 h2 {
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+
+	font-size: 1.25em;
+
+	margin: 0 0 5px 0;
+
+	padding-bottom: 7px;
+
+	border-top:none;
+
+	border-bottom: 1px groove #669966;
+
+	}
+
+#form1 .group .field  p {
+
+	margin: 0px;
+
+	padding: 0px 0 2px 0;
+
+}
+
+input {
+
+	vertical-align: middle;
+
+}
+
+blockquote {
+
+	margin-left: 25px;
+
+	margin-top: 5px;
+
+	margin-bottom: 5px;
+
+}
+
+.pInfo {
+
+	margin-bottom: 3px;
+
+	padding-top: 3px;
+
+}
+
+em {
+
+	color:#FF3333;
+
+}
+
+.schedule {
+
+	color:#666666;
+
+	font-style: italic;
+
+}

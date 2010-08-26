@@ -1,0 +1,33 @@
+<tr class="mochi-example">
+    foreach
+        <td>value in here</td>
+    <td>First Name</td>
+    <td>Last Name</td>
+    <td>Contact History</td>
+    <td></td>
+</tr>
+
+<tr mochi:repeat="item domains">
+    <td mochi:content="item.domain_name">mochibot.com</td>
+    <td mochi:content="item.create_date">2005-02-10</td>
+    <td mochi:content="item.expiry_date">2007-02-10</td>
+    <td mochi:content="item.organization_name">Jameson Hsu</td>
+</tr>
+<tr class="mochi-example">
+    <td>pythonmac.org</td>
+    <td>2003-09-24</td>
+    <td>2006-09-24</td>
+    <td>Bob Ippolito</td>
+</tr>
+<tr class="mochi-example">
+    <td>undefined.org</td>
+    <td>2000-01-10</td>
+    <td>2006-01-10</td>
+    <td>Robert J Ippolito</td>
+</tr>
+<tr class="mochi-example">
+    <td>python.org</td>
+    <td>1995-03-27</td>
+    <td>2007-03-28</td>
+    <td>Python Software Foundation</td>
+</tr>

@@ -1,0 +1,45 @@
+/*******************************************************************
+ * TITLE: Color Scheme Stylesheet for Blue Haze (MODIFIED)         *
+ * URI  : http://www.oswd.org/design/xxx/bluehaze/color-scheme.css *
+ * MODIF: 2003-01-05 1608 +0800                                    *
+ *******************************************************************/
+
+
+/* ------------------------------------------------------------------------
+   Four basic colors are used to render Blue Haze. These are:
+     1. Text Color
+     2. Border Color
+     3. Background Color (darker)
+     4. Background Color (lighter)
+   
+   To change the above colors, just edit their respective values below.
+------------------------------------------------------------------------ */
+
+
+/* ###### General Color Scheme ###### */
+
+h1, h2, h3, q, #footer *, .topOfPage
+{ /* Text Color: */  color: #8BE65B; }
+
+h1, q
+{ /* Border Color: */	border-color: #5BE671; }
+
+q
+{ /* Background Color (lighter): */  background-color: #fafcff; }
+
+
+/* ###### Special Colors ###### */
+
+acronym {
+	color: Green;
+	border-bottom-color: Green;
+}
+
+#bodyText a {
+  color: #4080ff;
+  border-bottom-color: #4080ff;
+}
+
+#footer {
+	background-color: #F2FFF5;
+}

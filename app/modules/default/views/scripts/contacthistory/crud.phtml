@@ -1,0 +1,19 @@
+<div align="center">
+    <?php 
+    switch ($this->displayPartial):
+        case 'new':
+        case 'update':
+            echo $this->partial('/contacthistory/_form.phtml', $this);
+            break;
+        case 'success':
+            echo $this->partial('/contacthistory/success.phtml', $this);
+            break;
+        case 'default':
+        case 'view':
+            echo $this->partial('/contacthistory/view.phtml', $this);
+            break;
+    endswitch;
+    ?>
+    <hr />
+    <?= $this->action('list', "contacthistory", null, array("baby_id" => $this->babyId, "dir_styles" => $this->dir_styles)) ?>
+</div>

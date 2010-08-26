@@ -1,0 +1,58 @@
+<h2 class="our_list">Archive Baby</h2>
+
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_formErrorMsg.phtml', array('errors' => $this->errors));
+    if (!(empty($this->warnings)))
+        echo $this->partial('_formWarnMsg.phtml', array('warnings' => $this->warnings));
+?>
+<??>
+
+<form action="<?= $this->url(array("controller" => "baby", "action" => "archive")) ?>" method="post" accept-charset="utf-8">
+    <!-- Additional info to pass -->
+    <input type="hidden" name="id" value="<?= $this->baby["id"] ?>" />
+    <input type="hidden" name="caller" value="<?= $this->caller ?>" />
+    
+    <table cellpadding="6" cellspacing="0" border="1" bordercolorlight="#333">
+        <tr>
+            <td><strong>Serial Number</strong> </td>
+            <td><?= $this->baby['id'] ?></td>
+        </tr>
+        <tr>
+            <td><strong>First Name</strong> </td>
+            <td><?= $this->baby['first_name'] ?></td>
+        </tr>
+        <tr>
+            <td><strong>Last Name</strong> </td>
+            <td><?= $this->baby['last_name'] ?></td>
+        </tr>
+        <tr>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+        <tr>
+            <td><strong>Date</strong> </td>
+            <td><?= date('M d Y') ?></td>
+        </tr>
+        <tr>
+            <td><strong>Caller</strong> </td>
+            <td><?= $this->caller ?></td>
+        </tr>
+        <tr>
+            <td><strong>Reason for Decline</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td>
+                <?= $this->formSelect("reason", $this->reason, null, $this->reasonOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Comments</strong></td>
+            <td>
+                <textarea name="comments" id="comments" rows="4" cols="50"><?= ($this->comments) ? $this->comments : $this->baby['comments'] ?></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <input type="submit" value="Archive" id="submit">
+            </td>
+        </tr>
+    </table>
+</form>

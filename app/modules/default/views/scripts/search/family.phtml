@@ -1,0 +1,118 @@
+<h2 class=our_list> Family Search </h2>
+
+    <?php
+        if (!(empty($this->errors)))
+            echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
+    ?>
+
+<form action="<?= $this->form->getAction() ?>" method="<?= $this->form->getMethod() ?>" accept-charset="utf-8">
+    <h3 class=our_list> Baby Information </h2>
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">
+                <?= $this->form->baby_id->label() ?>
+            </td>
+            <td>
+                <label></label>
+                <?= $this->form->baby_id->field() ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                <label>Name/Sex</label>
+            </td>
+            <td>
+                <?= $this->form->first_name ?>
+                <?= $this->form->last_name ?>
+                <?= $this->form->sex ?>
+            </td>
+        </tr>
+            <td class="label">
+               <label>Date of birth</label>
+            </td>
+            <td>
+                <label></label>
+                <?= $this->form->dob ?>&nbsp; 
+                <em>(MM/DD/YY)</em>
+            </td>
+        </tr>
+        </tr>
+            <td class="label">
+               <?= $this->form->study_id->label() ?>
+            </td>
+            <td>
+                <label></label>
+                <?= $this->form->study_id->field() ?>
+            </td>
+        </tr>
+    </table>
+    <br />
+    <h3 class=our_list> Parent Information </h2>
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">
+                <?= $this->form->family_id->label() ?>
+            </td>
+            <td>
+                <label></label>
+                <?= $this->form->family_id->field() ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                <label>Mother</label>
+            </td>
+            <td>
+                <?= $this->form->mother_first_name ?>
+                <?= $this->form->mother_last_name ?>
+                <?= $this->form->mother_ethnicity ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                <label>Father</label>
+            </td>
+            <td>
+                <?= $this->form->father_first_name ?>
+                <?= $this->form->father_last_name ?>
+                <?= $this->form->father_ethnicity ?>
+            </td>
+        </tr>
+    </table>
+        <br />
+    <h3 class=our_list> Contact Information </h2>
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">
+                <label>Address</label>
+            </td>
+            <td>
+                <?= $this->form->city ?>
+                <?= $this->form->state ?>
+                <?= $this->form->zip ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                <?= $this->form->phone->label() ?>
+            </td>
+            <td>
+                <label></label>
+                <?= $this->form->phone->field() ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                <?= $this->form->email->label() ?>
+            </td>
+            <td>
+                <label></label>
+                <?= $this->form->email->field() ?>
+            </td>
+        </tr>
+    </table>    
+    <br /><br />
+    <?= $this->form->submit ?>
+    
+    
+</form>

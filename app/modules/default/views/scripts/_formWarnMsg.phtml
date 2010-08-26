@@ -1,0 +1,18 @@
+<div id="errorMsg">
+	<h3>Ooops! You had the following warnings (Click submit if information is correct):</h3>
+	<ol>
+    	<?php foreach ($this->warnings as $category => $messages): ?>
+    	    <?php foreach ($messages as $field => $errors): ?>
+    	        <?php foreach ($errors as $key => $error): ?>
+    	           <?php if (is_array($error)): ?>
+         	           <?php foreach ($error as $sub_field => $sub_error): ?>
+          	           <li><?= $sub_error ?></li>
+          	       <?php endforeach ?>
+         	       <?php else: ?>
+         	           <li><?= $error ?></li>
+         	       <?php endif ?>
+    	        <?php endforeach ?>
+    	    <?php endforeach ?>
+    	<?php endforeach ?>
+	</ol>
+</div>

@@ -1,0 +1,20 @@
+<div align="center">
+    <font face="verdana"><h1>Language List</h1></font>
+    <?php 
+    switch ($this->displayPartial):
+        case 'new':
+        case 'update':
+            echo $this->partial('/language/_form.phtml', $this);
+            break;
+        case 'success':
+            echo "<strong>Database entry successfully completed! Great job.</strong>";
+            break;
+        case 'view':
+            echo $this->partial('/language/view.phtml', $this);
+            break;
+        case 'default':
+            break;
+    endswitch;
+    ?>
+    <?= $this->action('list', "language", null, array("is_crud" => 1)) ?>
+</div>

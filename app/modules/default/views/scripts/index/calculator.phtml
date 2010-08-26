@@ -1,0 +1,89 @@
+<h2 class=our_list> Age Wizard </h2>
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial("_newErrorMsg.phtml", array('errors' => $this->errors));
+?>
+<??>
+<em>
+<?php if ($this->calculated): ?>
+    <strong>Calculated the <?= $this->calculated ?></strong>
+<?php else: ?>
+    Please complete two of three options (DOB, Date, or Age).
+<?php endif ?>
+<??>
+</em>
+<br />
+<br />
+<form action="<?= $this->url(array("controller" => "index", "action" => "calculator")) ?>" method="post" accept-charset="utf-8">
+    <table cellspacing="0" cellpadding="5" class="form">
+        <!-- Dob -->
+        <tr>
+            <td class="label"><label>Date of Birth</label></td>
+            <td>
+                <span class="spacer"></span>
+                <?php if (isset($this->calculated)): ?>
+                    <?= $this->dob ?>
+                <?php else: ?>
+                    <?= $this->form->dob ?>
+                <?php endif ?>
+            </td>
+        </tr>
+        <!-- Date -->
+        <tr>
+            <td class="label"><label>Date</label></td>
+            <td>
+                <span class="spacer"></span>
+                <?php if (isset($this->calculated)): ?>
+                    <?= $this->date ?>
+                <?php else: ?>
+                    <?= $this->form->date ?>
+                <?php endif ?>
+            </td>
+        </tr>
+        <!-- Age -->
+        <tr>
+            <td class="label"><label>Age</label></td>
+            <td>
+                <span class="spacer"></span>
+                <?php if (isset($this->calculated)): ?>
+                    <?= $this->age ?>
+                <?php else: ?>
+                    <?= $this->form->age ?>
+                <?php endif ?>
+            </td>
+        </tr>
+        <!-- Study (optional) -->
+        <tr>
+            <td class="label"><?= $this->form->study->label() ?></td>
+            <td>
+                <span class="spacer"></span>
+                <?php if (isset($this->calculated) and isset($this->study)): ?>
+                    '<?= $this->study ?>'
+                    <?php if ($this->lowerAge and $this->upperAge): ?>
+                        with age range:
+                        <br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?= $this->lowerAge ?>
+                        <br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TO
+                        <br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?= $this->upperAge ?>
+                    <?php endif ?>
+                <?php else: ?>
+                    <?= $this->form->study->field() ?>
+                <?php endif ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">&nbsp;</td>
+            <td>
+                <label></label>
+                <?php if (isset($this->calculated)): ?>
+                    <a href="<?= $this->sUrl('calculator', 'index') ?>">Calculate Something Else!</a>
+                    <?php else: ?>
+                        <?= $this->form->submit ?>
+                <?php endif ?>
+            </td>
+        </tr>
+    </table>
+</form>
+

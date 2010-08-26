@@ -1,0 +1,16 @@
+<div id="errorMsg">
+	<h3>Ooops! You had the following errors:</h3>
+	<ol>	    
+	    <?php foreach ($this->errors as $field => $errors): ?>
+	       <?php foreach ($errors as $type => $error): ?>
+	            <?php if (is_array($error)): ?>
+	               <?php foreach ($error as $subType => $subError): ?>
+	                    <li><?= $subError ?></li>
+	               <?php endforeach ?>
+                <?php else: ?>
+	                <li><?= $error ?></li>
+                <?php endif ?>
+            <?php endforeach ?>
+	    <?php endforeach ?>
+	</ol>
+</div>

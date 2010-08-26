@@ -1,0 +1,20 @@
+<form action="<?= $this->form->getAction() ?>" method="<?= $this->form->getMethod() ?>" accept-charset="utf-8">
+    <fieldset>
+        <legend><?= $this->title ?></legend>
+        <ol>
+            <li><a href="<?= $this->sUrl('list', $this->controller, null, true) ?>" style="font-size: 1.25em">List</a></li>
+            <br />
+        <?php foreach ($this->columns as $name => $display): ?>
+            <?php if ($name == "to_use"): ?>
+                <?= $this->form->$name ?>
+            <?php else: ?>
+                <li><?= $this->form->$name ?></li>
+            <?php endif ?>
+        <?php endforeach ?>
+        </ol>
+        
+        <br />
+        <?= $this->form->submit ?>
+        
+    </fieldset>
+</form>

@@ -1,0 +1,26 @@
+login:
+  elements:
+    username:
+      type: "text"
+      options:
+        label: "Username:"
+        description: "Enter your username"
+        size: 15
+        maxlength: 20
+        required: true
+        validators:
+          notempty:
+            validator: "NotEmpty"
+    password:
+      type: "password"
+      options:
+        label: "Password:"
+        description: "Enter your password"
+        size: 15
+        maxlength: 20
+        required: true
+        validators:
+          notempty:
+            validator: "NotEmpty"
+    submit:
+      type: "submit"

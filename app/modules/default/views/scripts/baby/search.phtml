@@ -1,0 +1,534 @@
+<h2 class=our_list> Baby Search </h2>
+<br />
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_formErrorMsg.phtml', array('errors' => $this->errors));
+    if (!(empty($this->warnings)))
+        echo $this->partial('_formWarnMsg.phtml', array('warnings' => $this->warnings));
+?>
+<??>
+<form action="<?= $this->url(array("controller" => "baby", "action" => "search"), null, true) ?>" method="post" accept-charset="utf-8">
+    <h3 class=our_list> Baby Information </h2>
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">
+                Record Status
+            </td>
+            <td>
+                <label>Record Status</label>
+                <?= $this->formSelect("baby[record_status]", $this->baby["record_status"], null, array("" => 'Choose', "1" => 'INACTIVE', "2" => 'ACTIVE')) ?>
+                <label>Baby Status</label>
+                <?= $this->formSelect("baby[status_id]", $this->baby["status_id"], null, $this->statusOptions) ?>
+                
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Serial No.
+            </td>
+            <td>
+                <label></label>
+                <?= $this->formText("baby[id]", null, null, array("size" => 10, "maxlength" => 10)) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Family ID
+            </td>
+            <td>
+                <label></label>
+                <?= $this->formText("family[id]", null, null, array("size" => 10, "maxlength" => 10)) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Record Date
+            </td>
+            <td>
+                <label>Created (MM/DD/YY)</label>
+                <?= $this->formSelectDate(
+                    array(
+                        'baby[created_from][year]',
+                        'baby[created_from][month]',
+                        'baby[created_from][day]'
+                    ),
+                    $this->baby["created_from"],
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>
+                <em>(TO
+                <?= $this->formSelectDate(
+                    array(
+                        'baby[created_to][year]',
+                        'baby[created_to][month]',
+                        'baby[created_to][day]'
+                    ),
+                    $this->baby["created_to"],
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>)</em>
+                <p class="br"></p>
+                <label>Updated (MM/DD/YY)</label>
+                <?= $this->formSelectDate(
+                    array(
+                        'baby[updated_from][year]',
+                        'baby[updated_from][month]',
+                        'baby[updated_from][day]'
+                    ),
+                    $this->baby["updated_from"],
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>
+                <em>(TO
+                <?= $this->formSelectDate(
+                    array(
+                        'baby[updated_to][year]',
+                        'baby[updated_to][month]',
+                        'baby[updated_to][day]'
+                    ),
+                    $this->baby["updated_to"],
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>)</em>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Personal Info
+            </td>
+            <td>
+                <?= $this->formText("baby[first_name]", "(First name)", null, array("size" => 10, "maxlength" => 100)) ?>
+                <?= $this->formText("baby[last_name]", "(Last name)", null, array("size" => 15, "maxlength" => 150)) ?>
+                <label>(Sex)</label><?= $this->formSelect('baby[sex]', $this->baby['sex'], array('id' => 'sex'), array("" => 'M/F', "1" => 'Female', "2" => 'Male')) ?>
+                <p class="br"></p>
+                <label>(Date of Birth - MM/DD/YY)</label>
+                <?= $this->formSelectDate(
+                    array(
+                        'baby[dob_from][year]',
+                        'baby[dob_from][month]',
+                        'baby[dob_from][day]'
+                    ),
+                    $this->baby["dob_from"],
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>
+                <em>(TO
+                <?= $this->formSelectDate(
+                    array(
+                        'baby[dob_to][year]',
+                        'baby[dob_to][month]',
+                        'baby[dob_to][day]'
+                    ),
+                    $this->baby["dob_to"],
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>)</em>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Mother
+            </td>
+            <td>
+                    <?= $this->formText("family[mother_first_name]", "(First name)", null, array("size" => 10, "maxlength" => 100)) ?>
+                    <?= $this->formText("family[mother_last_name]", "(Last name)", null, array("size" => 15, "maxlength" => 150)) ?>
+                    <label>(Ethnicity)</label><?= $this->formSelect('family[mother_ethnicity_id]', null, $this->family["mother_ethnicity_id"], $this->ethnicityOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Father
+            </td>
+            <td>
+                <?= $this->formText("family[father_first_name]", "(First name)", null, array("size" => 10, "maxlength" => 100)) ?>
+                <?= $this->formText("family[father_last_name]", "(Last name)", null, array("size" => 15, "maxlength" => 150)) ?>
+                <label>(Ethnicity)</label><?= $this->formSelect('family[father_ethnicity_id]', $this->family["father_ethnicity_id"], null, $this->ethnicityOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Languages
+            </td>
+            <td>
+                <?php for ($i=0; $i < 4; $i++): ?>
+                    <?php $num = $i + 1 ?> 
+                    <label>Language <?= $num ?> &nbsp;</label>
+                    <?= $this->formSelect("language[$i][language_id]", $this->language[$i]["language_id"], null, $this->languageOptions) ?>
+                    &nbsp;&nbsp;&nbsp;Degree&nbsp;
+                    <input type="text" name="<?= "language[$i][rate]" ?>" value="<?= $this->language[$i]['rate'] ?>" size="3">
+                    &nbsp;&nbsp;
+                    <?= $this->formSelect("language[$i][moreorless]", $this->language[$i]['moreorless'], null, array("more" => "or more", "less" => "or less")) ?>
+                    <?php if ($i != 3): ?>
+                        <p class="br"></p>
+                    <?php endif ?>
+                <?php endfor ?>
+            </td>
+        </tr>
+    	<tr>
+    	    <td class="label">
+    	       Birth Weight
+    	    </td>
+            <td>
+                <span class="spacer"><span>
+                <?= $this->formBirthWeight(false) ?>
+                &nbsp; <em>1 oz = 28.349 g, 1 g = 0.0353 oz</em>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Born at Term?
+            </td>
+            <td>
+                <span class="spacer"><span>
+                <select name="baby[term_period]">
+                    <option value=''> Choose</option>
+                    <option value=-4>4 or more weeks early
+                    <option value=-3>3 or more weeks early
+                    <option value=-2>2 or more weeks early
+                    <option value=-1>1 or more weeks early
+                    <option value=0>Term
+                    <option value=1>1 or more weeks late
+                    <option value=2>2 or more weeks late
+                    <option value=3>3 or more weeks late
+                    <option value=4>4 or more weeks late
+                </select>
+                <?= $this->formText("baby[term_weeks]", "or exact # of weeks", $this->baby['term'], array("size" => 2, "maxlength" => 2)) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Issues
+            </td>
+            <td>
+                <?= $this->formText("baby[med_problems]", "Major Medical Problems", null, array("size" => 50, "maxlength" => 255)) ?>
+                <p class="br"></p>
+                <label>Previous Ear Infections</label><?= $this->formSelect('baby[ear_infection]', $this->baby['ear_infection'], array('id' => 'ear_infection'), array("" => 'Yes/No', 2 => 'Yes', 1 => 'No')) ?>
+                <p class="br"></p>
+                <?= $this->formText("baby[audlang_problems]", "Auditory or Language Problems", null, array("size" => 20, "maxlength" => 255)) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Address
+            </td>
+            <td>
+                <?= $this->formText("family[city]", "City", null, array("size" => 20, "maxlength" => 150)) ?>
+                <label>State</label><?= $this->formSelect("family[state]", $this->family['state'], null, $this->stateOptions) ?>
+                <?= $this->formText("family[zip]", "Zip Code", null, array("size" => 5, "maxlength" => 5)) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Contact
+            </td>
+            <td>
+                <label>Phone</label>
+                <input type="text" name="contact[phone_number]" value="<?= $this->contact["phone_number"] ?>" size="15" maxlength="20">
+                <label>Email</label>
+                <input type="text" name="contact[email]" value="<?= $this->contact["email"] ?>" size="15" maxlength="150">
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Other Stuff
+            </td>
+            <td>
+                <label>Daycare</label><?= $this->formSelect('baby[daycare]', $this->baby['daycare'], array('id' => 'daycare'), array("" => 'Yes/No', 2 => 'Yes', 1 => 'No')) ?>
+                <?= $this->formText("family[income]", "Income", null, array("size" => 10)) ?>
+                <p class="br"></p>
+                <label>How heard about study?</label>
+                <?= $this->formText("family[how_heard]", "", null, array("size" => 20, "maxlength" => 255)) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Baby Comments
+            </td>
+            <td>
+                <span class="spacer"><span>
+                <textarea name="baby[comments]" id="baby_comments" rows="4" cols="50"><?= $this->baby['comments'] ?></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Family Comments
+            </td>
+            <td>
+                <span class="spacer"><span>
+                <textarea name="family[comments]" id="family_comments" rows="4" cols="50"><?= $this->family['comments'] ?></textarea>
+            </td>
+        </tr>
+    </table>    
+    <br />
+    <h3 class=our_list> Study and Appointment Info </h2>
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">
+                Study Info
+            </td>
+            <td>
+                <label>Study</label>
+                <?= $this->formSelect("study[study_id]", $this->study["study_id"], null, $this->studyOptions) ?>
+				<label>Caller</label>
+				<?= $this->formSelect("study[caller_id]", $this->study["caller_id"], null, $this->callerOptions) ?>
+                <label>Researcher</label>
+                <?= $this->formSelect("study[researcher_id]", $this->study["researcher_id"], null, $this->researcherOptions) ?>
+                <label>Lab</label>
+                <?= $this->formSelect("study[lab_id]", $this->study["lab_id"], null, $this->labOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                NOT This Study Info
+            </td>
+            <td>
+                <label>Study</label>
+                <?= $this->formSelect("study[not_study_id]", $this->study["not_study_id"], null, $this->notStudyOptions) ?>
+				<label>Caller</label>
+				<?= $this->formSelect("study[not_caller_id]", $this->study["not_caller_id"], null, $this->notCallerOptions) ?>
+                <label>Researcher</label>
+                <?= $this->formSelect("study[not_researcher_id]", $this->study["not_researcher_id"], null, $this->notResearcherOptions) ?>
+                <label>Lab</label>
+                <?= $this->formSelect("study[not_lab_id]", $this->study["not_lab_id"], null, $this->notLabOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Study Date/Time
+            </td>
+            <td>
+                <label>From</label>
+                <?= $this->formSelectDate(
+                    array(
+                        'study[date_from][year]',
+                        'study[date_from][month]',
+                        'study[date_from][day]'
+                    ),
+                    $this->study["date_from"],
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>
+                (MM/DD/YY)
+                <p class="br"></p>
+                <em>(<label>To</label>&nbsp;&nbsp;&nbsp;
+                <?= $this->formSelectDate(
+                    array(
+                        'study[date_to][year]',
+                        'study[date_to][month]',
+                        'study[date_to][day]'
+                    ),
+                    $this->study["date_to"],
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>
+                (MM/DD/YY)
+                )</em>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Level of Enthusiasm
+            </td>
+            <td>
+                <label></label>
+                <?= $this->formSelect("study[enthusiasm]", $this->study["enthusiasm"], null, $this->enthusiasmOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Study Outcome
+            </td>
+            <td>
+                <label></label>
+                <?= $this->formSelect("study[outcome_id]", ($this->study["outcome_id"]), null, $this->outcomeOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                NOT Study Outcome
+            </td>
+            <td>
+                <label></label>
+                <?= $this->formSelect("study[not_outcome_id]", ($this->study["not_outcome_id"]), null, $this->outcomeOptions) ?>
+            </td>
+        </tr>
+    </table>
+    <br />
+    <h3 class=our_list> Contact History </h2>
+    <table cellspacing="0" cellpadding="5" class="form">
+		<tr>
+            <td class="label">
+                Caller
+            </td>
+            <td>
+				<label></label>
+				<?= $this->formSelect("caller[caller_id]", $this->caller["caller_id"], null, $this->callerOptions) ?>
+            </td>
+        </tr>
+		<tr>
+            <td class="label">
+                Call Date
+            </td>
+            <td>
+                <label>From</label>
+                <?= $this->formSelectDate(
+                    array(
+                        'caller[date_from][year]',
+                        'caller[date_from][month]',
+                        'caller[date_from][day]'
+                    ),
+                    $this->caller["date_from"],
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>
+                (MM/DD/YY)
+                <p class="br"></p>
+                <em>(<label>To</label>&nbsp;&nbsp;&nbsp;
+                <?= $this->formSelectDate(
+                    array(
+                        'caller[date_to][year]',
+                        'caller[date_to][month]',
+                        'caller[date_to][day]'
+                    ),
+                    $this->caller["date_to"],
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>
+                (MM/DD/YY)
+                )</em>
+            </td>
+        </tr>
+	    <tr>
+            <td class="label">
+                Contact Info
+            </td>
+            <td>
+				<label>Type</label>
+                <?= $this->formSelect("caller[contact_type_id]", $this->caller["contact_type_id"], null, $this->contactTypeOptions) ?>
+                <label>Method</label>
+                <?= $this->formSelect("caller[contact_method]", $this->caller["contact_method"], null, $this->contactMethodOptions) ?>
+                <label>Outcome</label>
+                <?= $this->formSelect("caller[contact_outcome_id]", $this->caller["contact_outcome_id"], null, $this->contactOutcomeOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Callback Date
+            </td>
+            <td>
+                <label>From</label>
+                <?= $this->formSelectDate(
+                    array(
+                        'caller[callback_date_from][year]',
+                        'caller[callback_date_from][month]',
+                        'caller[callback_date_from][day]'
+                    ),
+                    $this->caller["callback_date_from"],
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>
+                (MM/DD/YY)
+                <p class="br"></p>
+                <em>(<label>To</label>&nbsp;&nbsp;&nbsp;
+                <?= $this->formSelectDate(
+                    array(
+                        'caller[callback_date_to][year]',
+                        'caller[callback_date_to][month]',
+                        'caller[callback_date_to][day]'
+                    ),
+                    $this->caller["callback_date_to"],
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>
+                (MM/DD/YY)
+                )</em>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Callback Time
+            </td>
+            <td>
+                <label></label>
+                <?= $this->formSelectTime(
+                    array(
+                        'caller[callback_time_begin][hour]',
+                        'caller[callback_time_begin][minute]'
+                    ),
+                    $this->callback["callback_time_begin"],
+                    null,
+                    array(
+                        'addBy' => 10,
+                        "limitTime" => array(6,23)
+                    )
+                ) ?>
+                &nbsp;&nbsp; TO &nbsp;&nbsp;
+                <?= $this->formSelectTime(
+                    array(
+                        'caller[callback_time_end][hour]',
+                        'caller[callback_time_end][minute]'
+                    ),
+                    $this->callback["callback_time_begin"],
+                    null,
+                    array(
+                        'addBy' => 10,
+                        "limitTime" => array(6,23)
+                    )
+                ) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Research Info
+            </td>
+            <td>
+                <label>Study</label>
+                <?= $this->formSelect("caller[study_id]", $this->caller["study_id"], null, $this->studyOptions) ?>
+                <label>Researcher</label>
+                <?= $this->formSelect("caller[researcher_id]", $this->caller["researcher_id"], null, $this->researcherOptions) ?>
+                <label>Lab</label>
+                <?= $this->formSelect("caller[lab_id]", $this->caller["lab_id"], null, $this->labOptions) ?>
+            </td>
+        </tr>
+    </table>
+    <br />
+    <br />
+    <input type="submit" name="baby_search" value="Search">&nbsp;&nbsp;&nbsp;<input type="reset" value="Reset" id="reset">
+    
+</form>

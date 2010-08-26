@@ -1,0 +1,64 @@
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
+?>
+
+<form action="<?= $this->url(array("controller" => "baby-study", "action" => "schedule")) ?>" method="post" accept-charset="utf-8">
+<table cellspacing="0" cellpadding="5" class="form">
+    <tr>
+        <td class="label">
+            <?= $this->form->baby_id->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->baby_id->getValue() ?>
+            <?= $this->form->baby_id->field() ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <?= $this->form->study_id->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->study_id->field() ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <label>Appointment</label>
+        </td>
+        <td>
+            <label>Date</label>&nbsp;&nbsp;&nbsp;
+            <?= $this->form->appt_date ?>
+            <em>(MM/DD/YY)</em>
+            <p class="br"></p>
+            <label>Time</label>&nbsp;&nbsp;
+            <?= $this->form->appt_time ?>
+            <em>(HH:MM)</em>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->sibling->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->sibling->field() ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->comments->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->comments->field() ?>
+        </td>
+    </tr>
+</table>
+<p>
+    <?= $this->form->submit ?>
+</p>
+</form>

@@ -1,0 +1,113 @@
+
+<?php if ($this->success): ?>
+    <center>
+        <img src="<?= $this->dir_images . "/tup.jpg" ?>" width="150" height="150" alt="SUCCESS" />
+        <br />
+        <font face="verdana" color="009900" size =-1>
+            <strong><?= $this->success ?></strong>
+        </font>
+        <br /><br /><br /><br />
+        <a href="javascript:window.opener.location.reload(true); window.close();">Close Window</a>
+    </center>
+<?php else: ?>
+
+    <?php
+        if (!(empty($this->errors)))
+            echo $this->partial('_formErrorMsg.phtml', array('errors' => $this->errors));
+        if (!(empty($this->warnings)))
+            echo $this->partial('_formWarnMsg.phtml', array('warnings' => $this->warnings));
+    ?>
+
+    <form action="<?= $this->url(array("controller" => "baby-study", "action" => "{$this->type}-schedule")) ?>" method="post" accept-charset="utf-8">
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">
+                Serial No
+            </td>
+            <td>
+                <label></label>
+                <?php if ($this->babyGiven): ?>
+                    <?= $this->baby_id ?>
+                    <input type="hidden" name="babystudy[baby_id]" value="<?= $this->baby_id ?>" id="baby_id">
+                <?php else: ?>
+                    <input type="text" name="babystudy[baby_id]" value="<?= $this->babystudy['baby_id'] ?>" id="baby_id" size="10" maxlength="10">
+                <?php endif ?>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="label">
+                Research Details
+            </td>
+            <td>
+                <label>Lab</label>
+                <em><?= $this->lab ?></em>
+                <label>Study</label>
+                <?= $this->formSelect('babystudy[study_id]', ($this->babystudy['study_id']) ? $this->babystudy['study_id'] : $this->studyId, null, $this->studyOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Appointment</td>
+            <td>
+                <label>Date</label>&nbsp;&nbsp;&nbsp;
+                <?= $this->formSelectDate(
+                    array(
+                        'babystudy[appointment][year]',
+                        'babystudy[appointment][month]',
+                        'babystudy[appointment][day]'
+                    ),
+                    $this->date,
+                    null,
+                    array(
+                        'year_start'=>date('Y')-1,
+                        'year_end'=>date('Y')+2
+                    )
+                ) ?>
+                <em>(MM/DD/YY)</em>
+                <p class="br"></p>
+                <label>Time</label>&nbsp;&nbsp;
+                <?= $this->formSelectTime("babystudy[appointment]", $this->time, null, array("addBy" => 5)) ?>
+                <em>(HH:MM)</em>
+                <p class="br"></p>
+                <label>Length</label>
+                <?= $this->formSelect("babystudy[study_length]", $this->babystudy['study_length'], null, array("" => "Choose") + array_combine(range(15, 120, 15), range(15, 120, 15))) ?>
+                <em>(mins)</em>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Room
+            </td>
+            <td>
+                <label></label>
+                <?= $this->formSelect("babystudy[room]", $this->babystudy['room'], null, array("" => "Choose", 2 => "Room #1", 3 => "Room #2"))?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Sibling Coming
+            </td>
+            <td>
+                <label></label>
+                <?= $this->formSelect("babystudy[sibling]", $this->babystudy['sibling'], null, array("" => "No", 1 => "Yes")) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Comments
+            </td>
+            <td>
+                <label></label>
+                <textarea name="babystudy[comments]" id="comments" rows="4" cols="42"><?= $this->babystudy["comments"] ?></textarea>
+            </td>
+        </tr>
+    </table>
+    <p>
+        <input type="submit" name="<?= $this->type ?>" value="Book Appointment">
+        &nbsp;&nbsp;
+        <input type="reset" value="Reset" id="reset">
+    </p>
+    </form>
+    
+
+<?php endif ?>

@@ -1,0 +1,60 @@
+table.datagrid {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.datagrid thead th { 
+    text-align: center;
+    background-color: #4B4545;
+    background-repeat: no-repeat;
+    background-position: right center;
+    color: white;
+    padding: .3em .7em;
+    padding-right: 5px;
+    background-repeat: no-repeat;
+    background-position: 95% right;
+	  font: bold .8em Verdana, "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+}
+
+table.datagrid thead th a {
+    color: white;
+    text-decoration: none;
+    background-repeat: no-repeat;
+    background-position: center right;
+    padding-right: 15px;
+}
+
+table.datagrid thead th.over {
+    background-color: #746B6B;
+    cursor: pointer;
+}
+
+table.datagrid tbody th {
+    font-weight: bold;
+}
+
+table.datagrid tbody td, table.datagrid tbody th {
+    text-align: center;
+    padding: .3em .7em;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #aaa;
+}
+
+table.datagrid tbody tr.alternate td, table.datagrid tbody tr.alternate th {
+    background-color: #f1f1f1;
+}
+
+table.datagrid tfoot td, table.datagrid tfoot th { 
+    background-color: #FFFEE3;
+    color: #4B4545;
+    padding: .5em;
+    font-weight: bold;
+    border-top: 2px solid #4B4545;
+}
+
+table.datagrid tfoot th { text-align: left; }
+
+table.datagrid tfoot td {  }
+
+.invisible { display: none; }

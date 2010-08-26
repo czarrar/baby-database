@@ -1,0 +1,68 @@
+<h2 class=our_list> Confirm/Change Appointments </h2>
+
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
+?>
+
+<form action="<?= $this->form->getAction() ?>" method="<?= $this->form->getMethod() ?>" accept-charset="utf-8">
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label"><?= $this->form->study_id->label() ?></td>
+            <td width="70%"><?= $this->form->study_id->field() ?>
+                &nbsp;               
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->researcher_id->label() ?></td>
+            <td width="70%"><?= $this->form->researcher_id->field() ?>
+                &nbsp;               
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><label>Date of Study</label></td>
+            <td width="70%"><?= $this->form->begin_date ?> &nbsp; TO &nbsp; <?= $this->form->end_date ?>
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->per_page->label() ?></td>
+            <td width="70%"><?= $this->form->per_page->field() ?>
+                &nbsp;               
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">&nbsp;               
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><label><strong><u>Advanced Options</u></strong></label></td>
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->show_confirmed->label() ?></td>
+            <td width="70%">
+                <label></label><?= $this->form->show_confirmed->field() ?>
+            </td>        
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->off_date_search->label() ?></td>
+            <td width="70%">
+                <label></label><?= $this->form->off_date_search->field() ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->baby_id->label() ?></td>
+            <td width="70%">
+                <label></label><?= $this->form->baby_id->field() ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><label>Baby Name</label></td>
+            <td width="70%">
+                <?= $this->form->first_name ?><?= $this->form->last_name ?>
+            </td>
+        </tr>
+    </table>
+    <br />
+    <?= $this->form->submit ?>
+</form>

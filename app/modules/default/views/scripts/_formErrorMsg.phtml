@@ -1,0 +1,23 @@
+<?php
+    // with each error display add(after $field or $key) HTML element <span class="error">$sub_error</span>
+    // have php function here
+    
+    //function display($error)
+    //{
+    //    echo $error;
+    //}
+?>
+<div id="errorMsg">
+	<h3>Ooops! You had the following errors:</h3>
+	<ol>
+    	<?php foreach ($this->errors as $category => $messages): ?>
+    	    <?php foreach ($messages as $field => $errorSet): ?>
+    	        <?php foreach ($errorSet as $errors): ?>
+         	           <?php foreach ($errors as $key => $error): ?>
+          	               <li><?= $error ?></li>
+          	           <?php endforeach ?>
+    	        <?php endforeach ?>
+    	    <?php endforeach ?>
+    	<?php endforeach ?>
+	</ol>
+</div>

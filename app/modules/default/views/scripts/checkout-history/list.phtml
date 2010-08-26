@@ -1,0 +1,25 @@
+<table id="sortable_table" class="datagrid">
+    <thead>
+        <th>Lab</th>
+        <th>Researcher</th>
+        <th>Date</th>
+        <th>Action</th>
+        <th>Baby Age (YY MM DD)</th>
+    </thead>
+    <tfoot class="invisible">
+        <tr>
+            <td colspan="0"></td>
+        </tr>
+    </tfoot>
+    <tbody>
+        <?php foreach ($this->results as $row): ?>
+            <tr>
+                <td><?= $row->lab ?></td>
+                <td><?= $row->researcher ?></td>     
+                <td><?= $row->date ?></td>   
+                <td><?= ($row->action) ? "CHECKED-OUT" : "CHECKED-IN" ?></td>    
+                <td><?= $row->babyage ?></td>   
+            </tr>                               
+        <?php endforeach ?>                     
+    </tbody>
+</table>

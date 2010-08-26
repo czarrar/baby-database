@@ -1,0 +1,44 @@
+<fieldset>
+    <legend>Family</legend>
+    <ol>
+        <a href="#" onclick="new Element.addClassName('motherfirst', 'errorField'); return false;">test</a>
+        <li>
+            <label for="motherfirst">Mother's First Name</label>
+            <input name="family[mother_first_name]" id="motherfirst" type="text" value="<?= ucwords($this->family['mother_first_name']) ?>">
+        </li>
+        <li>
+            <label for="motherlast">Mother's Last Name:</label>
+            <input name="family[mother_last_name]" id="motherlast" type="text" value="<?= $this->family['mother_last_name'] ?>">
+        </li>
+        <li>
+            <label for="motherethnicity">Mother's Ethnicity:</label>
+            <input name="family[mother_ethnicity_id]" id="motherethnicity" type="text" value="<?= $this->family['mother_ethnicity_id'] ?>">
+        </li>
+        <li>
+            <label for="fatherfirst">Father's First Name:</label>
+            <input name="family[father_first_name]" id="fatherfirst" type="text" value="<?= $this->family['father_first_name'] ?>">
+        </li>
+        <li>
+            <label for="fatherlast">Father's Last Name:</label>
+            <input name="family[father_last_name]" id="fatherlast" type="text" value="<?= $this->family['father_last_name'] ?>">
+        </li>
+        <li>
+            <label for="fatherethnicity">Father's Ethnicity:</label>
+            <input name="family[father_ethnicity_id]" id="fatherethnicity" type="text" value="<?= $this->family['father_ethnicity_id'] ?>">
+        </li>
+        <li>
+            <label for="howheard">How Heard:</label>
+            <input name="family[how_heard]" id="howheard" type="text" title="How did they hear about the study?" value="<?= $this->family['how_heard'] ?>">
+        </li>
+        <li>
+            <label for="income">Income:</label>
+            <input name="family[income]" id="income" type="text" title="Family's income'" value="<?= $this->family['income'] ?>">
+        </li>
+    </ol>
+</fieldset>
+<script type="text/javascript" language="javascript">
+    // <![CDATA[
+      /* Load additional fields for language, phone, and email */
+     new $('motherfirst').addClassName('errorField');
+    // ]]>
+</script>

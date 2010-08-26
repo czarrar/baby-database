@@ -1,0 +1,137 @@
+<script language='JavaScript'>
+
+function call_popup(url) {  window.open(url,'StudyInfo','toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=yes,copyhistory=no,scrollbars=yes,width=700,height=500');
+}
+
+function edit_popup(url) {
+ window.open(url,'Profile','toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=yes,copyhistory=no,scrollbars=yes,width=1000,height=680');
+}
+
+</script>
+
+<h2 class=our_list> <?= ucwords($this->listType) ?> Appointments </h2>
+
+<p>
+    <em>Retrieved a total of <?= $this->rowCount ?> <?= ($this->rowCount > 1) ? "records" : "record" ?></em>
+    <?php if ($this->type == "schedule"): ?>
+        <br />
+        <em> With babies aged <?= $this->lowerAge ?> to <?= $this->upperAge ?> <?= (!empty($this->studyLowerAge) and !empty($this->studyUpperAge)) ? "(NOTE: actual age range of babies for study is {$this->studyLowerAge} to {$this->studyUpperAge})" : "" ?> </em>
+    <?php endif ?>
+</p>
+<p align="center">Pages: &nbsp;&nbsp;&nbsp;<?= $this->links ?></p>
+
+<table width='96%' border='0' align='center' cellpadding="0" cellspacing='0'>
+    <tr id='dob_year3'>
+        <td><a href="<?= $this->url($this->fieldLinks['id']) ?>"> Serial No. </a></td>
+        <td><a href="<?= $this->url($this->fieldLinks['last_name']) ?>"> Baby Last&nbsp;Name </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['first_name']) ?>"> Baby First&nbsp;Name </a></td>
+		<td> Contact History </td>
+		<td> Study History </td>
+        <td><a href="<?= $this->url($this->fieldLinks['dob']) ?>"> DOB </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['sex']) ?>"> Sex </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['mother_last_name']) ?>"> Mother's Last&nbsp;Name </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['mother_first_name']) ?>"> Mother's First&nbsp;Name </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['telephone']) ?>"> Telephone </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['father_last_name']) ?>"> Father's Last&nbsp;Name </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['father_first_name']) ?>"> Father's First&nbsp;Name </a></td>
+        <?php if ($this->listType == 'confirm' or $this->listType == 'outcome'): ?>
+            <td><a href="<?= $this->url($this->fieldLinks['appointment']) ?>"> Study Date </a></td>
+            <td><a href="<?= $this->url($this->fieldLinks['study']) ?>">Study </a></td>
+        <?php endif ?>
+        <td><a href="<?= $this->url($this->fieldLinks['record_status']) ?>">Record Status</td>
+		<td><a href="<?= $this->url($this->fieldLinks['scheduling_status']) ?>"> Scheduling Status </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['language']) ?>">Language</a></td>
+    </tr>
+        
+    <?php foreach ($this->results as $result): ?>
+        <tr id="dob_month3">
+            <td>
+                <a href="<?= $this->url(array("controller" => "baby", "action" => "common", "baby_id" => $result["id"], "study_id" => ($this->studyId) ? $this->studyId : $result['study_id'], "type" => $this->listType), null, true) ?>" target="_blank">
+                    <?= ($result['id']) ? $result['id'] : "ERROR" ?>
+                </a>
+            </td>
+            <td>
+                <?= ($result['last_name']) ? $result['last_name'] : "ERROR" ?>
+            </td>
+            <td>
+                <?= ($result['first_name']) ? $result['first_name'] : "ERROR" ?>
+            </td>
+            <td>
+                <a href="javascript:edit_popup('<?= $this->url(array("controller" => 'contacthistory', "action" => 'new', "baby_id" => $result['id'], "study_id" => ($this->studyId) ? $this->studyId : $result['study_id'], "type" => $this->type), null, true) ?>')">Contact History</a>
+            </td>
+            <td>
+                <a href="javascript:call_popup('<?= $this->url(array("controller" => 'study-history', "action" => 'list', "baby_id" => $result['id']), null, true) ?>')">Study History</a>
+            </td>
+            <td>
+                <?= ($result['dob']) ? $result['dob'] : "ERROR" ?>
+            </td>
+            <td>
+                <?php
+                    switch ($result['sex']) {
+                        case '2':
+                            echo "M";
+                            break;
+                        case '1':
+                            echo "F";
+                            break;
+                        default:
+                            echo "";
+                            break;
+                    }
+                ?>
+            </td>
+            <td>
+                <?= ($result['mother_last_name']) ? $result['mother_last_name'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['mother_first_name']) ? $result['mother_first_name'] : "" ?>
+            </td>
+            <td>
+                <?php                
+                    if (!(empty($result["telephone"]))) {
+                        $phone_numbers = explode(", ", $result["telephone"]);
+                        $numPhones = count($phone_numbers);
+                        
+                        for ($i=0; $i < $numPhones; $i++) { 
+                            // format number
+                            $area = substr($phone_numbers[$i], 0, 3);
+                            $first = substr($phone_numbers[$i], 3, 3);
+                            $second = substr($phone_numbers[$i], 6);
+                            
+                            $phone_numbers[$i] = $area . "-" . $first . "-" . $second;
+                        }
+                        
+                        $phone_numbers = implode(", ", $phone_numbers);
+                    }
+                    
+                    echo $phone_numbers;
+                ?>
+            </td>
+            <td>
+                <?= ($result['father_last_name']) ? $result['father_last_name'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['father_first_name']) ? $result['father_first_name'] : "" ?>
+            </td>
+            <?php if ($this->listType == 'confirm' or $this->listType == 'outcome'): ?>
+                <td>
+                    <?= ($result['appointment']) ? substr($result['appointment'], 0, 16) : "" ?>
+                </td>
+                <td>
+                    <?= ($result['study']) ? $result['study'] : "NONE" ?>
+                </td>
+            <?php endif ?>
+            <td>
+                 <?= ($result['record_status']) ? strtoupper($result['record_status']) : "NEW" ?>
+             </td>
+            <td>
+                <?= ($result['scheduling_status']) ? strtoupper($result['scheduling_status']) : "NEW" ?>
+            </td>
+            <td>
+                <?= (trim($result['language'], ',')) ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
+</table>
+<br />
+<p align="center">Pages: &nbsp;&nbsp;&nbsp;<?= $this->links ?></p>

@@ -1,0 +1,103 @@
+<h3>: Changing/Confirming Baby</h3>
+
+<?php
+    if (!(empty($this->errors))) {
+        echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
+        echo "<br /><br />";
+    }
+?>
+
+<? if($this->hasOtherStudies == 1): ?>
+	<strong><em><font color="red">This baby is currently participating in other studies. If you change the appointment date/time for this study, this will change the date/time for all relevant studies.</font></em></strong>
+	<br /><br />
+<? endif ?>
+
+<form action="<?= $this->url(array('controller' => 'baby-study2', 'action' => 'confirm')) ?>" method="post" accept-charset="utf-8">
+    <!-- HIDDEN FIELDS -->
+    <?= $this->form->baby_id->field() ?>
+    <?= $this->form->caller_id->field() ?>
+    <?= $this->form->other_studies->field() ?>
+    
+<table cellspacing="0" cellpadding="5" class="form">
+    <tr>
+        <td class="label">
+            <?= $this->form->baby_id->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->baby_id->getValue() ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->status_id->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->status_id->field() ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->study_id->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->study_id->field() ?>
+        </td>
+    </tr>
+    <? if($this->hasOtherStudies == 1): ?>
+    <tr>
+    	<td class="label">
+    		<label>Other Studies</label>
+    	</td>
+    	<td>
+    		<label></label>
+    		<?php
+    		for ($i = 0; $i < count($this->otherStudies); $i++) {
+    		    if($i != 0)
+    				echo ", ";
+    			echo "<em>" . $this->otherStudies[$i]["study"] . "</em>";
+    		}
+    		?>
+    	</td>
+    </tr>
+    <? endif ?>
+    <tr>
+        <td class="label">
+            <label>Appointment</label>
+        </td>
+        <td>
+            <label>Date</label>&nbsp;&nbsp;&nbsp;
+            <?= $this->form->appt_date ?>
+            <em>(MM/DD/YY)</em>
+            <p class="br"></p>
+            <label>Start Time</label>&nbsp;&nbsp;
+            <?= $this->form->appt_time ?>
+            <em>(HH:MM)</em>
+            <p class="br"></p>
+            <label>End Time</label>&nbsp;&nbsp;&nbsp;
+            <?= $this->form->appointment_end_time ?>
+            <em>(HH:MM)</em>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->comments->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->comments->field() ?>
+        </td>
+    </tr>
+</table>
+<p>
+    <?= $this->form->save->field() ?>
+    <!--OLD
+	    &nbsp;
+		<?= $this->form->confirm->field() ?>
+	!-->
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <?= $this->form->cancel->field() ?>
+</p>
+</form>

@@ -1,0 +1,117 @@
+<html>
+<head>
+<title>The McGill Infant Research Group</title>
+<LINK REL=stylesheet HREF="style.css" TYPE="text/css" media="screen, projection">
+<link rel="stylesheet" href="print.css" type="text/css" media="print, handheld">
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript">
+
+function open_lang()
+{
+window.open("language_list.php","_blank","toolbar=no, location=no, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=250, height=400")
+}
+
+function open_study()
+{
+window.open("studylist.php","_blank","toolbar=no, location=no, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=400, height=400")
+}
+
+function open_add()
+{
+window.open("add_data.php","_blank","toolbar=no, location=no, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=yes, copyhistory=yes, width=800, height=600")
+}
+
+function open_addcaller()
+{
+window.open("add_caller.php","_blank","toolbar=no, location=no, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=yes, copyhistory=yes, width=800, height=600")
+}
+
+</script>
+
+</head>
+<body>
+<table width='100%' border='0' align='center' cellpadding='0' cellspacing='0' bgcolor="#CCFF99" id="header_table3">
+  <tr>
+    <td colspan="2" class="welcome">Welcome to McGill Infant Research Group, admin</td>
+
+  </tr>
+  <tr>
+    <td class="td_label2"><font color="#336600">General</font></td>
+    <td>
+<a href="uhome.php">Home</a> | 
+<a href="contact.php">Regie List</a> | 
+<a href="http://www2.medicine.mcgill.ca/scsd_psych/files/bb">Messages</a> | <a href="uploads/schedule.xls">Calling Schedule</a> | <a href="javascript:open_lang()">Language List</a> | <a href="javascript:open_study()">Study List</a> | <a href="logout.php">Log out</a></td>
+
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="td_label2"><font color="#336600">Our List</font></td>
+    <td><a href="manualnew.php" target="_blank">Manual Entry</a> |
+    <a href="getdata.php">Check Out Records</a> |
+	<a href="schedule.php">Schedule Appointments</a> |
+	<a href="verify_appointments.php">Verify Appointments</a> | 
+	<a href="nightcall.php">Confirm Appointments</a> |
+    <a href="dayofstudy.php">Appointment Outcome</a> |
+    <a href="checkin.php">Check in Records</a> | 
+    <a href="search3.php">Search</a> </td>
+
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+      <td height="86" class="td_label3">Extra</td>
+    <td><table width="100%" height="85" border="0" cellspacing="0">
+
+        <tr>           <td class="td_label56" width="13%" height="86"> &middot;Additions <br> 
+            &middot;Security<br> &middot;Record Input<br> &middot;Record Management<br> 
+            &middot;Others</td> 
+          <td class="td_label56" width="87%" height="86"> 
+                        <a href="index.php?page=register&page_name=2">Add User </a> | 
+                        <a href="javascript:open_addcaller()"> Add new Callers </a> | <a href="javascript:open_add()"> 
+            Add new Researcher/Study </a>| <a href="add_study_history.php?page_name=2"> Add 
+            a study outcome for previous research</a><br> 
+                        <a href="change_pwd.php?page_name=2">Change Password </a> | 
+                        <a href="ipcheck.php?page_name=2">IP Control </a> | <a href="iptest.php?page_name=2"> IP Check 
+            </a> | <a href="enableip.php?page_name=2"> IP Control Activation/Deactivation</a> 
+            | <a href="show_log.php?sort=logdate, time&page=1&page_name=2">Caller Log </a><br> 
+            <a href="upload.php?page_name=2">Upload </a> | <a href="genlab.php?page_name=2"> Generate 
+            Labels </a> | <a href="letter_sent.php">Confirm Dispatch</a><br> 
+                        <a href="mass_archive.php?page_name=2">Purge Records </a> | <a href="show_archive.php?page_name=2"> 
+            Show Archive </a>| 
+                        <a href="statistics2.php?page_name=2"> Statistics</a><br> <a href="back_to_regie.php?page_name=2">Transfer 
+            a record back to Regie List</a>| <a href="uploader_form.php?page_name=2">Upload 
+            calling schedule</a></td>
+
+                  </tr>
+      </table></td>
+  </tr>
+   
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+</table><br>
+
+
+<h2>Change Password</h2>
+
+	<form action="change_pwd.php" method="post">
+	<p>
+		<strong>Username: </strong><br />
+		<input type="Username" name="uname" /><br/ >
+		
+		<strong>New Password:</strong><br />
+		<input type="password" name="new_password1" /><br/ >
+
+		<strong>Re-type Password:</strong><br />
+		<input type="password" name="new_password2" /><br/ >
+		<input type="submit" name="submitted" value="Change Password" />
+	</p>
+	</form>
+

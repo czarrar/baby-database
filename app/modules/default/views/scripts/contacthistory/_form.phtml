@@ -1,0 +1,214 @@
+<script language="JavaScript">
+	function call_popup() {
+		window.open('<?=$this->sUrl("new", "contacthistory")  ?>', 'CallInfo', 'toolbar=no, location=no, directories=no, status=yes, menubar=no, resizable=yes, copyhistory=no, scrollbars=yes, width=800, height=500');
+	}
+</script>
+
+<div align="center">
+<font face="verdana"><h1>Contact History</h1></font>
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_formErrorMsg.phtml', array('errors' => $this->errors));
+    if (!(empty($this->warnings)))
+        echo $this->partial('_formWarnMsg.phtml', array('warnings' => $this->warnings));
+?>
+
+<form action="<?= $this->sUrl('new', 'contacthistory') ?>" method="POST" accept-charset="utf-8" >
+    
+    <table border="0" cellspacing="0" cellpadding="5" class="form" width="75%">
+        <tr>
+            <td class="label">Serial No</td>
+            <td>
+                <span class="spacer"><span><?= $this->babyId ?>
+                <input type="hidden" name="contact[baby_id]" value="<?= $this->babyId ?>" id="baby_id">
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Name</td>
+            <td>
+                <span class="spacer"><span><?= $this->babyName ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Sibling(s)</td>
+            <td>
+                <span class="spacer"><span>
+                <? if($this->numSiblings == 0): ?>
+                	NONE
+                <? else: ?>
+                	<? foreach ($this->siblings as $sibling): ?>
+						<? if ($sibling->id != $this->babyId): ?>
+							<a href="<?= $this->url(array("controller" => "contacthistory", "action" => "new", "baby_id" => $sibling->id)) ?>">
+		        				<?= $sibling->id ?>
+		        			</a>
+						<? endif ?>
+					<? endforeach ?>
+                <? endif ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Scheduling Status</td>
+            <td>
+                <span class="spacer"></span>
+                <?= $this->schedulingStatus ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Record Status</td>
+            <td>
+                <span class="spacer"></span>
+                <?= $this->recordStatus ?>
+            </td>
+        </tr>      
+        <tr>
+            <td class="label">Attempt #</td>
+            <td>
+                <span class="spacer"></span>
+                <?= $this->contact["attempt"] ?>
+                <input type="hidden" name="contact[attempt]" value="<?= $this->contact["attempt"] ?>" id="baby_id">
+            </td>
+        </tr>  
+        <tr>
+            <td class="label">Call Date</td>
+            <td>
+                <label>Date</label>
+                <?= $this->formSelectDate(
+                    array(
+                        'contact[date][year]',
+                        'contact[date][month]',
+                        'contact[date][day]'
+                    ),
+                    $this->date,
+                    null,
+                    array(
+                        'year_start' => date('Y', strtotime($this->date))-1,
+                        'year_end' => date('Y')+2
+                    )
+                ) ?>
+                <em>(MM/DD/YY)</em>
+                <p class="br"></p>
+                <?= $this->formText("contact[time]", "Time", $this->time, array("size" => 6, "maxlength" => 6, "disabled" => "disabled")) ?>
+                <input type="hidden" name="contact[time]" value="<?= $this->time ?>" id="caller_id">
+            </td>
+        </tr>
+    </table>
+    <br />
+    <br />
+    <table border="0" cellspacing="0" cellpadding="5" class="form" width="75%">
+        <tr>
+            <td class="label">Caller</td>
+            <td>
+                <span class="spacer"></span>
+                <?= $this->formSelect("contact[caller_id]", $this->myCallerId, array("disabled" => "disabled"), $this->callerOptions) ?>
+                <input type="hidden" name="contact[caller_id]" value="<?= $this->myCallerId ?>" id="caller_id">
+            </td>
+        </tr>
+        <!-- If baby inactive, then ask if want to make active -->
+        <?php if ($this->isInactive): ?>
+            <tr>
+                <td class="label">Record Status</td>
+                <td>
+                    <span class="spacer"></span>
+                    <?= $this->formCheckbox("contact[activate]", 1, $this->contact["activate"] ? array("checked" => "checked") : NULL) ?> <strong>Make baby active</strong>
+                </td>
+            </tr>
+        <!-- If baby 'contacting', then ask if want to make inactive -->
+        <?php elseif ($this->isContacting): ?>
+            <tr>
+                <td class="label">Record Status</td>
+                <td>
+                    <span class="spacer"></span>
+                    <?= $this->formCheckbox("contact[inactivate]", 1, $this->contact['inactivate'] ? array("checked" => "checked") : NULL) ?> <strong>Return baby record</strong>
+                </td>
+            </tr>
+        <?php endif ?>
+        <tr>
+            <td class="label">
+                Contact Info
+            </td>
+            <td>
+                <label>Type</label>
+                <?= $this->formSelect("contact[contact_type_id]", ($this->contact["contact_type_id"]) ? $this->contact["contact_type_id"] : $this->type, null, $this->typeOptions) ?>
+                <label>Method</label>
+                <?= $this->formSelect("contact[contact_method]", ($this->contact["contact_method"]) ? $this->contact["contact_method"] : "Phone", null, $this->methodOptions) ?>
+                <p class="br"></p>
+                <label>Outcome</label>
+                <?= $this->formSelect("contact[contact_outcome_id]", $this->contact["contact_outcome_id"], null, $this->outcomeOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Callback
+            </td>
+            <td>
+                <label>When should B&amp;C call back? </label>
+                <p class="br"></p>
+                <label></label>
+                <?= $this->formSelectDate(
+                    array(
+                        'contact[callback_date][year]',
+                        'contact[callback_date][month]',
+                        'contact[callback_date][day]'
+                    ),
+                    $this->callback_date,
+                    null,
+                    array(
+                        'year_start' => date('Y', strtotime($this->date)),
+                        'year_end' => date('Y')+2
+                    )
+                ) ?>
+                <em>(MM/DD/YY)</em>
+                <p class="br"></p>
+                <label></label>
+                <?= $this->formSelectTime(
+                    array(
+                        'contact[callback_time_begin][hour]',
+                        'contact[callback_time_begin][minute]'
+                    ),
+                    $this->callback_time_begin,
+                    null,
+                    array(
+                        'addBy' => 10,
+                        "limitTime" => array(6,23)
+                    )
+                ) ?>
+                 TO 
+                <?= $this->formSelectTime(
+                    array(
+                        'contact[callback_time_end][hour]',
+                        'contact[callback_time_end][minute]'
+                    ),
+                    $this->callback_time_begin,
+                    null,
+                    array(
+                        'addBy' => 10,
+                        "limitTime" => array(6,23)
+                    )
+                ) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Research Info
+            </td>
+            <td>
+                <label>Study/Researcher</label>
+                <?= $this->formSelect("contact[study_id]", ($this->contact["study_id"]) ? $this->contact["study_id"] : $this->studyId, null, $this->studyOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Comments
+            </td>
+            <td>
+                <span class="spacer"><span>
+                <textarea name="contact[comments]" id="comments" rows="4" cols="42"><?= $this->contact["comments"] ?></textarea>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        <input type="submit" value="Log Contact Attempt &rarr;">
+    </p>
+</form>
+</div>

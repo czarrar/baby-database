@@ -1,0 +1,184 @@
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_formErrorMsg.phtml', array('errors' => $this->errors));
+    if (!(empty($this->warnings)))
+        echo $this->partial('_formWarnMsg.phtml', array('warnings' => $this->warnings));
+?>
+<form action="" method="post" accept-charset="utf-8">
+    <fieldset>
+        <legend>Baby</legend>
+        <ol id="baby">
+            <li>
+                <label for="first_name">First name</label>
+                <input name="baby[first_name]" id="first_name" type="text" title="Enter baby's first name" maxlength="100" value="<?= ucwords($this->baby['first_name']) ?>"
+            </li>
+            <li>
+                <label for="last_name">Last name</label>
+                <input name="baby[last_name]" id="last_name" type="text" title="Enter baby's last name" maxlength="150" value="<?= ucwords($this->baby['last_name']) ?>">
+            </li>
+            <li>
+                <label for="sex">Gender</label>
+                <?= $this->formSelect('baby[sex]', null, array('id' => 'sex'), array("" => 'Select one', 0 => 'Female', 1 => 'Male')) ?>
+            </li>
+            <li id="dob">
+                <label for="dob">Date of Birth</label>
+                    <?= $this->formSelectMonth('baby[dob][month]', $this->baby['dob'][1]) ?>
+                    <?= $this->formSelectDay('baby[dob][day]', $this->baby['dob'][2]) ?>
+                    <?= $this->formSelectYear('baby[dob][year]', $this->baby['dob'][0], null, array('year_start'=>date('Y')-18, 'year_end'=>date('Y')+1)) ?>
+            </li>
+            <li>
+                <label for="birth_weight">Birth Weight</label>
+                <input name="baby[birth_weight]" id="birth_weight" type="text" value="<?= $this->baby['birth_weight'] ?>" size="10">
+                <?= $this->formSelect('baby[birth_weight_opts]', 1, array('id' => 'birth_weight'), array(1 => 'lb,oz', 2 => 'grams')) ?>
+            </li>
+            <li>
+                <label for="term">Term Length</label>
+                <?= $this->formSelect('baby[term]', $this->baby['term'], array('id' => 'term'), $this->termRange) ?>
+                <span class="error">Error (test)</span>
+            </li>
+            <li>
+                <fieldset id="ear_infection">
+                    <legend>Ear Infection</legend>
+                    <ol>
+                    <li>
+                        <input name="baby[ear_infection]" id="no" type="radio" value="0" <?= ($this->baby['sex'] === '0') ? 'checked="checked"' : '' ?>>
+                        <label for="no">No</label>
+                    </li>
+                    <li>
+                        <input name="baby[ear_infection]" id="yes" value="1" type="radio" <?= ($this->baby['sex'] === '1') ? 'checked="checked"' : '' ?>>
+                        <label for="yes">Yes</label>
+                    </li>
+                    </ol>
+                </fieldset>
+            </li>
+            <li>
+                <label for="med_problems">Medical Problems</label>
+                <input name="baby[med_problems]" id="med_problems" type="text" value="<?= $this->baby['med_problems'] ?>" maxlength="255">
+            </li>
+            <li>
+                <label for="audlang_problems">Aud/Lang Problems</label>
+                <input name="baby[audlang_problems]" id="audlang_problems" type="text" value="<?= $this->baby['audlang_problems'] ?>" maxlength="255">
+            </li>
+            <li>
+                <label for="daycare">Daycare</label>
+                <?= $this->formSelect('baby[daycare]', $this->baby['daycare'], array('id' => 'daycare'), array("" => 'Yes/No', 1 => 'Yes', 0 => 'No')) ?>
+            </li>
+            <li>
+                <fieldset>
+                    <legend>Language Exposure</legend>
+                    <ol id="language_exposure">
+                    </ol>
+                </fieldset>
+            </li>
+            <li>
+                <div>
+                    <label for="baby_comments">Comments/Notes</label>
+                    <textarea name="baby[comments]" id="baby_comments"><?= $this->baby['comments'] ?></textarea>
+                </div>
+            </li>
+        </ol>
+    </fieldset>
+    
+    <fieldset class="alt">
+        <legend>Family</legend>
+        <ol>
+            <li>
+                <label for="motherfirst">Mother's First Name</label>
+                <input name="family[mother_first_name]" id="motherfirst" type="text" value="<?= ucwords($this->family['mother_first_name']) ?>" maxlength="100">
+            </li>
+            <li>
+                <label for="motherlast">Mother's Last Name:</label>
+                <input name="family[mother_last_name]" id="motherlast" type="text" value="<?= $this->family['mother_last_name'] ?>" maxlength="150">
+            </li>
+            <li>
+                <label for="motherethnicity">Mother's Ethnicity:</label>
+                <input name="family[mother_ethnicity_id]" id="motherethnicity" type="text" value="<?= $this->family['mother_ethnicity_id'] ?>">
+            </li>
+            <li>
+                <label for="fatherfirst">Father's First Name:</label>
+                <input name="family[father_first_name]" id="fatherfirst" type="text" value="<?= $this->family['father_first_name'] ?>" maxlength="100">
+            </li>
+            <li>
+                <label for="fatherlast">Father's Last Name:</label>
+                <input name="family[father_last_name]" id="fatherlast" type="text" value="<?= $this->family['father_last_name'] ?>" maxlegnth="150">
+            </li>
+            <li>
+                <label for="fatherethnicity">Father's Ethnicity:</label>
+                <input name="family[father_ethnicity_id]" id="fatherethnicity" type="text" value="<?= $this->family['father_ethnicity_id'] ?>">
+            </li>
+            <li>
+                <label for="howheard">How Heard:</label>
+                <input name="family[how_heard]" id="howheard" type="text" title="How did they hear about the study?" value="<?= $this->family['how_heard'] ?>" maxlength="255">
+            </li>
+            <li>
+                <label for="income">Income:</label>
+                <input name="family[income]" id="income" type="text" title="Family's income'" value="<?= $this->family['income'] ?>">
+            </li>
+        </ol>
+    </fieldset>
+    
+    <fieldset>
+        <legend>Contact</legend>
+        <ol>
+            <li>
+                <label for="address1">Address 1:</label>
+                <input name="family[address_1]" id="address1" type="text" value="<?= $this->family['address_1'] ?>" maxlength="255">
+            </li>
+            <li>
+                <label for="address2">Address 2:</label>
+                <input name="family[address_2]" id="address2" type="text" value="<?= $this->family['address_2'] ?>" maxlength="255">
+            </li>
+            <li>
+                <label for="city">City:</label>
+                <input name="family[city]" id="city" type="text" value="<?= $this->family['city'] ?>" maxlength="150">
+            </li>
+            <li>
+                <label for="state">State:</label>
+                <input name="family[state]" id="state" type="text" value="<?= $this->family['state'] ?>" maxlength="100">
+            </li>
+            <li>
+                <label for="zip">Zip Code:</label>
+                <input name="family[zip]" id="zip" type="text" value="<?= $this->family['zip'] ?>" maxlength="5">
+            </li>
+            <li>
+                <label for="zip+">Zip+4:</label>
+                <input name="family[zip_plus]" id="zip+" type="text" value="<?= $this->family['zip_plus'] ?>" maxlength="4">
+            </li>
+            <li>
+                <fieldset>
+                    <legend>Phone</legend>
+                    <ol id="phone_info">
+                    </ol>
+                </fieldset>
+            </li>
+            <li>
+                <fieldset>
+                    <legend>Email</legend>
+                    <ol id="email_info">
+                    </ol>
+                </fieldset>
+            </li>
+        </ol>
+    </fieldset>
+
+    <fieldset class="submit">
+        <input type="submit" value="submit" id="submit">
+        <input type="reset" value="reset" id="reset">
+    </fieldset>
+</form>
+
+<script type="text/javascript" language="javascript">
+    // <![CDATA[
+      /* Load additional fields for language, phone, and email */
+     <?php for ($i=0; $i < $this->total_languages ; $i++): ?>
+        new Ajax.Updater('language_exposure',"<?= $this->url(array('action' => 'ajax.language')) ?>",{insertion:Insertion.Bottom, evalScripts:true});
+     <?php endfor; ?>
+     <?php for ($i=0; $i < $this->total_phones ; $i++): ?>
+        <?php $_SESSION['phones'] = $this->phone[$i]; ?>
+        new Ajax.Updater('phone_info',"<?= $this->url(array('action' => 'ajax.phone')) ?>",{insertion:Insertion.Bottom, evalScripts:true});
+     <?php endfor; ?>
+     <?php for ($i=0; $i < $this->total_emails ; $i++): ?>
+        new Ajax.Updater('email_info',"<?= $this->url(array('action' => 'ajax.email')) ?>",{insertion:Insertion.Bottom, evalScripts:true});
+    <?php endfor; ?>
+    // ]]>
+</script>

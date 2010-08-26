@@ -1,0 +1,153 @@
+<script language='JavaScript'>
+
+function call_popup(url) {  window.open(url,'StudyInfo','toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=yes,copyhistory=no,scrollbars=yes,width=700,height=500');
+}
+
+function edit_popup(url) {
+ window.open(url,'Profile','toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=yes,copyhistory=no,scrollbars=yes,width=1000,height=680');
+}
+
+</script>
+
+<h2 class=our_list> <?= ucwords($this->listType) ?> Appointments </h2>
+
+<p><em>Retrieved a total of <?= $this->rowCount ?> <?= ($this->rowCount > 1) ? "records" : "record" ?></em></p>
+<p align="center">Pages: &nbsp;&nbsp;&nbsp;<?= $this->links ?></p>
+
+<table width='96%' border='0' align='center' cellpadding="0" cellspacing='0'>
+    <tr id='dob_year3'>
+        <td> Call </td>
+        <td> Contact History </td>
+        <td><a href="<?= $this->url($this->link['id']) ?>"> Serial No. </a></td>
+        <td><a href="<?= $this->url($this->link['last_name']) ?>"> Baby Last&nbsp;Name </a></td>
+		<td><a href="<?= $this->url($this->link['first_name']) ?>"> Baby First&nbsp;Name </a></td>
+		<td> Study History </td>
+        <td><a href="<?= $this->url($this->link['dob']) ?>"> DOB </a></td>
+		<td><a href="<?= $this->url($this->link['sex']) ?>"> Sex </a></td>
+		<td><a href="<?= $this->url($this->link['mother_last_name']) ?>"> Mother's Last&nbsp;Name </a></td>
+		<td><a href="<?= $this->url($this->link['mother_first_name']) ?>"> Mother's First&nbsp;Name </a></td>
+		<td><a href="<?= $this->url($this->link['telephone']) ?>"> Telephone </a></td>
+		<td><a href="<?= $this->url($this->link['father_last_name']) ?>"> Father's Last&nbsp;Name </a></td>
+		<td><a href="<?= $this->url($this->link['father_first_name']) ?>"> Father's First&nbsp;Name </a></td>
+		<?php if ($this->listType == 'schedule'): ?>
+		  	<td><a href="<?= $this->url($this->link['checkout_date']) ?>"> Checkout Date </a></td>
+		<?php elseif ($this->listType == 'confirm' or $this->listType == 'outcome'): ?>
+		    <td><a href="<?= $this->url($this->link['study']) ?>"> Study </a></td>
+		    <td><a href="<?= $this->url($this->link['lab_researcher']) ?>"> Lab&nbsp;Researcher </a></td>
+		    <td><a href="<?= $this->url($this->link['study_date']) ?>"> Study&nbsp;Date </a></td>
+		<?php endif ?>
+		<td><a href="<?= $this->url($this->link['status']) ?>"> Scheduling Status </a></td>
+        <td><a href="<?= $this->url($this->link['record_status']) ?>"> Record Status </a></td>
+        <td><a href="<?= $this->url($this->link['record_owner']) ?>"> Record Owner </a></td>
+    </tr>
+    
+    <?php foreach ($this->results as $result): ?>
+        <tr id="dob_month3">
+            <td>
+                <a href="<?= $this->url(array("controller" => "baby", "action" => "common", "baby_id" => $result["id"], "type" => $this->listType, "study_id" => $result["study_id"]), null, true) ?>" target="_blank">
+                    <?php
+                        switch ($this->listType):
+                            case 'schedule':
+                                echo 'Schedule';
+                                break;
+                            case 'confirm':
+                                echo "Confirm";
+                                break;
+                            case 'outcome':
+                                echo "Result";
+                                break;
+                        endswitch;
+                    ?>
+                </a>
+            </td>
+            <td>
+                <a href="javascript:edit_popup('<?= $this->url(array("controller" => 'contacthistory', "action" => 'new', "baby_id" => $result['id'], "study_id" => $result['study_id']), null, true) ?>')">Contact History</a>
+            </td>
+            <td>
+                <a href="<?= $this->url(array("controller" => "baby", "action" => "edit", "baby_id" => $result["id"]), null, true) ?>" target="_blank">
+                    <?= ($result['id']) ? $result['id'] : "ERROR" ?>
+                </a>
+            </td>
+            <td>
+                <?= ($result['last_name']) ? $result['last_name'] : "ERROR" ?>
+            </td>
+            <td>
+                <?= ($result['first_name']) ? $result['first_name'] : "ERROR" ?>
+            </td>
+            <td>
+                <a href="javascript:call_popup('<?= $this->url(array("controller" => 'study-history', "action" => 'list', "baby_id" => $result['id']), null, true) ?>')">Study History</a>
+            </td>
+            <td>
+                <?= ($result['dob']) ? $result['dob'] : "ERROR" ?>
+            </td>
+            <td>
+                <?php
+                    switch ($result['sex']) {
+                        case '2':
+                            echo "M";
+                            break;
+                        case '1':
+                            echo "F";
+                            break;
+                        default:
+                            echo "";
+                            break;
+                    }
+                ?>
+            </td>
+            <td>
+                <?= ($result['mother_last_name']) ? $result['mother_last_name'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['mother_first_name']) ? $result['mother_first_name'] : "" ?>
+            </td>
+            <td>
+                <?php
+                    if (!(empty($result["telephone"]))) {
+                        $phone_number = $result["telephone"];
+                        
+                        // format number
+                        $area = substr($phone_number, 0, 3);
+                        $first = substr($phone_number, 3, 3);
+                        $second = substr($phone_number, 6);
+                        
+                        // display
+                        echo $area . "-" . $first . "-" . $second;
+                    }
+                ?>
+            </td>
+            <td>
+                <?= ($result['father_last_name']) ? $result['father_last_name'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['father_first_name']) ? $result['father_first_name'] : "" ?>
+            </td>
+            <?php if ($this->listType == 'schedule'): ?>
+                <td>
+                    <?= ($result['checkout_date']) ? $result['checkout_date'] : "" ?>
+                </td>
+            <?php elseif ($this->listType == 'confirm' or $this->listType == 'outcome'): ?>
+                <td>
+                    <?= ($result['study']) ? $result['study'] : "" ?>
+                </td>
+                <td>
+                    <?= ($result['lab_researcher']) ? $result['lab_researcher'] : "" ?>
+                </td>
+                <td>
+                    <?= ($result['study_date']) ? substr($result['study_date'], 0, 16) : "" ?>
+                </td>
+            <?php endif ?>
+            <td>
+                <?= ($result['status']) ? strtoupper($result['status']) : "NONE" ?>
+            </td>
+            <td>
+                <?= ($result['record_status'] == 1) ? "CHECKED-OUT" : "CHECKED-IN"  ?>
+            </td>
+            <td>
+                <?= ($result['record_owner']) ? $result['record_owner'] : "NONE" ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
+</table>
+<br />
+<p align="center">Pages: &nbsp;&nbsp;&nbsp;<?= $this->links ?></p>

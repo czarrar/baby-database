@@ -1,0 +1,124 @@
+<script type="text/javascript" charset="utf-8">
+
+function call_popup(url) {  window.open(url,'StudyInfo','toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=yes,copyhistory=no,scrollbars=yes,width=700,height=500');
+}
+
+function edit_popup(url) {
+window.open(url,'Profile','toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=yes,copyhistory=no,scrollbars=yes,width=1000,height=680');
+}
+
+function doIt() {
+    // Get all element ids for checkout checkboxes
+    contents = $$('.checkout');
+    for (var i = 0; i < contents.length; i++) {
+        // Toggles between checked and unchecked
+        $(contents[i]).checked = 1 - $(contents[i]).checked
+    }
+}
+</script>
+<h2 class=our_list> Return Records </h2>
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_formErrorMsg.phtml', array('errors' => $this->errors));
+    if (!(empty($this->warnings)))
+        echo $this->partial('_formWarnMsg.phtml', array('warnings' => $this->warnings));
+?>
+<??>
+<form name='<? $this->type ?>' action='<?= $this->url(array("controller" => 'record-owner', "action" => "list")) ?>' method='POST'>
+<font face='verdana' size='-1'>
+    <?php if ($this->type == 'checkout'): ?>
+        <strong>Borrowed by:</strong>
+        <?= $this->formSelect('record_owner', $this->record_owner, null, $this->recordOwnerOptions) ?>
+    <?php endif ?>
+    <input type='submit' name='check' value='Return'>
+</font>
+
+<p><em>Retrieved a total of <?= $this->rowCount ?> <?= ($this->rowCount > 1) ? "records" : "record" ?></em></p>
+<p align="center">Pages: &nbsp;&nbsp;&nbsp;<?= $this->links ?></p>
+
+<table width='96%' border='0' align='center' cellpadding="0" cellspacing='0'>
+    <? // Add function do it ?>
+    <tr id='dob_year3'>
+        <td><input type='checkbox' name='all' value='false' onClick="doIt()"></td>
+        <td><a href="<?= $this->url($this->link['id']) ?>"> Serial No. </a></td>
+        <td> Contact History </td>
+        <td> Study History </td>
+        <td><a href="<?= $this->url($this->link['last_name']) ?>"> Baby Last Name </a></td>
+		<td><a href="<?= $this->url($this->link['first_name']) ?>"> Baby First Name </a></td>
+		<td><a href="<?= $this->url($this->link['dob']) ?>"> DOB </a></td>
+		<td><a href="<?= $this->url($this->link['sex']) ?>"> Sex </a></td>
+		<td><a href="<?= $this->url($this->link['mother_last_name']) ?>"> Mother's Last Name </a></td>
+		<td><a href="<?= $this->url($this->link['mother_first_name']) ?>"> Mother's First Name </a></td>
+		<td><a href="<?= $this->url($this->link['record_status']) ?>"> Record Status </a></td>
+        <td><a href="<?= $this->url($this->link['status']) ?>"> Scheduling Status </a></td>
+    </tr>
+    
+    <?php foreach ($this->results as $key => $result): ?>
+        <?php
+            // Quick hack to display only even or odd serial numbers
+            if ($this->odd or $this->even) {
+                $remainder = $result["id"] % 2;
+                if ($this->odd and $remainder == 0)
+                    continue;
+                else if ($this->even and $remainder != 0)
+                    continue;
+            }
+        ?>
+        
+        <tr id="dob_month3">
+            <td>
+                <input type="checkbox" class="checkout" name="rec[<?= $key ?>][record_id]" value="<?= $result['id'] ?>" <?= ($result['record_status'] == 1 && $this->type == "checkout") ? "disabled=\"disabled\"" : '' ?> <?= ($this->rec[$key]["record_id"]) ? "checked=checked" : "" ?> />
+            </td>
+            <td>
+                <a href="<?= $this->url(array("controller" => "baby", "action" => "edit", "baby_id" => $result["id"]), null, true) ?>" target="_blank">
+                    <?= ($result['id']) ? $result['id'] : "ERROR" ?>
+                </a>
+            </td>
+            <td>
+                <a href="javascript:edit_popup('<?= $this->url(array("controller" => 'contacthistory', "action" => 'new', "baby_id" => $result['id']), null, true) ?>')">Contact History</a>
+            </td>
+            <td>
+                <a href="javascript:call_popup('<?= $this->url(array("controller" => 'study-history', "action" => 'list', "baby_id" => $result['id']), null, true) ?>')">Study History</a>
+            </td>
+            <td>
+                <?= ($result['last_name']) ? $result['last_name'] : "ERROR" ?>
+            </td>
+            <td>
+                <?= ($result['first_name']) ? $result['first_name'] : "ERROR" ?>
+            </td>
+            <td>
+                <?= ($result['dob']) ? $result['dob'] : "ERROR" ?>
+            </td>
+            <td>
+                <?php
+                    switch ($result['sex']) {
+                        case '2':
+                            echo "M";
+                            break;
+                        case '1':
+                            echo "F";
+                            break;
+                        default:
+                            echo "";
+                            break;
+                    }
+                ?>
+            </td>
+            <td>
+                <?= ($result['mother_last_name']) ? $result['mother_last_name'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['mother_first_name']) ? $result['mother_first_name'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['record_status'] == 1) ? "ACTIVE" : "INACTIVE"  ?>
+            </td>
+            <td>
+                <?= ($result['status']) ? strtoupper($result['status']) : "NONE" ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
+</table>
+</form>
+<br />
+<p align="center">Pages: &nbsp;&nbsp;&nbsp;<?= $this->links ?></p>

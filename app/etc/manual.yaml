@@ -1,0 +1,40 @@
+motherfirst:
+  name: "Mother's First Name: "
+  field: 'motherfirst'
+motherlast:
+  name: "Mother's Last Name: "
+  field: 'motherlast'
+fatherfirst:
+  name: "Father's First Name: "
+  field: 'fatherfirst'
+fatherlast:
+  name: "Father's Last Name: "
+  field: "fatherlast"
+firstname:
+  name: 'Baby First Name: '
+  field: 'firstname'
+lastname:
+  name: 'Baby Last Name: '
+  field: 'lastname'
+sex:
+  name: 'Gender: '
+  field: 'sex'
+dob:
+  name: 'Date of Birth: '
+  field: 'dob'
+address:
+  name: 'Address: '
+  field: 'address'
+city:
+  name: 'City: '
+  field: 'city'
+zip:
+  name: 'Zip Code: '
+  field: 'zipcode'
+homephone:
+  name: 'Home Phone: '
+  field: 'homephone'
+cellphone:
+  name: 'Cell Phone'
+  field: 'cellphone'
+

@@ -1,0 +1,107 @@
+<table width='100%' border='0' align='center' cellpadding='0' cellspacing='0' bgcolor="#33CC33" id="header_table3">
+  <tr>
+    <td colspan="2" class="welcome">Welcome to Baby and Child @ YOUR UNIVERSITY</td>
+    <td class="td_label2"><strong>Your Lab: <?= $_SESSION['lab_name'] ?></strong></td>
+  </tr>
+  <tr>
+    <td class="td_label2">General</td>
+    <td>
+<a href="<?= $this->sUrl('index', 'index', null, true) ?>">Home</a> |  
+<a href="http://6wpl.info/blog">Blog/Wiki</a> | 
+<a href="#">Lab Sharing Schedule</a> | 
+<a href="<?= $this->url(array('controller' => 'language', 'view_archive' => 2), null, true) ?>" target="_blank">Languages</a> |
+<a href="<?= $this->url(array('controller' => 'ethnicity', 'view_archive' => 2), null, true) ?>" target="_blank">Ethnicities</a> |
+<a href="<?= $this->sUrl('logout', 'login', null, true) ?>">Log Out</a>
+<p class="br"></p>
+<a href="http://groups.google.com/group/nyu-babydb">Report Error (contact czarrar@gmail.com to join)</a>
+</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="td_label2">Baby/Family </td>
+    <td><a href="<?= $this->sUrl('new', 'baby', null, true) ?>" target="_blank">Enter New Baby</a> |
+    <a href="<?= $this->sUrl('checkin-search', 'record-owner', null, true) ?>">Return Records</a> | 
+    <a href="<?= $this->sUrl('search', 'baby', null, true) ?>">Baby Search</a> |
+    <a href="<?= $this->sUrl('family', 'search', null, true) ?>">Family/Sibling Search</a></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="td_label2">Appointments </td>
+    <td>
+    	<a href="<?= $this->sUrl('schedule', 'appointment2', null, true) ?>">Schedule Appointments</a> |
+    	<a href="<?= $this->sUrl('confirm', 'appointment2', null, true) ?>">Change/Confirm Appointments</a> |
+        <a href="<?= $this->sUrl('outcome', 'appointment2', null, true) ?>">Appointment Outcome</a> |
+        <a href="<?= $this->sUrl('search', 'baby-study', null, true) ?>">Search Schedule</a> |
+        <a href="<?= $this->sUrl('calculator', 'index', null, true) ?>" target="_blank">Age Wizard</a> 
+    </td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <?php if ($_SESSION['user_privelages'] == "admin"): ?>
+  <tr>
+    <td class="td_label2">Db Management </td>
+    <td>
+    	<a href="<?= $this->url(array('controller' => 'auth', 'view_archive' => 2), null, true) ?>" target="_blank">Users</a> |
+    	<a href="<?= $this->url(array('controller' => 'lab', 'view_archive' => 2), null, true) ?>" target="_blank">Labs</a> |
+    	<a href="<?= $this->url(array('controller' => 'researcher', 'view_archive' => 2), null, true) ?>" target="_blank">Researchers</a> |
+        <a href="<?= $this->url(array('controller' => 'study', 'view_archive' => 2), null, true) ?>" target="_blank">Studies</a> |
+        <a href="<?= $this->url(array('controller' => 'callers', 'view_archive' => 2), null, true) ?>" target="_blank">Callers</a> | 
+        <a href="<?= $this->url(array('controller' => 'contact-source', 'view_archive' => 2), null, true) ?>" target="_blank">Contact Sources</a> |
+        <a href="<?= $this->url(array('controller' => 'r-list', 'view_archive' => 2), null, true) ?>" target="_blank">RList</a>
+    </td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <?php endif ?>
+  <tr>
+  <? if($this->username=="admin" || $this->username=="Coordinator"): ?>
+    <td height="86" class="td_label2">Extra<? ?></td>
+    <td><table width="100%" height="85" border="0" cellspacing="0">
+        <tr> <? ?>
+          <td class="td_label55" width="13%" height="86"> &middot;Additions <? ?><br> 
+            &middot;Security<br> &middot;Record Input<br> &middot;Record Management<br> 
+            &middot;Others</td> 
+          <td class="td_label55" width="87%" height="86"> 
+            <? if($this->username=="admin"):  ?>
+                <a href="javascript:open_add('<?= $this->sUrl('index', 'auth') ?>')">Add User </a> | 
+            <? endif  ?>
+            <a href="javascript:open_addcaller('<?= $this->sUrl('index', 'caller') ?>')"> Add new Callers </a> | <a href="javascript:open_add('<?= $this->sUrl('index', 'researcher') ?>')"> 
+            Add new Researcher </a> | <a href="javascript:open_add('<?= $this->sUrl('index', 'study') ?>')">Add new Study</a> | <a href="<?= $this->sUrl('outcome', 'studyhistory') ?>"> Add 
+            a study outcome for previous research</a><br> 
+            <? if($this->username=="admin"): ?>
+                <a href="<? $this->sUrl('edit', 'auth') ?>">Change Password </a> | 
+            <? endif ?>
+            <a href="ipcheck.php">IP Control </a> | <a href="iptest.php"> IP Check 
+            </a> | <a href="enableip.php"> IP Control Activation/Deactivation</a> 
+            | <a href="show_log.php?sort=logdate, time&page=1">Caller Log </a><br> 
+            <a href="upload.php">Upload </a> | <a href="genlab.php"> Generate 
+            Labels </a> | <a href="letter_sent.php">Confirm Dispatch</a><br> 
+            <? if($this->username=="admin"): ?>
+                <a href="mass_archive.php">Purge Records </a> | <a href="show_archive.php"> 
+                    Show Archive </a>| 
+            <? endif ?>
+            <a href="statistics2.php"> Statistics</a><br> <a href="back_to_regie.php">Transfer 
+            a record back to Regie List</a>| <a href="uploader_form.php">Upload 
+            calling schedule</a></td>
+    <? endif ?>
+        </tr>
+      </table></td>
+  </tr>
+    
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+</table><br>
+
+

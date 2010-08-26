@@ -1,0 +1,185 @@
+img {
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+
+fieldset {
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 1em;
+	width: 100%;
+	border-style: none;
+	border-top: 2px solid #BFBAB0;
+	margin-bottom: -1em;
+	padding-bottom: 3em;
+	/*background-color: #ecf3e1;*/
+}
+
+fieldset input, fieldset textarea, fieldset select {
+	border: 1px inset black;
+	padding: .1em;
+}
+
+fieldset input:focus,fieldset textarea:focus, fieldset select:focus {
+  color:#000;
+	background-color: #feffc8;
+}
+
+fieldset.alt {
+	background-color: #E6E3DD;
+}
+
+fieldset span.error {
+	padding: 0;
+	margin: 0 0 0 11.5em;
+	clear: left;
+	font-size: 1em;
+	color: red;
+	display: block;
+	background-color: transparent;
+	font-style: italic;
+}
+
+ul.errors {
+  padding: 0;
+  margin: .25em 0 0 12em;
+  font-size: .95em;
+  color: red;
+  display: block;
+  background-color: transparent;
+	font-style: italic;
+	list-style: none;
+}
+
+ul.errors li {
+  list-style: none;
+}
+
+legend {
+	margin-left: .5em;
+	padding: 0 .25em 0 .25em;
+	color: #669900;
+	font-weight: bold;
+	font-size: 2em;
+	font-variant: small-caps;
+}
+
+label {
+	color: #111;
+	display:inline-block;
+	float: left;
+	clear: left;
+	width: 10em;
+	margin-right: 1em;
+	text-align: left;
+	line-height: 1.8;
+  vertical-align: top;
+}
+
+fieldset ol {
+	padding: 0 1em 0 1em;
+	list-style: none;
+	width: 100%;
+}
+
+fieldset li {
+	width: 100%;
+	padding-bottom: .5em;
+	list-style: none;
+}
+
+fieldset li div {
+	float: left;
+	display: inline;
+	margin-right: 1.5em;
+}
+
+fieldset.submit {
+	text-align: center;
+	padding: 2em .5em 2em .5em;
+	margin-bottom: 2em;
+}
+
+fieldset #submit, fieldset #reset {
+	font-size: 1em;
+	margin: 0 .5em 0 .5em;
+	padding: .1em .5em .1em .5em;
+}
+
+fieldset fieldset {
+	margin: 0 0 -2.5em -.25em;
+	padding: 0 0 .5em 0;
+	border-style: none;
+	background-color: transparent;
+}
+
+fieldset fieldset legend {
+	color: #111;
+	margin-left: 0;
+	font-size: 1em;
+	font-weight: normal;
+	font-variant: normal;
+}
+
+fieldset fieldset label {
+	float: none;
+	width: auto;
+	margin-right: auto;
+}
+
+fieldset fieldset ol {
+	height: auto;
+	position: relative;
+	top: -1.75em;
+	margin: 0 0 0 13.4em;
+	padding: 0 0 4.1em 0;
+}
+
+fieldset fieldset li {
+	margin: 0;
+	padding: 0;
+}
+
+fieldset fieldset div {
+	position: relative;
+	top: -.75em;
+	margin: 0 0 0 12.5em;
+	padding: 0;
+}
+
+fieldset fieldset div div {
+	display: inline;
+	margin: -.5em 1.5em .5em 0;
+}
+
+fieldset fieldset div label {
+  margin-right: .25em;
+}
+
+#errorMsg{
+	background:#ffdfdf;
+	border:1px solid #df7d7d;
+	border-width: 1px 0 1px 0;
+	margin:0 0 2em 0;
+	padding:1em;
+	width: 89%;
+}
+#errorMsg #errorMsg h3{
+	margin:0 0 .5em 0;
+	font-size:110%;
+	line-height:100%;
+	font-weight:bold;
+	color:#DC143C;
+}
+#errorMsg ol,
+#errorMsg ul,{
+	margin:0;
+	padding:0;
+}
+#errorMsg ol li
+#errorMsg ul li{
+	margin:0;
+	padding:2px;
+	list-style-position:inside;
+	position:relative;
+}

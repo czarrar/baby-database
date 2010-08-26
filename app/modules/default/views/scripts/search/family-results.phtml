@@ -1,0 +1,79 @@
+<script language='JavaScript'>
+
+function call_popup(url) {  window.open(url,'StudyInfo','toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=yes,copyhistory=no,scrollbars=yes,width=700,height=500');
+}
+
+function edit_popup(url) {
+ window.open(url,'Profile','toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=yes,copyhistory=no,scrollbars=yes,width=1000,height=680');
+}
+
+</script>
+
+<h2 class=our_list> Family Results </h2>
+
+<p>
+    <em>Retrieved a total of <?= $this->rowCount ?> <?= ($this->rowCount > 1) ? "records" : "record" ?>
+    <p class="br"></p>
+    Note: if siblings exist, you can find them by clicking on the serial number listed for a specific family.
+    </em>
+</p>
+<br />
+<p align="center">Pages: &nbsp;&nbsp;&nbsp;<?= $this->links ?></p>
+
+<table width='96%' border='0' align='center' cellpadding="0" cellspacing='0'>
+    <tr id='dob_year3'>
+        <td> Add Baby </td>
+        <td><a href="<?= $this->url($this->fieldLinks['id']) ?>"> Family Id </a></td>
+        <td> Serial Nos. </td>             
+        <td><a href="<?= $this->url($this->fieldLinks['mother_name']) ?>"> Mother's Name </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['father_name']) ?>"> Father's Name </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['address']) ?>"> Address </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['city']) ?>"> City </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['state']) ?>"> State </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['zip']) ?>"> Zip </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['telephone']) ?>"> Telephone </a></td>
+		<td><a href="<?= $this->url($this->fieldLinks['email']) ?>"> Email </a></td>
+    </tr>
+    
+    <?php foreach ($this->results as $result): ?>
+        <tr id="dob_month3">
+            <td>
+                <a href="<?= $this->url(array("controller" => "baby", "action" => "new", "family_id" => $result['id']), null, true) ?>" target="_blank">
+                    add baby
+                </a>
+            </td>
+            <td>
+                <?= ($result['id']) ? $result['id'] : "ERROR" ?>
+            </td>
+            <td>
+                <?= ($result['baby_ids']) ? $result['baby_ids'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['mother_name']) ? $result['mother_name'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['father_name']) ? $result['father_name'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['address']) ? $result['address'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['city']) ? $result['city'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['state']) ? $result['state'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['zip']) ? $result['zip'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['telephone']) ? $result['telephone'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['emails']) ? $result['emails'] : "" ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
+</table>
+<br />
+<p align="center">Pages: &nbsp;&nbsp;&nbsp;<?= $this->links ?></p>

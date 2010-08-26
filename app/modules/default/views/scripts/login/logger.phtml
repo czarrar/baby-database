@@ -1,0 +1,27 @@
+<div align="center">
+  <?php if (!(empty($this->messages))): ?>
+    <div id="errorBox">
+      <div class="error"><b>Error:</b></div>
+      <?php foreach ($this->messages as $field => $messages): ?>
+        <?php foreach ($messages as $key => $message): ?>
+            <div class="error">- <?= $message ?></div>
+        <?php endforeach ?>
+      <?php endforeach ?>
+    </div>
+  <?php endif ?>
+  <br />
+  <form enctype="application/x-www-form-urlencoded" action="<?= $this->sUrl("logger", "login") ?>" method="post">
+      <table class="contacts" cellspacing="0" summary="Contacts template">
+          <tr>
+              <td class="contactDept" colspan="1">Login Time: <strong><?= $this->time_now ?></strong></td>
+          </tr>
+          <?php foreach ($this->form as $element): ?>
+            <tr>
+                <td class="contact">
+                    <?= $element ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+      </table>
+  </form>
+</div>

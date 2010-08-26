@@ -1,0 +1,16 @@
+<table border="0" cellspacing="5" cellpadding="5">
+    <tr>
+        <?php foreach ($this->columns as $column): ?>
+            <th><?= $column ?></th>
+        <?php endforeach ?>
+    </tr>
+    <?php foreach ($this->results as $result): ?>
+        <tr>
+            <?php foreach ($result as $key => $value): ?>
+                <td><?= $value ?></td>
+            <?php endforeach ?>
+        </tr>
+    <?php endforeach ?>
+</table>
+
+<p><?= $this->links ?></p>

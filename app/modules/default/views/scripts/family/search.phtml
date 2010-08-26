@@ -1,0 +1,124 @@
+<h2 class=our_list> Family Search </h2>
+
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_formErrorMsg.phtml', array('errors' => $this->errors));
+    if (!(empty($this->warnings)))
+        echo $this->partial('_formWarnMsg.phtml', array('warnings' => $this->warnings));
+?>
+
+<??>
+<br />
+<form action="<?= $this->url(array('controller' => 'family', 'action' => 'search'), null, true) ?>" method="post" accept-charset="utf-8" />
+    <h3 class=our_list> Baby Information </h2>
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">
+                Serial No.
+            </td>
+            <td>
+                <label></label>
+                <?= $this->formText("baby_id", null, null, array("size" => 10, "maxlength" => 10)) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Name/Sex
+            </td>
+            <td>
+                <?= $this->formText("baby_first_name", "(First name)", null, array("size" => 10, "maxlength" => 100)) ?>
+                <?= $this->formText("baby_last_name", "(Last name)", null, array("size" => 15, "maxlength" => 150)) ?>
+                <label>(Sex)</label><?= $this->formSelect('baby_sex', $this->baby['sex'], array('id' => 'sex'), $this->sexOptions) ?>
+            </td>
+        </tr>
+            <td class="label">
+                Date of Birth
+            </td>
+            <td>
+                <label></label>
+                <?= $this->formSelectDate(
+                    array(
+                        'baby_dob[year]',
+                        'baby_dob[month]',
+                        'baby_dob[day]'
+                    ),
+                    $this->baby_dob,
+                    null,
+                    array(
+                        'year_start'=>1990,
+                        'year_end'=>date('Y')+1
+                    )
+                ) ?>
+                <em>(MM/DD/YY)</em>
+            </td>
+        </tr>
+    </table>
+    <br />
+    <h3 class=our_list> Parent Information </h2>
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">
+                Family ID
+            </td>
+            <td>
+                <label></label>
+                <?= $this->formText("family_id", null, null, array("size" => 10, "maxlength" => 10)) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Mother
+            </td>
+            <td>
+                <?= $this->formText("mother[first_name]", "(First name)", null, array("size" => 10, "maxlength" => 100)) ?>
+                <?= $this->formText("mother[last_name]", "(Last name)", null, array("size" => 15, "maxlength" => 150)) ?>
+                <label>(Ethnicity)</label><?= $this->formSelect('mother[ethnicity_id]', null, $this->mother["ethnicity_id"], $this->ethnicityOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Father
+            </td>
+            <td>
+                <?= $this->formText("father[first_name]", "(First name)", null, array("size" => 10, "maxlength" => 100)) ?>
+                <?= $this->formText("father[last_name]", "(Last name)", null, array("size" => 15, "maxlength" => 150)) ?>
+                <label>(Ethnicity)</label><?= $this->formSelect('father[ethnicity_id]', $this->father["ethnicity_id"], null, $this->ethnicityOptions) ?>
+            </td>
+        </tr>
+    </table>
+        <br />
+    <h3 class=our_list> Contact Information </h2>
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">
+                Address
+            </td>
+            <td>
+                <?= $this->formText("city", "City", null, array("size" => 20, "maxlength" => 150)) ?>
+                <?= $this->formText("state", "State", null, array("size" => 20, "maxlength" => 100)) ?>
+                <?= $this->formText("zip", "Zip Code", null, array("size" => 5, "maxlength" => 5)) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Phone
+            </td>
+            <td>
+                <label></label>
+                <input type="text" name="phone_number" value="<?= $this->phone_number ?>" size="15" maxlength="20">
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Email
+            </td>
+            <td>
+                <label></label>
+                <input type="text" name="email" value="<?= $this->email ?>" size="15" maxlength="150">
+            </td>
+        </tr>
+    </table>    
+    <br />    <br />
+    <input type="submit" name="family_search" value="Search">&nbsp;&nbsp;&nbsp;<input type="reset" value="Reset" id="reset">
+    
+</form>

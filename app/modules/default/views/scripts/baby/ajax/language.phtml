@@ -1,0 +1,16 @@
+	<li id="<?= "lang_{$this->id}" ?>" style="display:none">
+        <?= $this->formSelect("baby_language[{$this->id}][language_id]", $this->language_id, array('id' => 'language_id'), $this->language_opts) ?>
+        <input name="baby_language[<?= $this->id ?>][percent_per_week]" id='percentage' type='text' value="<?= $this->percent ?>" size='10'>
+        <a href='#' onClick="new Ajax.Updater('language_exposure','<?= $this->url(array('action' => 'ajax.language')) ?>', {insertion:Insertion.Bottom, evalScripts:true}); return false;">
+            <img src='{$this->dir_images}/add.gif' title='click to add' alt='add' />
+        </a>
+        <a href='#' onClick="new Effect.Fade('<?= "lang_{$this->id}" ?>'); return false;">
+            <img src='{$this->dir_images}/delete.gif' title='click to remove' alt='remove' />
+        </a>
+	</li>
+		
+    <script type="text/javascript" language="javascript">
+        // <![CDATA[
+          new Effect.Appear('<?= "lang_{$this->id}" ?>');
+        // ]]>
+    </script>

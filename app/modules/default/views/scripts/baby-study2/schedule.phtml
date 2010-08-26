@@ -1,0 +1,131 @@
+<h3>: Scheduling Baby</h3>
+
+<?php
+    if (!(empty($this->errors))) {
+        echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
+    	echo "<br /><br />";    
+    }
+?>
+<??>
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+<? if($this->hasOtherStudies == 1): ?>
+	<strong><em><font color="red">This baby is currently participating in other studies. If you change the appointment date/time for this study, this will change the date/time for all relevant studies.</font></em></strong>
+	<br /><br />
+<? endif ?>
+
+<form action="<?= $this->url(array('controller' => 'baby-study2', 'action' => 'schedule')) ?>" method="post" accept-charset="utf-8">    
+    <?= $this->form->baby_id->field() ?>
+    <?= $this->form->caller_id->field() ?>
+    <?= $this->form->other_studies->field() ?>
+    
+<table cellspacing="0" cellpadding="5" class="form">
+    <?php if ($this->startAge and $this->endAge): ?>
+        <tr>
+            <td class="label">
+                <label>Start of Study</label>
+            </td>
+            <td>
+                <label></label><?= $this->startDate ?>
+                <label></label><i>(baby's age: <?= $this->startAge ?>)</i>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                <label>End of Study</label>
+            </td>
+            <td>
+                <label></label><?= $this->endDate ?>
+                <label></label> 
+                <i>(baby's age: <?= $this->endAge ?>)</i>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"></td>
+        </tr>
+    <?php endif ?>
+    
+    <tr>
+        <td class="label">
+            <?= $this->form->baby_id->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->baby_id->getValue() ?>            
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->study_id->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->study_id->field() ?>
+        </td>
+    </tr>
+    <? if($this->hasOtherStudies == 1): ?>
+    <tr>
+    	<td class="label">
+    		<label>Other Studies</label>
+    	</td>
+    	<td>
+    		<label></label>
+    		<?php
+    		for ($i = 0; $i < count($this->otherStudies); $i++) {
+    		    if($i != 0)
+    				echo ", ";
+    			echo "<em>" . $this->otherStudies[$i]["study"] . "</em>";
+    		}
+    		?>
+    	</td>
+    </tr>
+    <? endif ?>
+    <tr>
+        <td class="label">
+            <label>Appointment</label>
+            <p class="br"></p>
+            <!--
+                @TODO:
+                <label></label><a href="#">calculate age</a> 
+            -->
+        </td>
+        <td>
+            <label>Date</label>&nbsp;&nbsp;&nbsp;
+            <?= $this->form->appt_date ?>
+            <em>(MM/DD/YY)</em>
+            <p class="br"></p>
+            <label>Start Time</label>&nbsp;&nbsp;
+            <?= $this->form->appt_time ?>
+            <em>(HH:MM)</em>
+            <p class="br"></p>
+            <label>End Time</label>&nbsp;&nbsp;&nbsp;
+            <?= $this->form->appointment_end_time ?>
+            <em>(HH:MM)</em>
+            <p class="br"></p>
+            <label></label>
+            <a href="#" onClick=" window.open('<?= $this->url(array('action' => 'calculator', 'controller' => 'index', 'baby_id' => $this->form->baby_id->getValue(), 'study_id' => $this->form->study_id->getValue()), null, true) ?>', 'Age Wizard', 'toolbar=no, location=no, directories=no, status=yes, menubar=no, resizable=yes, copyhistory=no, scrollbars=yes, width=600, height=300')""><strong><em>Click here for the age wizard</em></strong></a>            
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->sibling->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->sibling->field() ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->comments->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->comments->field() ?>
+        </td>
+    </tr>
+</table>
+<p>
+    <?= $this->form->submit->field() ?>
+</p>
+</form>

@@ -1,0 +1,269 @@
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_formErrorMsg.phtml', array('errors' => $this->errors));
+    if (!(empty($this->warnings)))
+        echo $this->partial('_formWarnMsg.phtml', array('warnings' => $this->warnings));
+?>
+<??>
+
+<form action="<?= $this->url(array("controller" => "baby", "action" => $this->type)) ?>" method="post" accept-charset="utf-8">
+    <?php if ($this->haswarnings): ?>
+        <input type="hidden" name="warnings" value="1" />
+    <?php endif ?>
+    <?php if ($this->haserrors): ?>
+        <input type="hidden" name="errors" value="1" />
+    <?php endif ?>
+    
+    
+<table cellspacing="0" cellpadding="5" class="form">
+    <?php if ($this->type == "edit"): ?>
+        <input type="hidden" name="baby[id]" value="<?= $this->baby["id"] ?>" />
+        <input type="hidden" name="baby[family_id]" value="<?= $this->baby["family_id"] ?>" />
+        <input type="hidden" name="family[id]" value="<?= $this->baby["family_id"] ?>" />
+        <input type="hidden" name="baby[date_of_entry]" value="<?= $this->baby["date_of_entry"] ?>" />
+        <input type="hidden" name="baby[last_update]" value="<?= $this->baby["last_update"] ?>" />
+
+	    <?php if ($this->showStatusFields): ?>
+		<tr>
+			<td class="label">
+				Status
+			</td>
+			<td>
+				<label>Record</label>
+				<?= $this->formSelect("baby[checked_out]", $this->baby['checked_out'], null, array('0' => "INACTIVE", '1' => "ACTIVE")) ?>
+				<label>List</label>
+				<?= $this->formSelect("baby[list_id]", $this->baby["list_id"], null, $this->listOptions) ?> 
+				<label>Scheduling</label>
+				<?= $this->formSelect("baby[status_id]", $this->baby["status_id"], null, $this->statusOptions) ?> 
+			</td>
+		</tr>
+		<?php else: ?>
+			<input type="hidden" name="baby[checked_out]" value="<?= $this->baby["checked_out"] ?>" />
+	        <input type="hidden" name="baby[status_id]" value="<?= $this->baby["status_id"] ?>" />
+	        <input type="hidden" name="baby[list_id]" value="<?= $this->baby["list_id"] ?>" />
+		<?php endif ?>
+
+    <?php endif ?>
+
+    <tr>
+        <td class="label">
+            Baby
+        </td>
+        <td>
+            <?= $this->formText("baby[first_name]", "(First name)", null, array("size" => 10, "maxlength" => 100)) ?>
+            <?= $this->formText("baby[middle_name]", "(Middle name)", null, array("size" => 10, "maxlength" => 100)) ?>
+            <?= $this->formText("baby[last_name]", "(Last name)", null, array("size" => 15, "maxlength" => 150)) ?>
+            <p class="br"></p>
+            <label>(Sex)</label><?= $this->formSelect('baby[sex]', $this->baby['sex'], array('id' => 'sex'), array("" => 'M/F', "1" => 'Female', "2" => 'Male')) ?>
+            <label>(Date of Birth)</label>
+            <?= $this->formSelectDate(
+                array(
+                    'baby[dob][year]',
+                    'baby[dob][month]',
+                    'baby[dob][day]'
+                ),
+                $this->baby['dob'],
+                null,
+                array(
+                    'year_start'=>1990,
+                    'year_end'=>date('Y')+1
+                )
+            ) ?>
+            <em>(MM/DD/YY)</em>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            Mother
+        </td>
+        <td>
+                <?= $this->formText("family[mother_first_name]", "(First name)", null, array("size" => 10, "maxlength" => 100)) ?>
+                <?= $this->formText("family[mother_last_name]", "(Last name)", null, array("size" => 15, "maxlength" => 150)) ?>
+                <p class="br"></p>
+                <label>(Ethnicity)</label><?= $this->formSelect('family[mother_ethnicity_id]', $this->family['mother_ethnicity_id'], null, $this->ethnicityOptions) ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            Father
+        </td>
+        <td>
+            <?= $this->formText("family[father_first_name]", "(First name)", null, array("size" => 10, "maxlength" => 100)) ?>
+            <?= $this->formText("family[father_last_name]", "(Last name)", null, array("size" => 15, "maxlength" => 150)) ?>
+            <p class="br"></p>
+            <label>(Ethnicity)</label><?= $this->formSelect('family[father_ethnicity_id]', $this->family['father_ethnicity_id'], null, $this->ethnicityOptions) ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            Languages
+        </td>
+        <td>
+            <?php // Spits out 4 entries for language ?>
+            <?php for ($i=0; $i < 4; $i++): ?>
+            	<label>Lang <?= $i+1 ?></label>
+            	<?php if ($this->action == "new"): ?>
+            	    <?= $this->formSelect("language[$i][language_id]", $this->language[$i]['language_id'], null, $this->languageOptions) ?>
+            	<?php else: ?>
+            	    <input type="text" name="language[<?= $i ?>][language]" value="<?= $this->specialLanguages[$i] ?>" size="8" maxlength="100">
+            	<?php endif ?>
+        	    <label>(&#37;/Wk)</label>
+        	    <input type="text" name="language[<?= $i ?>][percent_per_week]" value="<?= $this->language[$i]['percent_per_week'] ?>" size="4" maxlength="3">
+        	    <input type="hidden" name="language[<?= $i ?>][order]" value="<?= $i + 1 ?>" />
+        	    <p class="br"></p>
+        	<?php endfor; ?>
+        	<label>Lang 5</label>
+        	<input type="text" name="language[4][language]" value="<?= $this->specialLanguage ?>" size="8" maxlength="100">
+        	<?= ($this->action == "new") ? "&nbsp;" : "" ?>
+        	<label>(&#37;/Wk)</label>
+        	<input type="text" name="language[4][percent_per_week]" value="<?= $this->language[4]['percent_per_week'] ?>" size="4" maxlength="3">
+    	    <input type="hidden" name="language[4][order]" value="5" />
+		</td>
+	</tr>
+	<tr>
+	    <td class="label">
+	       Birth Weight
+	    </td>
+        <td>
+            <span class="spacer"><span>
+            <?= $this->formBirthWeight() ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            Born at Term?
+        </td>
+        <td>
+            <span class="spacer"><span>
+            <select name="baby[term_period]">
+                <option value=''> Choose</option>
+                <option value=-4>4 or more weeks early
+                <option value=-3>3 or more weeks early
+                <option value=-2>2 or more weeks early
+                <option value=-1>1 or more weeks early
+                <option value=0>Term
+                <option value=1>1 or more weeks late
+                <option value=2>2 or more weeks late
+                <option value=3>3 or more weeks late
+                <option value=4>4 or more weeks late
+            </select>
+            <?= $this->formText("baby[term_weeks]", "or exact # of weeks", $this->baby['term'], array("size" => 2, "maxlength" => 2)) ?>&nbsp;&nbsp;<em>(40 weeks is term)</em>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            Issues
+        </td>
+        <td>
+            <?= $this->formText("baby[med_problems]", "Major Medical Problems", null, array("size" => 50, "maxlength" => 255)) ?>
+            <p class="br"></p>
+            <label>Previous Ear Infections</label><?= $this->formSelect('baby[ear_infection]', $this->baby['ear_infection'], array('id' => 'ear_infection'), array("" => 'Yes/No', 2 => 'Yes', 1 => 'No')) ?>
+            <p class="br"></p>
+            <?= $this->formText("baby[audlang_problems]", "Auditory or Language Problems", null, array("size" => 20, "maxlength" => 255)) ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            Address
+        </td>
+        <td>
+            <?= $this->formText("family[address_1]", "Address 1", null, array("size" => 25, "maxlength" => 255)) ?>
+            <?= $this->formText("family[address_2]", "Address 2", null, array("size" => 25, "maxlength" => 255)) ?>
+            <p class="br"></p>
+            <?= $this->formText("family[city]", "City", null, array("size" => 20, "maxlength" => 150)) ?>
+            <label>State</label><?= $this->formSelect("family[state]", ($this->family['state']) ? $this->family['state'] : "NY", null, $this->stateOptions) ?>
+            <?= $this->formText("family[zip]", "Zip Code", null, array("size" => 5, "maxlength" => 5)) ?> &nbsp; - <?= $this->formText("family[zip_plus]", "", null, array("size" => 4, "maxlength" => 4)) ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            Phones
+        </td>
+        <td>
+            <?php
+            // Quick hack for getting phone numbers as xxx-xxx-xxxx
+            if (!(empty($this->phone))) {
+                foreach ($this->phone as $key => $phone) {
+                    if (empty($phone["phone_number"]) === false) {
+                        $phone_number = $phone["phone_number"];
+                        $area = substr($phone_number, 0, 3);
+                        $first = substr($phone_number, 3, 3);
+                        $second = substr($phone_number, 6);
+                        $this->phone[$key]["phone_number"] = "(" . $area . ") " . $first . "-" . $second;
+                    }
+                }
+            }
+            ?>
+            <label>(Home)</label><input type="text" name="phone[0][phone_number]" value="<?= $this->phone[0]['phone_number'] ?>" size="15" maxlength="14">
+            <input type="hidden" name="phone[0][family_setting_id]" value="1" />
+            <label>(Cell)</label><input type="text" name="phone[1][phone_number]" value="<?= $this->phone[1]['phone_number'] ?>" size="15" maxlength="14">
+            <input type="hidden" name="phone[1][family_setting_id]" value="2" />
+            <label>(Work)</label><input type="text" name="phone[2][phone_number]" value="<?= $this->phone[2]['phone_number'] ?>" size="15" maxlength="14">
+            <input type="hidden" name="phone[2][family_setting_id]" value="3" />
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            Emails
+        </td>
+        <td>
+            <label>(#1)</label><input type="text" name="email[0][email]" value="<?= $this->email[0]['email'] ?>" size="15" maxlength="150">
+            <input type="hidden" name="email[0][order]" value="1" />
+            <label>(#2)</label><input type="text" name="email[1][email]" value="<?= $this->email[1]['email'] ?>" size="15" maxlength="150">
+            <input type="hidden" name="email[1][order]" value="2" />
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            Other Stuff
+        </td>
+        <td>
+            <label>Daycare</label><?= $this->formSelect('baby[daycare]', $this->baby['daycare'], array('id' => 'daycare'), array("" => 'Yes/No', 2 => 'Yes', 1 => 'No')) ?>
+            <?= $this->formText("family[income]", "Income", null, array("size" => 10)) ?>
+            <p class="br"></p>
+            <label>How heard about study?</label>
+            <?= $this->formSelect('family[contact_source_id]', $this->family['contact_source_id'], array('id' => 'contact_source_id'), $this->sourceOptions) ?> &nbsp;&nbsp;OR 
+            <?= $this->formText("family[how_heard]", "", null, array("size" => 20, "maxlength" => 255)) ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            Baby Comments
+        </td>
+        <td>
+            <span class="spacer"><span>
+            <textarea name="baby[comments]" id="baby_comments" rows="4" cols="50"><?= $this->baby['comments'] ?></textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            Family Comments
+        </td>
+        <td>
+            <span class="spacer"><span>
+            <textarea name="family[comments]" id="family_comments" rows="4" cols="50"><?= $this->family['comments'] ?></textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            Done!
+        </td>
+        <td>
+            <div align="center">
+                <input type="submit" value="Save" id="submit">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <?php if ($this->action != "new"): ?>
+                    <?php if ($this->status == "ARCHIVED"): ?>
+                        <input type="submit" name="baby[unarchive]" value="Unarchive">
+                    <?php else: ?>
+                        <input type="submit" name="baby[archive]" value="Not Interested">
+                    <?php endif ?>
+                <?php endif ?>
+                &nbsp;&nbsp;
+                <input type='button' value='Print' onClick='window.print()' />
+            </div>
+        </td>
+    </tr>
+</table>
+<br />
+</form>

@@ -1,0 +1,88 @@
+
+<?php if ($this->success): ?>
+    <center>
+        <img src="<?= $this->dir_images . "/tup.jpg" ?>" width="150" height="150" alt="SUCCESS" />
+        <br />
+        <font face="verdana" color="009900" size =-1>
+            <strong><?= $this->success ?></strong>
+        </font>
+        <br /><br /><br /><br />
+        <a href="javascript:window.opener.location.reload(true); window.close();">Close Window</a>
+    </center>
+<?php else: ?>
+
+    <?php
+        if (!(empty($this->errors)))
+            echo $this->partial('_formErrorMsg.phtml', array('errors' => $this->errors));
+        if (!(empty($this->warnings)))
+            echo $this->partial('_formWarnMsg.phtml', array('warnings' => $this->warnings));
+    ?>
+
+    <form action="<?= $this->url(array("controller" => "baby-study", "action" => "{$this->type}-outcome")) ?>" method="post" accept-charset="utf-8">
+    <input type="hidden" name="id" value="<?= $this->study_history_id ?>" id="id" />
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">
+                Serial No
+            </td>
+            <td>
+                <label></label>
+                <?= $this->baby_id ?>
+                <input type="hidden" name="baby_id" value="<?= $this->baby_id ?>" id="baby_id">
+            </td>
+        </tr>   
+        <tr>
+            <td class="label">
+                Research Details
+            </td>
+            <td>
+                <label>Lab: </label>
+                <?= $this->lab ?>
+                <label>Study: </label>
+                <?= $this->study ?>
+                <input type="hidden" name="study_id" value="<?= $this->study_id ?>" id="study_id">
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Appointment</td>
+            <td>
+                <label></label>
+                <?= substr($this->appointment, 0, strlen($this->appointment)-3) ?>
+                <input type="hidden" name="appointment" value="<?= $this->appointment ?>" id="appointment">
+                <em>(MM/DD/YY hh:mm:ss)</em>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Outcome</td>
+            <td>
+                <label></label>
+                <?= $this->formSelect('study_outcome_id', $this->study_outcome_id, null, $this->outcomeOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Level of Enthusiasm</td>
+            <td>
+                <label></label>
+                (Lowest)<?= $this->formRadio("level_enthusiasm", $this->level_enthusiasm, null, $this->enthusiasmOptions, " ") ?>&nbsp;&nbsp;(Highest)
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Study Comments
+            </td>
+            <td>
+                <label></label>
+                <textarea name="comments" id="comments" rows="4" cols="42"><?= $this->study_comments ?></textarea>
+            </td>
+        </tr>
+    </table>
+    <p>
+        <input type="submit" name="allow_further" value="Allow Further Study">
+        <input type="submit" name="allow_further" value="Do Not Allow Further Study">
+        &nbsp;&nbsp;
+        <input type="reset" value="Reset" id="reset">
+    </p>
+    </form>
+    
+
+<?php endif ?>

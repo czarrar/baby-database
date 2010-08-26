@@ -1,0 +1,12 @@
+logger:
+  elements:
+    caller_id:
+      type: "select"
+      options:
+        label: "Caller:"
+        required: true
+        validators:
+          notempty:
+            validator: "NotEmpty"
+    submit:
+      type: "submit"

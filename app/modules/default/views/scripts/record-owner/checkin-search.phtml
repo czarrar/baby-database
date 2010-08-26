@@ -1,0 +1,58 @@
+<h2 class=our_list> Return Records </h2>
+
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_formErrorMsg.phtml', array('errors' => $this->errors));
+    if (!(empty($this->warnings)))
+        echo $this->partial('_formWarnMsg.phtml', array('warnings' => $this->warnings));
+?>
+
+<form action="<?= $this->url(array("controller" => "record-owner", "action" => "checkin-search"), null, true) ?>" method="post" accept-charset="utf-8">
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">Serial No.</td>
+            <td width="70%">
+                <span class="spacer"><span>
+                <?= $this->formText("baby_id", null, null, array("size" => 10, "maxlength" => 8)) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Record Owner</td>
+            <td width="70%">
+                <span class="spacer"><span>
+                <?= $this->formSelect("owner", $this->owner, null, $this->ownerOptions) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Age</td>
+            <td width="70%">
+                <label><strong>From (lower value)</strong></label>&nbsp;
+                <?= $this->formText("lyears", "Year", null, array("size" => 3, "maxlength" => 3)) ?>
+                <?= $this->formText("lmonths", "Month", null, array("size" => 3, "maxlength" => 3)) ?>
+                <?= $this->formText("ldays", "Day", null, array("size" => 3, "maxlength" => 3)) ?>
+                <p class="br"></p>
+                <label><strong>To (higher value)</strong></label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <?= $this->formText("hyears", "Year", null, array("size" => 3, "maxlength" => 3)) ?>
+                <?= $this->formText("hmonths", "Month", null, array("size" => 3, "maxlength" => 3)) ?>
+                <?= $this->formText("hdays", "Day", null, array("size" => 3, "maxlength" => 3)) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Select All Ages</td>
+            <td width="70%">
+                <span class="spacer"><span>
+                <input type="checkbox" name="allages" value="1" checked="<?= ($this->allages == 1) ? 'checked' : ''  ?>">
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Records per page :</td>
+            <td width="70%">
+                <span class="spacer"><span>
+                <?= $this->formSelect("per_page", ($this->per_page) ? $this->per_page : 50, null, $this->perPageOptions) ?>
+                &nbsp;               
+            </td>
+        </tr>
+    </table>
+    <br />
+    <input type="submit" name="checkin" value="Get Records &rarr;">&nbsp;&nbsp;&nbsp;<input type="reset" value="Reset" id="reset">
+</form>

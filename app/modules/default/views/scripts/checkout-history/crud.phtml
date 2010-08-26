@@ -1,0 +1,21 @@
+<div align="center">
+    <font face="verdana"><h1>Checkout History</h1></font>
+    <h3 align="left">Serial No: <?= $this->babyId ?></h3>
+    <?php 
+    switch ($this->displayPartial):
+        case 'new':
+        case 'update':
+            echo $this->partial('/checkout-history/_form.phtml', $this);
+            break;
+        case 'success':
+            echo "<strong>Database entry successfully completed! Great job.</strong>";
+            break;
+        case 'view':
+            echo $this->partial('/checkout-history/view.phtml', $this);
+            break;
+        case 'default':
+            break;
+    endswitch;
+    ?>
+    <?= $this->action('list', "checkout-history", null, array("baby_id" => $this->babyId, "is_crud" => 1)) ?>
+</div>

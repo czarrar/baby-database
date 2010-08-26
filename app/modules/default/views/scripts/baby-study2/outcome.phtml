@@ -1,0 +1,115 @@
+<h3>: Baby Outcome</h3>
+
+<?php
+    if (!(empty($this->errors))) {
+        echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
+        echo "<br /><br />";
+    }
+?>
+
+<? if($this->hasOtherStudies == 1): ?>
+	<strong><em><font color="red">This baby is currently participating in other studies. You must submit the outcome for each study seperately.</font></em></strong>
+	<br /><br />
+<? endif ?>
+
+<form action="<?= $this->url(array('controller' => 'baby-study2', 'action' => 'outcome')) ?>" method="post" accept-charset="utf-8">
+    <!-- HIDDEN FIELDS -->
+    <?= $this->form->baby_id->field() ?>
+    <?= $this->form->caller_id->field() ?>
+    <?= $this->form->other_studies->field() ?>
+    
+<table cellspacing="0" cellpadding="5" class="form">
+    <tr>
+        <td class="label">
+            <?= $this->form->baby_id->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->baby_id->getValue() ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->study_id->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->study_id->field() ?>
+        </td>
+    </tr>
+    <? if($this->hasOtherStudies == 1): ?>
+    <tr>
+    	<td class="label">
+    		<label>Other Studies</label>
+    	</td>
+    	<td>
+    		<label></label>
+    		<? foreach ($this->otherStudies as $otherStudy): ?>
+    			<a href="<?= $this->url(array("controller" => "baby-study2", "action" => "outcome", "baby_id" => $otherStudy["baby_id"], "study_id" => $otherStudy["study_id"]), null, true) ?>" target="_blank">
+		        	<?= $otherStudy["study"] ?>
+		    	</a>, 
+    		<? endforeach ?>
+    	</td>
+    </tr>
+    <? endif ?>
+    <tr>
+        <td class="label">
+            <label>Appointment</label>
+        </td>
+        <td>
+            <label>Date</label>&nbsp;&nbsp;&nbsp;
+            <?= $this->form->appt_date ?>
+            <em>(MM/DD/YY)</em>
+            <p class="br"></p>
+            <label>Start Time</label>&nbsp;&nbsp;
+            <?= $this->form->appt_time ?>
+            <em>(HH:MM)</em>
+            <p class="br"></p>
+            <label>End Time</label>&nbsp;&nbsp;&nbsp;
+            <?= $this->form->appointment_end_time ?>
+            <em>(HH:MM)</em>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->study_outcome_id->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->study_outcome_id->field() ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->level_enthusiasm->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->level_enthusiasm->field() ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->check_in->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->check_in->field() ?> <strong>Return baby record</strong>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <?= $this->form->comments->label() ?>
+        </td>
+        <td>
+            <label></label>
+            <?= $this->form->comments->field() ?>
+        </td>
+    </tr>
+</table>
+<p>
+    <?= $this->form->allow->field() ?>
+    &nbsp;
+    <?= $this->form->no_allow->field() ?>
+</p>
+</form>

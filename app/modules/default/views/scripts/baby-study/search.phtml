@@ -1,0 +1,70 @@
+<h2 class=our_list> Search Appointments </h2>
+
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_formErrorMsg.phtml', array('errors' => $this->errors));
+    if (!(empty($this->warnings)))
+        echo $this->partial('_formWarnMsg.phtml', array('warnings' => $this->warnings));
+?>
+<??>
+<form action="<?= $this->url(array("controller" => "baby-study", "action" => "search"), null, true) ?>" method="post" accept-charset="utf-8">
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label">Researcher</td>
+            <td width="70%"><?= $this->formSelect("search[researcher]", $this->search["researcher"], null, $this->researcherOptions) ?></td>
+        </tr>
+        <tr>
+            <td class="label">Study Name</td>
+            <td width="70%"><?= $this->formSelect("search[study]", $this->search["study"], null, $this->studyOptions) ?></td>
+        </tr>
+        <tr>
+            <td class="label">Date of Study</td>
+            <td width="70%">
+                &nbsp;From&nbsp;&nbsp;
+                <?= $this->formSelectDate(
+                    array(
+                        'search[date1][year]',
+                        'search[date1][month]',
+                        'search[date1][day]'
+                    ),
+                    ($this->search["date1"]) ? $this->search["date1"] : date("Y-m-d", strtotime("+1 day")),
+                    null,
+                    array(
+                        'year_start'=>date('Y')-1,
+                        'year_end'=>date('Y')+2
+                    )
+                ) ?>
+                <p class="br"></p>
+                &nbsp;To&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <?= $this->formSelectDate(
+                    array(
+                        'search[date2][year]',
+                        'search[date2][month]',
+                        'search[date2][day]'
+                    ),
+                    ($this->search["date2"]) ? $this->search["date2"] : date("Y-m-d", strtotime("+2 day")),
+                    null,
+                    array(
+                        'year_start'=>date('Y')-1,
+                        'year_end'=>date('Y')+2
+                    )
+                ) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Select all dates</td>
+            <td width="70%">
+                <input type="checkbox" name="search[alldates]" value="1" <?= ($this->search["alldates"]) ? "checked='checked'" : "" ?>>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Records per page :</td>
+            <td width="70%"><?= $this->formSelect("search[per_page]", ($this->search["per_page"]) ? $this->search["per_page"] : 10, null, $this->perPageOptions) ?>
+                &nbsp;               
+            </td>
+        </tr>
+    </table>
+    <br />
+    <input type="submit" value="Get Records &rarr;">&nbsp;&nbsp;&nbsp;<input type="reset" value="Reset" id="reset">
+    
+</form>

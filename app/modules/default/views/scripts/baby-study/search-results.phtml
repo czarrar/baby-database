@@ -1,0 +1,55 @@
+<script language='JavaScript'>
+
+function call_popup(url) {  window.open(url,'StudyInfo','toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=yes,copyhistory=no,scrollbars=yes,width=700,height=500');
+}
+
+function edit_popup(url) {
+ window.open(url,'Profile','toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=yes,copyhistory=no,scrollbars=yes,width=1000,height=680');
+}
+
+</script>
+
+<h2 class=our_list> Search Appointments </h2>
+
+<p><em>Retrieved a total of <?= $this->rowCount ?> <?= ($this->rowCount > 1) ? "records" : "record" ?></em></p>
+<p align="center">Pages: &nbsp;&nbsp;&nbsp;<?= $this->links ?></p>
+
+<table width='96%' border='0' align='center' cellpadding="0" cellspacing='0'>
+    <tr id='dob_year3'>		
+        <td><a href="<?= $this->url($this->link['id']) ?>"> Serial No. </a></td>
+        <td> Study History </td>
+        <td><a href="<?= $this->url($this->link['study']) ?>"> Study </a></td>
+		<td><a href="<?= $this->url($this->link['researcher']) ?>"> Researcher </a></td>
+        <td><a href="<?= $this->url($this->link['lab']) ?>"> Lab </a></td>
+        <td><a href="<?= $this->url($this->link['study_date']) ?>"> Study&nbsp;Date </a></td>
+    </tr>
+    
+    <?php foreach ($this->results as $result): ?>    
+        <tr id="dob_month3">
+            <td>
+                <a href="<?= $this->url(array("controller" => "baby", "action" => "common", "baby_id" => $result["id"], "type" => $this->listType, "study_id" => $result["study_id"]), null, true) ?>" target="_blank">
+                    <?= ($result['id']) ? $result['id'] : "ERROR" ?>&nbsp;
+                </a>
+            </td>
+            <td>
+                <a href="javascript:call_popup('<?= $this->url(array("controller" => 'study-history', "action" => 'list', "baby_id" => $result['id']), null, true) ?>')">Study History</a>
+            </td>
+            <td>
+                <?= ($result['study']) ? $result['study'] : "ERROR" ?>
+            </td>
+            <td>
+                <?= ($result['researcher']) ? $result['researcher'] : "ERROR" ?>
+            </td>
+
+            <td>
+                <?= ($result['lab']) ? $result['lab'] : "ERROR" ?>
+            </td>
+
+            <td>
+                <?= ($result['study_date']) ? $result['study_date'] : "" ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
+</table>
+<br />
+<p align="center">Pages: &nbsp;&nbsp;&nbsp;<?= $this->links ?></p>

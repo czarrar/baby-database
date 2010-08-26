@@ -1,0 +1,8 @@
+<p>
+    <?= ucwords($this->type) ?> led to a change in record status for <?= $this->numRecords ?> <?= ($this->numRecords == 1) ? "record" : "records" ?> including the following serial numbers:
+    <ul>
+        <?php foreach ($this->babyRecords as $record): ?>
+            <li><?= $record ?></li>
+        <?php endforeach ?>
+    </ul>
+</p>

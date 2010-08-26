@@ -1,0 +1,72 @@
+main:
+  elements:
+    submit:
+      type: "submit"
+  prefixPaths:
+    element:
+      prefix: "Zarrar_Form_Element"
+      path: "Zarrar/Form/Element"
+baby:
+  prefixPaths:
+    element:
+      prefix: "Zarrar_Form_Element"
+      path: "Zarrar/Form/Element"
+  elementsBelongTo: "baby"
+  isArray: true
+  elements:
+    username:
+      type: "text"
+      options:
+        label: "Username"
+        description: "test"
+        size: 5
+        maxlength: 3
+        validators:
+          notempty:
+            validator: "NotEmpty"
+          alnum:
+            validator: "Alnum"
+          strlen:
+            validator: "StringLength"
+            options:
+              min: "6"
+              max: "20"
+              messages:
+                stringLengthTooShort: "Not Good"
+    password:
+      type: "date"
+      options:
+        label: "Password"
+        validators:
+          strlen:
+            validator: "StringLength"
+            setMessages: "Not Good"
+            options:
+              min: "6"
+        required: true
+    list:
+      type: "select"
+      options:
+        label: "List"
+family:
+  elementsBelongTo: "family"
+  isArray: true
+  elements:
+    username:
+      type: "text"
+      options:
+        label: "Username"
+        description: "test"
+        validators:
+          alnum:
+            validator: "Alnum"
+        required: true
+    password:
+      type: "password"
+      options:
+        label: "Password"
+        required: true
+    list:
+      type: "select"
+      options:
+        label: "List"

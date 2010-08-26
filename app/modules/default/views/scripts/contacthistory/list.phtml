@@ -1,0 +1,34 @@
+
+<table id="sortable_table" class="datagrid">
+    <thead>
+        <th mochi:format="isodate">Date/Time</th>
+        <th mochi:format="str">Attempt</th>
+        <th mochi:format="istr">Type</th>
+        <th mochi:format="istr">Method</th>
+        <th mochi:format="istr">Study</th>
+        <th mochi:format="istr">Researcher</th>
+        <th mochi:format="istr">Caller</th>
+        <th mochi:format="istr">Outcome</th>
+        <th mochi:format="istr">Comments</th>
+    </thead>
+    <tfoot class="invisible">
+        <tr>
+            <td colspan="0"></td>
+        </tr>
+    </tfoot>
+    <tbody>
+        <?php foreach ($this->results as $row): ?>
+            <tr>
+                <td><?= substr($row->datetime, 0, strlen($row->datetime)-3) ?></td>     
+                <td><?= $row->attempt ?></td>
+                <td><?= $row->type ?></td>     
+                <td><?= $row->method ?></td>   
+                <td><?= $row->study ?></td>    
+                <td><?= $row->researcher ?></td>
+                <td><?= $row->caller ?></td>       
+                <td><?= $row->outcome ?><?= ($row->callback) ? "<font color ='#FF0000'><br />Callback: {$row->callback}</font>" : '' ?><?= ($row->callback_date) ? "<font color ='#FF0000'><br />Callback: {$row->callback_date}, " . substr($row->callback_time_begin,0,5) . " to " . substr($row->callback_time_end,0,5) . "</font>" : '' ?></td>
+                <td><?= $row->comments ?></td>     
+            </tr>                               
+        <?php endforeach ?>                     
+    </tbody>
+</table>
