@@ -1417,7 +1417,7 @@ class BabyController extends Zend_Controller_Action
 				"r.lab_id = labs.id", array())
 		// Get list id
 			->joinLeft(array('lists' => 'lists'),
-				"b.list_id = lists.id", array());
+				"b.list_id = lists.id", array("list"));
 	
 		/*
 			BABY - POSSIBLE SEARCH PARAMATERS
@@ -2044,7 +2044,7 @@ class BabyController extends Zend_Controller_Action
 		/* Setup column header links to sort column */
 		
 		// common fields to setup links for
-		$urlFields = array_merge(array("baby_id", "status", "record_status", "record_owner", "last_name", "first_name", "dob", "sex", "mother_first_name", "mother_last_name", "language"), $addUrlFields);
+		$urlFields = array_merge(array("baby_id", "status", "record_status", "record_owner", "last_name", "first_name", "dob", "sex", "mother_first_name", "mother_last_name", "language", "list"), $addUrlFields);
 				
 		// create the urls
 		foreach ($urlFields as $field)

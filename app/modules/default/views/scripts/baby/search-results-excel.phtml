@@ -12,6 +12,7 @@
 		<td>Scheduling Status</td>
         <td>Record Status</td>
         <td>Record Owner</td>
+        <td>List</td>
         <td>Language</td>
         <?php if ($this->link['telephone']): ?>
             <td>Telephone</td>
@@ -72,6 +73,9 @@
             </td>
             <td>
                 <?= ($result['language']) ? $result['language'] : "" ?>
+            </td>
+            <td>
+                <?= ($result['list']) ? $result['list'] : "" ?>
             </td>
             <?php if ($this->link['telephone']): ?>
             <td>    

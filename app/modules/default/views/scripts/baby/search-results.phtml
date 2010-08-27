@@ -29,6 +29,7 @@ function edit_popup(url) {
 		<td><a href="<?= $this->url($this->link['status']) ?>"> Scheduling Status </a></td>
         <td><a href="<?= $this->url($this->link['record_status']) ?>"> Record Status </a></td>
         <td><a href="<?= $this->url($this->link['record_owner']) ?>"> Record Owner </a></td>
+        <td><a href="<?= $this->url($this->link['list']) ?>"> List </a></td>
         <td><a href="<?= $this->url($this->link['language']) ?>"> Language </a></td>
         <?php if ($this->link['telephone']): ?>
             <td><a href="<?= $this->url($this->link['telephone']) ?>"> Telephone </a></td>
@@ -86,6 +87,9 @@ function edit_popup(url) {
             </td>
             <td>
                 <?= ($result['record_owner']) ? $result['record_owner'] : "NONE" ?>
+            </td>
+            <td>
+                <?= ($result['list']) ? $result['list'] : "ERROR" ?>
             </td>
             <td>
                 <?= ($result['language']) ? $result['language'] : "" ?>
