@@ -294,6 +294,11 @@ class BabyController extends Zend_Controller_Action
 		// Disable header file
 		$this->view->headerFile = '_empty.phtml';
 		
+		// List options
+		$lists = new RList();
+		$this->view->listOptions = $lists->getSelectOptions(null, null, array("" => "AUTO"));
+		
+		
 		// Language options
 		$languages = new Language();
 		$this->view->languageOptions = $languages->getSelectOptions(null, "language");
@@ -1409,7 +1414,10 @@ class BabyController extends Zend_Controller_Action
 				's.researcher_id = r.id', array("record_owner" => new Zend_Db_Expr('CONCAT(r.researcher, " : ", s.study)')))
 		// Get lab
 			->joinLeft(array('labs' => 'labs'),
-				"r.lab_id = labs.id", array());
+				"r.lab_id = labs.id", array())
+		// Get list id
+			->joinLeft(array('lists' => 'lists'),
+				"b.list_id = lists.id", array());
 	
 		/*
 			BABY - POSSIBLE SEARCH PARAMATERS
@@ -1435,9 +1443,11 @@ class BabyController extends Zend_Controller_Action
 			if ($baby["id"])
 				$select->where("b.id = ?", $baby["id"]);
 
-			if ($baby["record_status"] === 0 || $baby["record_status"] === 1) {
+            if ($baby["list_id"])
+                $select->where("b.list_id = ?", $baby["list_id"]);
+
+			if ($baby["record_status"] === 0 || $baby["record_status"] === 1)
 				$select->where("b.checked_out = ?", $baby["record_status"]);
-			}
 				
 			if ($baby["status_id"])
 				$select->where("b.status_id = ?", $baby["status_id"]);

@@ -87,6 +87,29 @@ class Baby extends Zarrar_Db_Table
 	);
 	
 	
+	# Function to calculate the appropriate list id given a date of birth
+	public function dob2listid($dob) {
+	    # automatically assign the list ID of A, B, or C depending on date of
+        # birth (first day of a month = A, second = B, third = C, fourth = A,
+        # etc.)
+        
+        # Get day from dob
+        $day = explode('-', $dob);
+        $day = $day[2];
+        
+        # Get list ids and total # of ids
+	    $query = "SELECT id FROM lists WHERE (is_permanent = 0) AND (to_use = 1) ORDER BY list";
+	    $stmt = $this->getAdapter()->query($query);
+	    $results = $stmt->fetchAll(Zend_Db::FETCH_COLUMN);
+	    $numIds = count($results);
+	    
+	    # Divide day by # of list ids and take the reminder
+	    $which = $day % $numIds;
+	    $listId = $results[$which];
+	    
+	    return($listId);
+	}
+	
 	protected function _modifyData(array $data)
 	{	
 		/* Check for archive setting */
@@ -177,6 +200,8 @@ class Baby extends Zarrar_Db_Table
 		return parent::_modifyData($data);
 	}
 	
+	# note that $data coming in here is incomplete
+	# other data should be in $this->_data
 	public function insert(array $data=array())
     {
         // default value for 'date_of_entry' is the current data
@@ -188,9 +213,8 @@ class Baby extends Zarrar_Db_Table
             $data['last_update'] = new Zend_Db_Expr('NOW()');
 		
 		// default value for 'list'
-		# TODO: have it look at dob to determine list
-		if (empty($data['list_id']))
-		    $data['list_id'] = 1;
+		if (empty($data['list_id']) && !empty($this->_data['dob']))
+		    $data['list_id'] = $this->dob2listid($this->_data['dob']);
 		
         return parent::insert($data);
     }
@@ -215,6 +239,10 @@ class Baby extends Zarrar_Db_Table
 		// default value for 'last_update' is the date+time now
         if (empty($data['last_update']))
             $data['last_update'] = new Zend_Db_Expr('NOW()');
+            
+        // default value for 'list'
+		if (empty($data['list_id']) && !empty($this->_data['dob']))
+		    $data['list_id'] = $this->dob2listid($this->_data['dob']);
 		
         return parent::filterInsert($data);
     }

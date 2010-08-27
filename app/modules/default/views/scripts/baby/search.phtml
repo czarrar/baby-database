@@ -12,14 +12,15 @@
     <table cellspacing="0" cellpadding="5" class="form">
         <tr>
             <td class="label">
-                Record Status
+                Status
             </td>
             <td>
+                <label>List</label>
+				<?= $this->formSelect("baby[list_id]", $this->baby["list_id"], null, $this->listOptions) ?>
                 <label>Record Status</label>
                 <?= $this->formSelect("baby[record_status]", $this->baby["record_status"], null, array("" => 'Choose', "1" => 'INACTIVE', "2" => 'ACTIVE')) ?>
                 <label>Baby Status</label>
                 <?= $this->formSelect("baby[status_id]", $this->baby["status_id"], null, $this->statusOptions) ?>
-                
             </td>
         </tr>
         <tr>

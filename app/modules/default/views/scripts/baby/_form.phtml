@@ -16,6 +16,15 @@
     
     
 <table cellspacing="0" cellpadding="5" class="form">
+    <?php if ($this->type == "new"): ?>
+        <td class="label">
+			List
+		</td>
+		<td>
+            <?= $this->formSelect("baby[list_id]", $this->baby["list_id"], null, $this->listOptions) ?>
+        </td>
+    <?php endif ?>
+    
     <?php if ($this->type == "edit"): ?>
         <input type="hidden" name="baby[id]" value="<?= $this->baby["id"] ?>" />
         <input type="hidden" name="baby[family_id]" value="<?= $this->baby["family_id"] ?>" />
@@ -46,7 +55,7 @@
     <?php endif ?>
 
     <tr>
-        <td class="label">
+        <td class="label" style="color:red">
             Baby
         </td>
         <td>
@@ -73,25 +82,51 @@
         </td>
     </tr>
     <tr>
-        <td class="label">
+        <td class="label" style="color:red">
             Mother
         </td>
         <td>
                 <?= $this->formText("family[mother_first_name]", "(First name)", null, array("size" => 10, "maxlength" => 100)) ?>
                 <?= $this->formText("family[mother_last_name]", "(Last name)", null, array("size" => 15, "maxlength" => 150)) ?>
-                <p class="br"></p>
-                <label>(Ethnicity)</label><?= $this->formSelect('family[mother_ethnicity_id]', $this->family['mother_ethnicity_id'], null, $this->ethnicityOptions) ?>
         </td>
     </tr>
     <tr>
-        <td class="label">
+        <td class="label" style="color:red">
             Father
         </td>
         <td>
             <?= $this->formText("family[father_first_name]", "(First name)", null, array("size" => 10, "maxlength" => 100)) ?>
             <?= $this->formText("family[father_last_name]", "(Last name)", null, array("size" => 15, "maxlength" => 150)) ?>
-            <p class="br"></p>
-            <label>(Ethnicity)</label><?= $this->formSelect('family[father_ethnicity_id]', $this->family['father_ethnicity_id'], null, $this->ethnicityOptions) ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label" style="color:red">
+            Born at Term?
+        </td>
+        <td>
+            <span class="spacer"><span>
+            <select name="baby[term_period]">
+                <option value=''> Choose</option>
+                <option value=-4>4 or more weeks early
+                <option value=-3>3 or more weeks early
+                <option value=-2>2 or more weeks early
+                <option value=-1>1 or more weeks early
+                <option value=0>Term
+                <option value=1>1 or more weeks late
+                <option value=2>2 or more weeks late
+                <option value=3>3 or more weeks late
+                <option value=4>4 or more weeks late
+            </select>
+            <?= $this->formText("baby[term_weeks]", "or exact # of weeks", $this->baby['term'], array("size" => 2, "maxlength" => 2)) ?>&nbsp;&nbsp;<em>(40 weeks is term)</em>
+        </td>
+    </tr>
+    <tr>
+	    <td class="label">
+	       Birth Weight
+	    </td>
+        <td>
+            <span class="spacer"><span>
+            <?= $this->formBirthWeight() ?>
         </td>
     </tr>
     <tr>
@@ -120,36 +155,6 @@
     	    <input type="hidden" name="language[4][order]" value="5" />
 		</td>
 	</tr>
-	<tr>
-	    <td class="label">
-	       Birth Weight
-	    </td>
-        <td>
-            <span class="spacer"><span>
-            <?= $this->formBirthWeight() ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="label">
-            Born at Term?
-        </td>
-        <td>
-            <span class="spacer"><span>
-            <select name="baby[term_period]">
-                <option value=''> Choose</option>
-                <option value=-4>4 or more weeks early
-                <option value=-3>3 or more weeks early
-                <option value=-2>2 or more weeks early
-                <option value=-1>1 or more weeks early
-                <option value=0>Term
-                <option value=1>1 or more weeks late
-                <option value=2>2 or more weeks late
-                <option value=3>3 or more weeks late
-                <option value=4>4 or more weeks late
-            </select>
-            <?= $this->formText("baby[term_weeks]", "or exact # of weeks", $this->baby['term'], array("size" => 2, "maxlength" => 2)) ?>&nbsp;&nbsp;<em>(40 weeks is term)</em>
-        </td>
-    </tr>
     <tr>
         <td class="label">
             Issues
@@ -163,7 +168,7 @@
         </td>
     </tr>
     <tr>
-        <td class="label">
+        <td class="label" style="color:red">
             Address
         </td>
         <td>
@@ -176,7 +181,7 @@
         </td>
     </tr>
     <tr>
-        <td class="label">
+        <td class="label" style="color:red">
             Phones
         </td>
         <td>
@@ -203,7 +208,7 @@
         </td>
     </tr>
     <tr>
-        <td class="label">
+        <td class="label" style="color:red">
             Emails
         </td>
         <td>
@@ -214,14 +219,10 @@
         </td>
     </tr>
     <tr>
-        <td class="label">
-            Other Stuff
+        <td class="label" style="color:red">
+            How heard?
         </td>
         <td>
-            <label>Daycare</label><?= $this->formSelect('baby[daycare]', $this->baby['daycare'], array('id' => 'daycare'), array("" => 'Yes/No', 2 => 'Yes', 1 => 'No')) ?>
-            <?= $this->formText("family[income]", "Income", null, array("size" => 10)) ?>
-            <p class="br"></p>
-            <label>How heard about study?</label>
             <?= $this->formSelect('family[contact_source_id]', $this->family['contact_source_id'], array('id' => 'contact_source_id'), $this->sourceOptions) ?> &nbsp;&nbsp;OR 
             <?= $this->formText("family[how_heard]", "", null, array("size" => 20, "maxlength" => 255)) ?>
         </td>

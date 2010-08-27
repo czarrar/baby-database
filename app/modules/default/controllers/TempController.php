@@ -9,6 +9,32 @@ class TempController extends Zend_Controller_Action
 	const HOME_DIR = "/home/wpl/public_html/babydb/app/etc/";
 	#const HOME_DIR = "/Users/czarrar/Sites/athena/app/etc/";
 	
+	function testAction()
+	{
+        // Get db adapter
+        $db = Zend_Registry::get('db');
+        $bTbl = new Baby();
+	    $row = $bTbl->fetchRow('id = 2');
+	    $day = explode('-', $row->dob);
+	    $day = $day[2];
+	    
+	    echo $day . "<br \>";
+	    
+	    $query = "SELECT id FROM lists WHERE (is_permanent = 0) AND (to_use = 1) ORDER BY list";
+	    $stmt = $db->query($query);
+	    $results = $stmt->fetchAll(Zend_Db::FETCH_COLUMN);
+	    $numIds = count($results);
+	    
+	    echo $numIds . "<br />";
+	    
+	    $which = $day % $numIds;
+	    $listId = $results[$which];
+	    
+	    echo $which . ":" . $listId . "<br />";
+	    
+	    exit();
+	}
+	
 	function checkStudiesAction()
 	{
 		set_time_limit(300);
