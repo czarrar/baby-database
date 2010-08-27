@@ -608,8 +608,27 @@ class Appointment2Controller extends Zend_Controller_Action
 					1 => "Odd",
 					2 => "Even"
 				));
+		# List ID
+		// Set options
+		$listTbl = new RList();
+		$listOptions = $listTbl->getSelectOptions(null, null, array("" => "Auto"));
+		// Create select field
+		$listId = $form->createElement("select", "list_id");
+		$listId->setLabel("List")
+		       ->setAllowEmpty(true)
+		       ->setMultiOptions($listOptions);
+
 
 		# Advanced Options
+		
+		# Ignore list id
+		$ignoreList = $form->createElement("select", "ignore_list");
+		$ignoreList->setLabel("Ignore List")
+				->setAllowEmpty(true)
+				->setMultiOptions(array(
+					0 => "No",
+					1 => "Yes"
+				));
 		
 		# Show babies who are currently participating in a study
 		$showActive = $form->createElement("select", "show_active");
@@ -688,7 +707,7 @@ class Appointment2Controller extends Zend_Controller_Action
 				->setMultiOptions($studyOptions);
 
 		# GET FORM (add non-common elements)
-		$formFields = array_merge(array($study, $callback, $scheduleStatus, $sex, $oddEven, $prevStudy, $lowerAge, $upperAge, $showActive), $languageFields);
+		$formFields = array_merge(array($study, $callback, $scheduleStatus, $sex, $oddEven, $prevStudy, $lowerAge, $upperAge, $showActive, $listId, $ignoreList), $languageFields);
 		$form = $this->_prepareForm($formFields, array(), array(), $form);
 
 		# Update study attributes to allow dynamic upload of page for study ages
@@ -750,7 +769,7 @@ class Appointment2Controller extends Zend_Controller_Action
 		$studySelect = $studyTbl->select()->where("id = ?", $data["study_id"]);
 		$studyRow = $studyTbl->fetchRow($studySelect);
 
-		/* 1. restrict to odd/even entries */
+		/* 1.1 restrict to odd/even entries */
 		$restrictor = new Zend_Db_Expr('MOD(b.id, 2)');
 		switch ($data['odd_even']) {
 			// Get everything (no restriction)
@@ -768,6 +787,23 @@ class Appointment2Controller extends Zend_Controller_Action
 				throw new Zend_Controller_Action_Exception("Entry for study '{$studyRow->study}' has an incorrect odd/even field value '{$studyRow->odd_even}' (should be 0, 1, or 2).");
 				break;
 		}
+		
+		/* 1.1 restrict to labs based on list id */
+		if ($data['ignore_list'] == 0) {
+		    // Auto set the list ids to use
+		    if (empty($data['list_id'])) {
+		        $listIds = $studyTbl->getListIds($data['study_id']);
+		        foreach ($listIds as $key => $value)
+		            $listIds[$key] = $this->_db->quote($value);
+		        $listIds = implode(", ", $listIds);
+		        $select->where("b.list_id IN ({$listIds})");
+	        } 
+	        // Get list id given
+	        else {
+	            $select->where("b.list_id = ?", $data['list_id']);
+	        }
+		}
+		
 
 	 	/* 2. combined with date of study, get babies in specified age range */
 		if ($data["off_date_search"] != 1) {

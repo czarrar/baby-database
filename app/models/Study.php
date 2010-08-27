@@ -30,6 +30,20 @@ class Study extends Zarrar_Db_Table
 		
         return parent::insert($data);
     }
+    
+    public function getListIds($studyId) {
+		$query = "SELECT lists.id FROM lists LEFT JOIN labs ON lists.lab_id = labs.id LEFT JOIN researchers ON labs.id = researchers.lab_id LEFT JOIN studies ON studies.researcher_id = researchers.id WHERE studies.id = ?";
+		
+		// Execute
+		$stmt = $this->getAdapter()->query($query, $studyId);
+		$results = $stmt->fetchAll(Zend_Db::FETCH_COLUMN);
+		
+		// Check
+		if (count($results) == 0)
+			throw new Exception("Could not find a list associated with current study");
+		
+		return $results;
+	}
 
 	/**
 	 * Gives a list of studies depending on users

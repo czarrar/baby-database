@@ -21,9 +21,9 @@
             </td>
         </tr>
         <tr>
-            <td class="label"><?= $this->form->odd_even->label() ?></td>
+            <td class="label"><?= $this->form->list_id->label() ?></td>
             <td width="70%">
-                <?= $this->form->odd_even->field() ?>
+                <?= $this->form->list_id->field() ?>
                 &nbsp;
             </td>
         </tr>
@@ -47,6 +47,12 @@
             <td colspan="2"><label><strong><u>Advanced Options</u></strong></label></td>
         </tr>
         <tr>
+            <td class="label"><?= $this->form->ignore_list->label() ?></td>
+            <td width="70%">
+                <label></label><?= $this->form->ignore_list->field() ?>
+            </td>
+        </tr>
+        <tr>
             <td class="label"><?= $this->form->off_date_search->label() ?></td>
             <td width="70%">
                 <label></label><?= $this->form->off_date_search->field() ?>
@@ -56,6 +62,13 @@
             <td class="label"><?= $this->form->show_active->label() ?></td>
             <td width="70%">
                 <label></label><?= $this->form->show_active->field() ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->odd_even->label() ?></td>
+            <td width="70%">
+                <?= $this->form->odd_even->field() ?>
+                &nbsp;
             </td>
         </tr>
         <tr>
