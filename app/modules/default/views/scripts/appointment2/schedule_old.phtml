@@ -1,0 +1,19 @@
+<h2 class=our_list> Schedule Appointments </h2>
+
+<?php
+    if (!(empty($this->errors)))
+        echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
+?>
+
+<form action="<?= $this->form->getAction() ?>" method="<?= $this->form->getMethod() ?>" accept-charset="utf-8" >
+    <table cellspacing="0" cellpadding="5" class="form">
+        <tr>
+            <td class="label"><?= $this->form->study_id->label() ?></td>
+            <td width="70%"><?= $this->form->study_id->field() ?>
+                &nbsp;               
+            </td>
+        </tr>
+    </table>
+    <br />
+    <?= $this->form->submit ?>
+</form>

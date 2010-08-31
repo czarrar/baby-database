@@ -463,42 +463,42 @@ class Appointment2Controller extends Zend_Controller_Action
  ********************************************/
 
 
-	public function scheduleAction()
-	{
-		# 1. FORM
-		// Prepare
-		$form = $this->_getForm();
-		// Get study options
-		$studyTbl = new Study();
-		$studyOptions = $studyTbl->getRecordOwners("long", false, array("" => "None"));
-		// Create select field
-		$study = $form->createElement("select", "study_id");
-		$study->setLabel("Study")
-				->setRequired(false)
-				->setMultiOptions($studyOptions);
-		$form->addElement($study);
-		// Submit field
-		$submit = new Zend_Form_Element_Submit("submit", "Start Search");
-		$form->addElement($submit);
-		// Make form available
-		$this->_form = $form;
-		// Process
-		$formGood = $this->_processForm();
-		
-		# 2. SEARCH
-		if ($formGood) {
-			$this->_redirector = $this->_helper->getHelper('Redirector');
-			$this->_redirector->goto("schedule2", null, null, array("study_id" => $this->_formData["study_id"]));
-		}
-		
-		# 3. PREPARE VIEW
-		$this->_prepareAction();
-	}
+	//public function scheduleAction()
+	//{
+	//	# 1. FORM
+	//	// Prepare
+	//	$form = $this->_getForm();
+	//	// Get study options
+	//	$studyTbl = new Study();
+	//	$studyOptions = $studyTbl->getRecordOwners("long", false, array("" => "None"));
+	//	// Create select field
+	//	$study = $form->createElement("select", "study_id");
+	//	$study->setLabel("Study")
+	//			->setRequired(false)
+	//			->setMultiOptions($studyOptions);
+	//	$form->addElement($study);
+	//	// Submit field
+	//	$submit = new Zend_Form_Element_Submit("submit", "Start Search");
+	//	$form->addElement($submit);
+	//	// Make form available
+	//	$this->_form = $form;
+	//	// Process
+	//	$formGood = $this->_processForm();
+	//	
+	//	# 2. SEARCH
+	//	if ($formGood) {
+	//		$this->_redirector = $this->_helper->getHelper('Redirector');
+	//		$this->_redirector->goto("schedule2", null, null, array("study_id" => $this->_formData["study_id"]));
+	//	}
+	//	
+	//	# 3. PREPARE VIEW
+	//	$this->_prepareAction();
+	//}
 
 	/**
 	 * Search babies to schedule them
 	 **/
-	public function schedule2Action()
+	public function scheduleAction()
 	{
 		# Get study id (from study select field)
 		$studyId = $this->_getParam("study_id");
@@ -716,7 +716,8 @@ class Appointment2Controller extends Zend_Controller_Action
 		$form = $this->_prepareForm($formFields, array(), array(), $form);
 
 		# Update study attributes to allow dynamic upload of page for study ages
-		$form->study_id->setAttrib("onChange", "updateAge(this.id)");
+		$baseUrl = $this->view->url(array('action' => 'schedule', 'controller' => 'appointment2'), null, true);
+		$form->study_id->setAttrib("onChange", "updateAge('{$baseUrl}')");
 		$form->study_id->setValue($studyId);
 
 		// Save
@@ -807,8 +808,11 @@ class Appointment2Controller extends Zend_Controller_Action
 			elseif (!empty($data['study_id']))
 				$upperAge = $studyRow->upper_age;
 			
-			if (empty($lowerAge) or empty($upperAge))
-				throw new Zend_Controller_Action_Exception("This study does not have an age range specified or a custom one was not specific by user, please select yes to 'Ignore Date Range' if you don't want one specified.");
+			if (empty($lowerAge) or empty($upperAge)) {
+			    # Only if study is none, is this ok
+			    if (!empty($data['study_id']))
+			        throw new Zend_Controller_Action_Exception("This study does not have an age range specified or a custom one was not specific by user, please select yes to 'Ignore Date Range' if you don't want one specified.");
+			} 
 			elseif (!empty($data["begin_date"]) and !empty($data["end_date"])) {
 				// Need a calculator
 				$calculator = new Zarrar_AgeCalculator();

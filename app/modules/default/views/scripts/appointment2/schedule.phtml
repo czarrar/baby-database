@@ -1,16 +1,115 @@
 <h2 class=our_list> Schedule Appointments </h2>
 
+<script language="JavaScript" type="text/javascript">
+<!--
+function updateAge(partialLink) {
+    var oForm = document.forms[0];
+    var study_id = oForm.elements.study_id.value;
+    window.location = partialLink + '/study_id/' + study_id;
+}
+-->
+</script>
+
 <?php
     if (!(empty($this->errors)))
         echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
 ?>
 
-<form action="<?= $this->form->getAction() ?>" method="<?= $this->form->getMethod() ?>" accept-charset="utf-8" >
+<form name="search-schedule" action="<?= $this->form->getAction() ?>" method="<?= $this->form->getMethod() ?>" accept-charset="utf-8" >
     <table cellspacing="0" cellpadding="5" class="form">
+		<tr>
+			<td class="label"><label>Study</label></td>
+			<td width="70%">
+				<?= $this->form->study_id->field() ?>
+			</td>
+		</tr>
         <tr>
-            <td class="label"><?= $this->form->study_id->label() ?></td>
-            <td width="70%"><?= $this->form->study_id->field() ?>
+            <td class="label"><label>Date of Study</label></td>
+            <td width="70%"><?= $this->form->begin_date ?> &nbsp; TO &nbsp; <?= $this->form->end_date ?>
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->list_id->label() ?></td>
+            <td width="70%">
+                <?= $this->form->list_id->field() ?>
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->callback->label() ?></td>
+            <td width="70%"><?= $this->form->callback->field() ?>
                 &nbsp;               
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->per_page->label() ?></td>
+            <td width="70%"><?= $this->form->per_page->field() ?>
+                &nbsp;               
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">&nbsp;               
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><label><strong><u>Advanced Options</u></strong></label></td>
+        </tr>
+        <tr>
+            <td class="label"><label>Ignore Date Range</label></td>
+            <td width="70%">
+                <label></label><?= $this->form->off_date_search->field() ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->show_active->label() ?></td>
+            <td width="70%">
+                <label></label><?= $this->form->show_active->field() ?>
+            </td>
+        </tr>
+        <tr>
+        	<td class="label"><label>Age Range</label></td>
+        	<td width="70%">
+        		<label></label><?= $this->form->lower_age ?> &nbsp; TO &nbsp; <?= $this->form->upper_age ?>
+                &nbsp;
+        	</td>
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->baby_id->label() ?></td>
+            <td width="70%">
+                <label></label><?= $this->form->baby_id->field() ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><label>Baby Details</label></td>
+            <td width="70%">
+                <?= $this->form->first_name ?><?= $this->form->last_name ?>
+                <p class="br"></p>
+                <?= $this->form->sex ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->previous_study->label() ?></td>
+            <td width="70%">
+                <label></label>Participated in <?= $this->form->previous_study->field() ?>
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><label>Languages</label></td>
+            <td width="70%">
+                <?= $this->form->language1->label() ?>
+                <?= $this->form->language1->field() ?>
+                <?= $this->form->language1_rate->label() ?>
+                <?= $this->form->language1_rate->field() ?>
+                &nbsp;<?= $this->form->language1_amount->field() ?>
+                <p class="br"></p>
+                <?= $this->form->language2->label() ?>
+                <?= $this->form->language2->field() ?>
+                <?= $this->form->language2_rate->label() ?>
+                <?= $this->form->language2_rate->field() ?>
+                &nbsp;<?= $this->form->language2_amount->field() ?>
+                &nbsp;
             </td>
         </tr>
     </table>
