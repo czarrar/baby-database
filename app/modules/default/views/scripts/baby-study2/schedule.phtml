@@ -16,7 +16,7 @@
 	<br /><br />
 <? endif ?>
 
-<form action="<?= $this->url(array('controller' => 'baby-study2', 'action' => 'schedule')) ?>" method="post" accept-charset="utf-8">    
+<form name="schedule" action="<?= $this->url(array('controller' => 'baby-study2', 'action' => 'schedule')) ?>" method="post" accept-charset="utf-8">    
     <?= $this->form->baby_id->field() ?>
     <?= $this->form->baby_dob->field() ?>
     <?= $this->form->caller_id->field() ?>

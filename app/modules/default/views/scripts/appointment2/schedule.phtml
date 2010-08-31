@@ -3,7 +3,7 @@
 <script language="JavaScript" type="text/javascript">
 <!--
 function updateAge(partialLink) {
-    var oForm = document.forms[0];
+    var oForm = document.forms["search_schedule"];
     var study_id = oForm.elements.study_id.value;
     window.location = partialLink + '/study_id/' + study_id;
 }
@@ -15,7 +15,7 @@ function updateAge(partialLink) {
         echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
 ?>
 
-<form name="search-schedule" action="<?= $this->form->getAction() ?>" method="<?= $this->form->getMethod() ?>" accept-charset="utf-8" >
+<form name="search_schedule" action="<?= $this->form->getAction() ?>" method="<?= $this->form->getMethod() ?>" accept-charset="utf-8" >
     <table cellspacing="0" cellpadding="5" class="form">
 		<tr>
 			<td class="label"><label>Study</label></td>
