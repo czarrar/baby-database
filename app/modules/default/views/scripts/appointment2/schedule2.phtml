@@ -7,11 +7,10 @@
 
 <form action="<?= $this->form->getAction() ?>" method="<?= $this->form->getMethod() ?>" accept-charset="utf-8" >
     <table cellspacing="0" cellpadding="5" class="form">
-	<?= $this->form->study_id->field() ?>
 		<tr>
 			<td class="label"><label>Study</label></td>
 			<td width="70%">
-				<?= $this->studyName ?>
+				<?= $this->form->study_id->field() ?>
 			</td>
 		</tr>
         <tr>
@@ -47,13 +46,7 @@
             <td colspan="2"><label><strong><u>Advanced Options</u></strong></label></td>
         </tr>
         <tr>
-            <td class="label"><?= $this->form->ignore_list->label() ?></td>
-            <td width="70%">
-                <label></label><?= $this->form->ignore_list->field() ?>
-            </td>
-        </tr>
-        <tr>
-            <td class="label"><?= $this->form->off_date_search->label() ?></td>
+            <td class="label"><label>Ignore Date Range</label></td>
             <td width="70%">
                 <label></label><?= $this->form->off_date_search->field() ?>
             </td>
@@ -62,13 +55,6 @@
             <td class="label"><?= $this->form->show_active->label() ?></td>
             <td width="70%">
                 <label></label><?= $this->form->show_active->field() ?>
-            </td>
-        </tr>
-        <tr>
-            <td class="label"><?= $this->form->odd_even->label() ?></td>
-            <td width="70%">
-                <?= $this->form->odd_even->field() ?>
-                &nbsp;
             </td>
         </tr>
         <tr>
@@ -93,6 +79,13 @@
             </td>
         </tr>
         <tr>
+            <td class="label"><?= $this->form->previous_study->label() ?></td>
+            <td width="70%">
+                <label></label>Participated in <?= $this->form->previous_study->field() ?>
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
             <td class="label"><label>Languages</label></td>
             <td width="70%">
                 <?= $this->form->language1->label() ?>
@@ -106,13 +99,6 @@
                 <?= $this->form->language2_rate->label() ?>
                 <?= $this->form->language2_rate->field() ?>
                 &nbsp;<?= $this->form->language2_amount->field() ?>
-                &nbsp;
-            </td>
-        </tr>
-        <tr>
-            <td class="label"><?= $this->form->previous_study->label() ?></td>
-            <td width="70%">
-                <label></label>Participated in <?= $this->form->previous_study->field() ?>
                 &nbsp;
             </td>
         </tr>

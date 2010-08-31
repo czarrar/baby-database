@@ -58,7 +58,7 @@ class StudyController extends Zend_Controller_Action
 		
 		// Get researcher options
 		$researcherTbl = new Researcher();
-		$researcherOptions = $researcherTbl->getRecordOwners("short", true, array("" => "Choose"));
+		$researcherOptions = $researcherTbl->getRecordOwners("long", true, array("" => "Choose"));
 		// Create researcher field (select)
 		$researcher = $form->createElement("select", "researcher_id");
 		$researcher->setLabel("Researcher")

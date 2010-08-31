@@ -8,6 +8,10 @@
 <?php if ($this->calculated): ?>
     <strong>Calculated the <?= $this->calculated ?></strong>
 <?php else: ?>
+    <?php if ($this->preAge): ?>
+        <strong><em>Age is <?= $this->preAge ?></em></strong>
+        <br /><br />
+    <?php endif ?>
     Please complete two of three options (DOB, Date, or Age).
 <?php endif ?>
 <??>

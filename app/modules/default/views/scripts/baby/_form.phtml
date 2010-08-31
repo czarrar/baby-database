@@ -121,53 +121,6 @@
         </td>
     </tr>
     <tr>
-	    <td class="label">
-	       Birth Weight
-	    </td>
-        <td>
-            <span class="spacer"><span>
-            <?= $this->formBirthWeight() ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="label">
-            Languages
-        </td>
-        <td>
-            <?php // Spits out 4 entries for language ?>
-            <?php for ($i=0; $i < 4; $i++): ?>
-            	<label>Lang <?= $i+1 ?></label>
-            	<?php if ($this->action == "new"): ?>
-            	    <?= $this->formSelect("language[$i][language_id]", $this->language[$i]['language_id'], null, $this->languageOptions) ?>
-            	<?php else: ?>
-            	    <input type="text" name="language[<?= $i ?>][language]" value="<?= $this->specialLanguages[$i] ?>" size="8" maxlength="100">
-            	<?php endif ?>
-        	    <label>(&#37;/Wk)</label>
-        	    <input type="text" name="language[<?= $i ?>][percent_per_week]" value="<?= $this->language[$i]['percent_per_week'] ?>" size="4" maxlength="3">
-        	    <input type="hidden" name="language[<?= $i ?>][order]" value="<?= $i + 1 ?>" />
-        	    <p class="br"></p>
-        	<?php endfor; ?>
-        	<label>Lang 5</label>
-        	<input type="text" name="language[4][language]" value="<?= $this->specialLanguage ?>" size="8" maxlength="100">
-        	<?= ($this->action == "new") ? "&nbsp;" : "" ?>
-        	<label>(&#37;/Wk)</label>
-        	<input type="text" name="language[4][percent_per_week]" value="<?= $this->language[4]['percent_per_week'] ?>" size="4" maxlength="3">
-    	    <input type="hidden" name="language[4][order]" value="5" />
-		</td>
-	</tr>
-    <tr>
-        <td class="label">
-            Issues
-        </td>
-        <td>
-            <?= $this->formText("baby[med_problems]", "Major Medical Problems", null, array("size" => 50, "maxlength" => 255)) ?>
-            <p class="br"></p>
-            <label>Previous Ear Infections</label><?= $this->formSelect('baby[ear_infection]', $this->baby['ear_infection'], array('id' => 'ear_infection'), array("" => 'Yes/No', 2 => 'Yes', 1 => 'No')) ?>
-            <p class="br"></p>
-            <?= $this->formText("baby[audlang_problems]", "Auditory or Language Problems", null, array("size" => 20, "maxlength" => 255)) ?>
-        </td>
-    </tr>
-    <tr>
         <td class="label" style="color:red">
             Address
         </td>
@@ -225,6 +178,49 @@
         <td>
             <?= $this->formSelect('family[contact_source_id]', $this->family['contact_source_id'], array('id' => 'contact_source_id'), $this->sourceOptions) ?> &nbsp;&nbsp;OR 
             <?= $this->formText("family[how_heard]", "", null, array("size" => 20, "maxlength" => 255)) ?>
+        </td>
+    </tr>
+<!--
+    <tr>
+	    <td class="label">
+	       Birth Weight
+	    </td>
+        <td>
+            <span class="spacer"><span>
+            <?= $this->formBirthWeight() ?>
+        </td>
+    </tr>
+-->
+    <tr>
+        <td class="label">
+            Languages
+        </td>
+        <td>
+            <?php // Spits out 3 entries for language ?>
+            <?php for ($i=0; $i < 3; $i++): ?>
+            	<label>Lang <?= $i+1 ?></label>
+            	<?php if ($this->action == "new"): ?>
+            	    <?= $this->formSelect("language[$i][language_id]", $this->language[$i]['language_id'], null, $this->languageOptions) ?>
+            	<?php else: ?>
+            	    <input type="text" name="language[<?= $i ?>][language]" value="<?= $this->specialLanguages[$i] ?>" size="8" maxlength="100">
+            	<?php endif ?>
+        	    <label>(&#37;/Wk)</label>
+        	    <input type="text" name="language[<?= $i ?>][percent_per_week]" value="<?= $this->language[$i]['percent_per_week'] ?>" size="4" maxlength="3">
+        	    <input type="hidden" name="language[<?= $i ?>][order]" value="<?= $i + 1 ?>" />
+        	    <p class="br"></p>
+        	<?php endfor; ?>
+		</td>
+	</tr>
+    <tr>
+        <td class="label">
+            Issues
+        </td>
+        <td>
+            <?= $this->formText("baby[med_problems]", "Major Medical Problems", null, array("size" => 50, "maxlength" => 255)) ?>
+            <p class="br"></p>
+            <label>Previous Ear Infections</label><?= $this->formSelect('baby[ear_infection]', $this->baby['ear_infection'], array('id' => 'ear_infection'), array("" => 'Yes/No', 2 => 'Yes', 1 => 'No')) ?>
+            <p class="br"></p>
+            <?= $this->formText("baby[audlang_problems]", "Auditory or Language Problems", null, array("size" => 20, "maxlength" => 255)) ?>
         </td>
     </tr>
     <tr>

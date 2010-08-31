@@ -106,11 +106,11 @@ class Researcher extends Zarrar_Db_Table
 			$ownerOptions = array("All" => "All");
 		else
 			$ownerOptions = $prependSelectOptions;
-			
+		
 		// Create form select, owner options
 		foreach ($result as $key => $row)
 			$ownerOptions[$row['researcher_id']] = $row['record_owner'];
-			
+		
 		return $ownerOptions;
 	}
 }

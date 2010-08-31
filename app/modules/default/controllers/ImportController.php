@@ -802,11 +802,55 @@ class ImportController extends Zend_Controller_Action
         exit();
 	}
 	
+	function createStudiesAction() {
+	    
+	    set_time_limit(300);
+	    
+	    $handle = fopen("/Users/zarrar/Sites/database_study_labs.csv", "r");
+        
+        $studies = array();
+        $researchers = array();
+        
+        $rowNum = 1;
+        while (($data = fgetcsv($handle)) !== FALSE) {
+            if ($rowNum === 1) {
+                $rowNum++;
+                continue;
+            }
+
+            $num = count($data);
+            // Trim each column and print onto screen
+            for ($c=0; $c < $num; $c++) { 
+                $data[$c] = trim($data[$c]);
+            }
+            
+            // Cols 1: Study, 2: Lab, 3: Researcher
+            array_push($studies, $data[0]);
+            array_push($researchers, $data[1] . " - " . $data[2]);
+            
+            $rowNum++;
+        }
+        
+        echo "<br />\n";
+        $uStudies = array_unique($studies);
+        print_r($uStudies);
+        echo "<br />\n";
+        echo "<br />\n";
+        $uResearchers = array_unique($researchers);
+        print_r($uResearchers);
+        
+        exit();
+	    
+	    
+	}
+	
+	
 	function getStudiesAction() {
 	    
 	    set_time_limit(300);
 	    
-	    $handle = fopen("/Users/zarrar/Sites/database_exp.csv", "r");
+	    #$handle = fopen("/Users/zarrar/Sites/database_exp.csv", "r");
+	    $handle = fopen("/Users/zarrar/Sites/database_study_labs.csv", "r");
 
         # Save study names
         $studies = array();
@@ -826,20 +870,23 @@ class ImportController extends Zend_Controller_Action
             // Trim each column and print onto screen
             for ($c=0; $c < $num; $c++) { 
                 $data[$c] = trim($data[$c]);
+                echo $data[$c] . ", ";
             }
-
-            foreach ($studyCols as $col) {
-                array_push($studies, $data[$col]);
-            }
+            
+            echo "<br >\n";
+            
+            #foreach ($studyCols as $col) {
+            #    array_push($studies, $data[$col]);
+            #}
             
             $rowNum++;
         }
         
-        echo "<br />\n";
-        $uStudies = array_unique($studies);
-        print_r($uStudies);
-        echo "<br />\n";
-        print_r(count($uStudies));
+        #echo "<br />\n";
+        #$uStudies = array_unique($studies);
+        #print_r($uStudies);
+        #echo "<br />\n";
+        #print_r(count($uStudies));
         
         exit();
 	    

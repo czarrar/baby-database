@@ -15,6 +15,7 @@
 <form action="<?= $this->url(array('controller' => 'baby-study2', 'action' => 'outcome')) ?>" method="post" accept-charset="utf-8">
     <!-- HIDDEN FIELDS -->
     <?= $this->form->baby_id->field() ?>
+    <?= $this->form->baby_dob->field() ?>
     <?= $this->form->caller_id->field() ?>
     <?= $this->form->other_studies->field() ?>
     

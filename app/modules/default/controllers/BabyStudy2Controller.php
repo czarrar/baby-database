@@ -86,8 +86,8 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		
 		// Get study id
 		$this->_studyId = $this->_getParam("study_id");
-		if (empty($this->_studyId))
-			throw new Zend_Controller_Action_Exception("Please provide the study id!");
+		#if (empty($this->_studyId))
+		#	throw new Zend_Controller_Action_Exception("Please provide the study id!");
 	}
 	
 	
@@ -95,6 +95,15 @@ class BabyStudy2Controller extends Zend_Controller_Action
  *	COMMON/SHARED FUNCTIONS	*
  ****************************/
  
+    // Gets the date of birth as YEAR-MONTH-DAY for baby
+    protected function _getBabyDob($babyId) {
+        $db = Zend_Registry::get('db');
+        $babyTbl = new Baby();
+		$select = $babyTbl->select()->where("id = ?", $babyId);
+		$babyRow = $babyTbl->fetchRow($select);
+        return $babyRow->dob;
+    }
+    
  	/**
 	 * Check if baby is scheduled for multiple studies
 	 *
@@ -102,6 +111,9 @@ class BabyStudy2Controller extends Zend_Controller_Action
 	 **/
  	protected function _checkMultipleStudies()
  	{
+ 	    if (empty($this->_studyId))
+			throw new Zend_Controller_Action_Exception("Please provide the study id!");
+ 	
 		// Fetch baby study rows with info on scheduled baby in studies
 		$db = Zend_Registry::get('db');
 		$select = $db->select()
@@ -145,6 +157,9 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		Zend_Loader::loadClass('Zend_Gdata_App_CaptchaRequiredException');
 		
 		$errorMessage = "";
+		
+		if (empty($this->_studyId))
+			throw new Zend_Controller_Action_Exception("Please provide the study id!");
 		
 		try {
 			# 1. Authenticate
@@ -280,10 +295,19 @@ class BabyStudy2Controller extends Zend_Controller_Action
 	 **/
 	protected function _processForm($actionType)
 	{
+#	    if (empty($this->_studyId))
+#			throw new Zend_Controller_Action_Exception("Please provide the study id!");
+	
 		// Get baby id
 		$babyId = $this->_babyId;
 		// Get study id
 		$studyId = $this->_studyId;
+		
+		if (empty($studyId)) {
+		    if ($actionType != "schedule" || ($actionType == "schedule" && $this->getRequest()->isPost()))
+		        $this->_errors["ERROR"] = array("info" => "No study given.");
+		    return False;
+	    }
 
 		# Check if baby has multiple studies
 		$this->_checkMultipleStudies();
@@ -305,10 +329,10 @@ class BabyStudy2Controller extends Zend_Controller_Action
 					
 					// Fetch event and calendar id info for studies
 					$gCalInfo = $this->_fetchGCalIDs();
-					
+                    
 					// Schedule baby for new study!
 					$message = call_user_func(array($this, "_process" . ucwords($actionType)), $this->_form->getValues());
-					
+                    
 					// Set message
 					$message = "BABY in study 'STUDY' at " . $message;
 					
@@ -398,7 +422,10 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		$baby = $form->createElement("hidden", "baby_id");
 		$baby->setLabel("Serial No")
 				->setRequired(true);
-
+        // also give the dob
+        $dob = $form->createElement("hidden", "baby_dob");
+		$dob->setRequired(true);
+		
 		# 2. STUDY ID
 		// Get study options
 		$studyTbl = new Study();
@@ -406,7 +433,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		// Create select field
 		$study = $form->createElement("select", "study_id");
 		$study->setLabel("Study")
-				->setAttrib("disabled", "disabled")
+				#->setAttrib("disabled", "disabled")
 				->setMultiOptions($studyOptions);
 				
 		# 3. COMMENTS
@@ -419,7 +446,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		$otherStudies = $form->createElement("hidden", "other_studies");
 				
 		# ADD ELEMENTS
-		$addElements = array_merge(array($baby, $study, $researcher, $perPage, $comments, $otherStudies), $elements);
+		$addElements = array_merge(array($baby, $dob, $study, $researcher, $perPage, $comments, $otherStudies), $elements);
 		$form->addElements($addElements);
 
 		# SET DECORATORS
@@ -437,11 +464,11 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		$date->setRequired(TRUE);
 		$form->addSubForm($date, 'appt_date');
 		// Add time
-		$time = new Zarrar_Form_SubForm_Time(array("addBy" => 5, "limitTime" => array(8,21)));
+		$time = new Zarrar_Form_SubForm_Time(array("addBy" => 15, "limitTime" => array(8,21)));
 		$time->setRequired(TRUE);
 		$form->addSubForm($time, 'appt_time');
 		// Add end time
-		$time = new Zarrar_Form_SubForm_Time(array("addBy" => 5, "limitTime" => array(8,21)));
+		$time = new Zarrar_Form_SubForm_Time(array("addBy" => 15, "limitTime" => array(8,21)));
 		$time->setRequired(TRUE);
 		$form->addSubForm($time, 'appointment_end_time');
 		
@@ -461,6 +488,9 @@ class BabyStudy2Controller extends Zend_Controller_Action
 	 **/
 	public function successAction()
 	{
+	    if (empty($this->_studyId))
+			throw new Zend_Controller_Action_Exception("Please provide the study id!");
+	
 		// Get message
 		$message = $this->_getParam("message");
 		// Get baby id
@@ -508,15 +538,6 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		
 		// Get study id
 		$studyId = $this->_getParam("study_id");
-		if (empty($studyId))
-			throw new Zend_Controller_Action_Exception("Please provide the study id!");
-		
-		// Throw error if baby is already participating in this study
-		$babyStudyTbl = new BabyStudy();
-		$select = $babyStudyTbl->select()->where("baby_id = ?", $babyId)->where("study_id = ?", $studyId);
-		$thisStudyRow = $babyStudyTbl->fetchAll($select);
-		if(count($thisStudyRow)>0)
-			throw new Zend_Controller_Action_Exception("This baby is already scheduled for this study!");
 		
 		// Get start and end age of study
 		$startDate = $this->_getParam("start_date");
@@ -559,6 +580,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		if (!$didProcess) {
 			$this->_form->populate(array(
 				"baby_id"		=> $babyId,
+				"baby_dob"      => $this->_getBabyDob($babyId),
 				"caller_id"		=> $_SESSION["caller_id"],
 				"study_id"		=> $studyId,
 				"appt_date"		=> array("my_date" => date('Y-m-d H:i:s')),
@@ -636,10 +658,14 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		 **/
 
 		$db = Zend_Registry::get('db');
-		
-		// Add study id
-		$data["study_id"] = $this->_getParam("study_id");
-
+        
+		// Throw error if baby is already participating in this study
+		$babyStudyTbl = new BabyStudy();
+		$select = $babyStudyTbl->select()->where("baby_id = ?", $data["baby_id"])->where("study_id = ?", $data["study_id"]);
+		$thisStudyRow = $babyStudyTbl->fetchAll($select);
+		if(count($thisStudyRow)>0)
+			throw new Zend_Controller_Action_Exception("This baby is already scheduled for this study!");
+        
 		// Set the appointment time
 		$data['appointment'] = $data['appt_date'] . " " . $data['appt_time'];
 		unset($data["appt_date"]);
@@ -705,6 +731,9 @@ class BabyStudy2Controller extends Zend_Controller_Action
 	 **/
 	protected function _gCalSchedule($data, $gCalInfo)
 	{
+	    if (empty($this->_studyId))
+			throw new Zend_Controller_Action_Exception("Please provide the study id!");
+	
 		# 1. INSANITY CHECKS
 	
 		// Check connection just in case
@@ -824,6 +853,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 			else {
 				$this->_form->populate(array(
 					"baby_id"	=> $babyId,
+					"baby_dob"      => $this->_getBabyDob($babyId),
 					"study_id"	=> $studyId,
 					"caller_id"	=> $_SESSION["caller_id"],
 					"appt_date"	=> array("my_date" => $bsInfo["appointment"]),
@@ -1164,6 +1194,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 			else {
 				$form->populate(array(
 					"baby_id"		=> $babyId,
+					"baby_dob"      => $this->_getBabyDob(),
 					"study_id"		=> $studyId,
 					"caller_id"		=> $_SESSION["caller_id"],
 					"appt_date" 	=> array("my_date" => $bsInfo["appointment"]),

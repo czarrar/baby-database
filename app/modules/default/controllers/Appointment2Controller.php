@@ -154,7 +154,7 @@ class Appointment2Controller extends Zend_Controller_Action
 				->setMultiOptions(array_combine($perPageOptions, $perPageOptions));
 				
 		$offRestrict = $form->createElement("select", "off_date_search");
-		$offRestrict->setLabel("Ignore Date Range")
+		$offRestrict->setLabel("Date Range")
 				->setAllowEmpty(true)
 				->setMultiOptions(array(
 					0 => "No",
@@ -228,7 +228,7 @@ class Appointment2Controller extends Zend_Controller_Action
 				return TRUE; // form is good
 		}
 		# 2. SET DEFAULTS (if new form)
-		else if (!empty($defaults)) {
+		elseif (!empty($defaults)) {
 			$this->_form->populate($defaults);
 		}
 	
@@ -462,9 +462,6 @@ class Appointment2Controller extends Zend_Controller_Action
  * BABY-STUDY SCHEDULING SEARCH FUNCTIONS	*
  ********************************************/
 
-# Make Baby Schedule Search a 2 step process
-## Step 1. Select a study
-## Step 2. Everything else
 
 	public function scheduleAction()
 	{
@@ -473,11 +470,11 @@ class Appointment2Controller extends Zend_Controller_Action
 		$form = $this->_getForm();
 		// Get study options
 		$studyTbl = new Study();
-		$studyOptions = $studyTbl->getRecordOwners("long", false, array("" => "Choose"));
+		$studyOptions = $studyTbl->getRecordOwners("long", false, array("" => "None"));
 		// Create select field
 		$study = $form->createElement("select", "study_id");
 		$study->setLabel("Study")
-				->setRequired(true)
+				->setRequired(false)
 				->setMultiOptions($studyOptions);
 		$form->addElement($study);
 		// Submit field
@@ -505,43 +502,54 @@ class Appointment2Controller extends Zend_Controller_Action
 	{
 		# Get study id (from study select field)
 		$studyId = $this->_getParam("study_id");
-		if(empty($studyId))
-			throw new Zend_Controller_Action_Exception("You must specify a study id for the second step of schedule search!");
+		#if(empty($studyId))
+		#	throw new Zend_Controller_Action_Exception("You must specify a study id for the second step of schedule search!");
 		
 		
 		# 1. FORM
-		// Prepare
-		$this->_prepareScheduleForm($studyId);
-		// Set default study date
+	    // Prepare
+	    $this->_prepareScheduleForm($studyId);
+	    
+	    // Set default study date
 		$defaults = array(
 			"study_id"		=> $studyId,
 			"begin_date"	=> date('Y-m-d', strtotime("+1 day")),
 			"end_date"		=> date('Y-m-d', strtotime("+1 week +1 day"))
 		);
+		
 		// Process
 		$formGood = $this->_processForm($defaults);
 
 		# 2. SEARCH
 		if ($formGood) {
-			// Prepare 
-			$studyRow = $this->_prepareScheduleQuery();
-			// Want to know study range for list
-			// Actual lower age range used
-			if(!empty($this->_formData['lower_age'])) {
-				$params['lower_age'] = $this->_formData['lower_age'];
-				$params['study_lower_age'] = $studyRow->lower_age;
-			} else {
-				$params['lower_age'] = $studyRow->lower_age;
-			}
-			// Actual upper age range used
-			if(!empty($this->_formData['upper_age'])) {
-				$params['upper_age'] = $this->_formData['upper_age'];
-				$params['study_upper_age'] = $studyRow->upper_age;
-			} else {
-				$params['upper_age'] = $studyRow->upper_age;
-			}
-			// Process
-			$this->_processQuery("schedule", $params);
+		    try {
+    			// Prepare 
+    			$studyRow = $this->_prepareScheduleQuery();
+    			// Want to know study range for list
+    			// Actual lower age range used
+    			if (empty($studyRow)) {
+    			    $params['lower_age'] = '**NO LOWER AGE**';
+    			} elseif(!empty($this->_formData['lower_age'])) {
+    				$params['lower_age'] = $this->_formData['lower_age'];
+    				$params['study_lower_age'] = $studyRow->lower_age;
+    			} else {
+    				$params['lower_age'] = $studyRow->lower_age;
+    			}
+    			// Actual upper age range used
+    			if (empty($studyRow)) {
+    			    $params['upper_age'] = '**NO UPPER AGE**';
+    			} elseif(!empty($this->_formData['upper_age'])) {
+    				$params['upper_age'] = $this->_formData['upper_age'];
+    				$params['study_upper_age'] = $studyRow->upper_age;
+    			} else {
+    				$params['upper_age'] = $studyRow->upper_age;
+    			}
+			    // Process
+    			$this->_processQuery("schedule", $params);
+			} catch(Exception $e) {
+    			// Crap, search did not work!
+    			$this->_errors["ERROR"] = array("info" => $e->getMessage());
+    		}
 		}
 
 		# 3. PREPARE VIEW
@@ -560,9 +568,16 @@ class Appointment2Controller extends Zend_Controller_Action
 		
 		$form = $this->_getForm();
 		
-		# CALLER ID
-		$study = $form->createElement("hidden", "study_id");
-		$study->setRequired(true);
+		# Study
+		// Get study options
+		$studyTbl = new Study();
+		$studyOptions = $studyTbl->getRecordOwners("long", false, array("" => "None"));		
+		// Create select field
+		$study = $form->createElement("select", "study_id");
+		$study->setLabel("Study")
+				->setRequired(false)
+				->setMultiOptions($studyOptions);
+		$form->addElement($study);
 		
 		# SET NON-COMMON ELEMENTS
 		
@@ -597,21 +612,11 @@ class Appointment2Controller extends Zend_Controller_Action
 					1  => "Female",
 					2  => "Male"
 				));
-
-		# ODD/EVEN
-		// Add all, odd, even (select)
-		$oddEven = $form->createElement("select", "odd_even");
-		$oddEven->setLabel("Odd/Even")
-				->setAllowEmpty(true)
-				->setMultiOptions(array(
-					0 => "All",
-					1 => "Odd",
-					2 => "Even"
-				));
+        
 		# List ID
 		// Set options
 		$listTbl = new RList();
-		$listOptions = $listTbl->getSelectOptions(null, null, array("" => "Auto"));
+		$listOptions = $listTbl->getSelectOptions(null, null, array("" => "*Auto*", "-1" => "*All*"));
 		// Create select field
 		$listId = $form->createElement("select", "list_id");
 		$listId->setLabel("List")
@@ -623,7 +628,7 @@ class Appointment2Controller extends Zend_Controller_Action
 		
 		# Ignore list id
 		$ignoreList = $form->createElement("select", "ignore_list");
-		$ignoreList->setLabel("Ignore List")
+		$ignoreList->setLabel("List")
 				->setAllowEmpty(true)
 				->setMultiOptions(array(
 					0 => "No",
@@ -707,7 +712,7 @@ class Appointment2Controller extends Zend_Controller_Action
 				->setMultiOptions($studyOptions);
 
 		# GET FORM (add non-common elements)
-		$formFields = array_merge(array($study, $callback, $scheduleStatus, $sex, $oddEven, $prevStudy, $lowerAge, $upperAge, $showActive, $listId, $ignoreList), $languageFields);
+		$formFields = array_merge(array($study, $callback, $scheduleStatus, $sex, $prevStudy, $lowerAge, $upperAge, $showActive, $listId, $ignoreList), $languageFields);
 		$form = $this->_prepareForm($formFields, array(), array(), $form);
 
 		# Update study attributes to allow dynamic upload of page for study ages
@@ -740,7 +745,7 @@ class Appointment2Controller extends Zend_Controller_Action
 
 		// Get data
 		$data = $this->_formData;
-
+        
 		// Join study history table
 		$select->joinLeft(array('sh' => 'study_histories'),
 			'b.id <=> sh.baby_id',
@@ -754,54 +759,38 @@ class Appointment2Controller extends Zend_Controller_Action
 		# TODO: else -> add restriction preventing showing baby that is scheduled for the current study -> so joinLeft and where
 
 		# Do not want babies having done current study
-		$select->where("
-			sh.study_id IS NULL"
-			. " OR "
-			. $this->_db->quoteInto("sh.study_id != ?", $data['study_id'])
-			. " OR ("
-			. $this->_db->quoteInto("sh.study_id = ?", $data['study_id']) . " AND " . $this->_db->quoteInto("sh.study_outcome_id != ?", self::OUTCOME_RUN) . ")"
-			);
-
+		if (!empty($data['study_id']))
+    		$select->where("
+    			sh.study_id IS NULL"
+    			. " OR "
+    			. $this->_db->quoteInto("sh.study_id != ?", $data['study_id'])
+    			. " OR ("
+    			. $this->_db->quoteInto("sh.study_id = ?", $data['study_id']) . " AND " . $this->_db->quoteInto("sh.study_outcome_id != ?", self::OUTCOME_RUN) . ")"
+    			);
+        
 		# STUDY/DATE-OF-STUDY
 
 		/* Get study details */
-		$studyTbl = new Study();
-		$studySelect = $studyTbl->select()->where("id = ?", $data["study_id"]);
-		$studyRow = $studyTbl->fetchRow($studySelect);
-
-		/* 1.1 restrict to odd/even entries */
-		$restrictor = new Zend_Db_Expr('MOD(b.id, 2)');
-		switch ($data['odd_even']) {
-			// Get everything (no restriction)
-			case 0:
-				break;
-			// Get odd baby ids
-			case 1:
-				$select->where("{$restrictor} = 1");
-				break;
-			// Get even baby ids
-			case 2:
-				$select->where("{$restrictor} = 0");
-				break;
-			default:
-				throw new Zend_Controller_Action_Exception("Entry for study '{$studyRow->study}' has an incorrect odd/even field value '{$studyRow->odd_even}' (should be 0, 1, or 2).");
-				break;
+		if (!empty($data['study_id'])) {
+		    $studyTbl = new Study();
+    		$studySelect = $studyTbl->select()->where("id = ?", $data["study_id"]);
+    		$studyRow = $studyTbl->fetchRow($studySelect);
+		} else {
+		    $studyRow = NULL;
 		}
 		
-		/* 1.1 restrict to labs based on list id */
-		if ($data['ignore_list'] == 0) {
+		/* 1.1 restrict to labs based on list id or select specific one */
+		if (empty($data['list_id'])) {
 		    // Auto set the list ids to use
-		    if (empty($data['list_id'])) {
+		    if (!empty($data['study_id'])) {
 		        $listIds = $studyTbl->getListIds($data['study_id']);
 		        foreach ($listIds as $key => $value)
 		            $listIds[$key] = $this->_db->quote($value);
 		        $listIds = implode(", ", $listIds);
 		        $select->where("b.list_id IN ({$listIds})");
-	        } 
-	        // Get list id given
-	        else {
-	            $select->where("b.list_id = ?", $data['list_id']);
 	        }
+		} elseif ($data['list_id'] != -1) {
+		    $select->where("b.list_id = ?", $data['list_id']);
 		}
 		
 
@@ -810,17 +799,17 @@ class Appointment2Controller extends Zend_Controller_Action
 			# Get lower age
 			if(!empty($data["lower_age"]))
 				$lowerAge = $data["lower_age"];
-			else
+			elseif (!empty($data['study_id']))
 				$lowerAge = $studyRow->lower_age;
 			# Get upper age
 			if(!empty($data["upper_age"]))
 				$upperAge = $data["upper_age"];
-			else
+			elseif (!empty($data['study_id']))
 				$upperAge = $studyRow->upper_age;
 			
 			if (empty($lowerAge) or empty($upperAge))
-				throw new Zend_Controller_Action_Exception("This study does not have an age range specified or a custom one was not specific by user, please check or you can contact coordinator or administrator.");
-			else if (!empty($data["begin_date"]) and !empty($data["end_date"])) {
+				throw new Zend_Controller_Action_Exception("This study does not have an age range specified or a custom one was not specific by user, please select yes to 'Ignore Date Range' if you don't want one specified.");
+			elseif (!empty($data["begin_date"]) and !empty($data["end_date"])) {
 				// Need a calculator
 				$calculator = new Zarrar_AgeCalculator();
 

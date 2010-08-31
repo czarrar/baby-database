@@ -1,5 +1,7 @@
 <h3>: Scheduling Baby</h3>
 
+<?= $this->partial('/baby-study2/_age.phtml', $this) ?>
+
 <?php
     if (!(empty($this->errors))) {
         echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
@@ -16,6 +18,7 @@
 
 <form action="<?= $this->url(array('controller' => 'baby-study2', 'action' => 'schedule')) ?>" method="post" accept-charset="utf-8">    
     <?= $this->form->baby_id->field() ?>
+    <?= $this->form->baby_dob->field() ?>
     <?= $this->form->caller_id->field() ?>
     <?= $this->form->other_studies->field() ?>
     
@@ -103,7 +106,9 @@
             <em>(HH:MM)</em>
             <p class="br"></p>
             <label></label>
-            <a href="#" onClick=" window.open('<?= $this->url(array('action' => 'calculator', 'controller' => 'index', 'baby_id' => $this->form->baby_id->getValue(), 'study_id' => $this->form->study_id->getValue()), null, true) ?>', 'Age Wizard', 'toolbar=no, location=no, directories=no, status=yes, menubar=no, resizable=yes, copyhistory=no, scrollbars=yes, width=600, height=300')""><strong><em>Click here for the age wizard</em></strong></a>            
+            <a href="javascript:openAgeWizard('<?= $this->url(array('action' => 'calculator', 'controller' => 'index'), null, true) ?>')"><strong><em>
+                Click Here Age Wizard
+            </em></strong></a>
         </td>
     </tr>
     <tr>

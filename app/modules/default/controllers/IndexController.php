@@ -230,6 +230,16 @@ class IndexController extends Zend_Controller_Action
 			$form->populate($defaults);
 		}
 		
+		// If have dob and date just calculate age and display
+		if (!empty($defaults["dob"]) && !empty($defaults["date"])) {
+		    $calculator = new Zarrar_AgeCalculator();
+		    // Set variables
+    		$calculator->setDob($defaults["dob"])
+    				   ->setDate($defaults["date"]);	
+    		// Get age
+    		$this->view->preAge = $calculator->getAge("full");
+		}		
+		
 		// Save form
 		$this->view->form = $form; 
 	}
@@ -347,7 +357,8 @@ class IndexController extends Zend_Controller_Action
 		}
 		
 		return $protocol . $host . $port . $php_request_uri;
-	}
+	}
+
 	
 	function tempNewAction()
 	{
