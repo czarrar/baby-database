@@ -500,6 +500,13 @@ class BabyController extends Zend_Controller_Action
 			$languageData = $newData["language"];
 			$newData["language"][] = array();
 			
+		    // Get baby age today
+		    $calculator = new Zarrar_AgeCalculator();
+    		$calculator->setDob($newData["baby"]["dob"])
+    				   ->setDate();
+		    $this->view->babyAge = $calculator->getAge("full");
+		    
+			
 			// Get family table
 			$family = $baby->findParentFamily();
 			$newData["family"] = $family->toArray();

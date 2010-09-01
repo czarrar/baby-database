@@ -79,6 +79,10 @@
                 )
             ) ?>
             <em>(MM/DD/YY)</em>
+            <?php if ($this->action == "common"): ?>
+                <p class="br"></p>
+                <label>(Age Today)</label> <strong><em><?= $this->babyAge ?></em></strong>
+            <?php endif; ?>
         </td>
     </tr>
     <tr>
@@ -122,6 +126,26 @@
     </tr>
     <tr>
         <td class="label" style="color:red">
+            Languages
+        </td>        
+        <td>
+            <?php // Spits out 3 entries for language ?>
+            <?php for ($i=0; $i < 3; $i++): ?>
+            	<label>Lang <?= $i+1 ?></label>
+            	<?php if ($this->action == "new"): ?>
+            	    <?= $this->formSelect("language[$i][language_id]", $this->language[$i]['language_id'], null, $this->languageOptions) ?>
+            	<?php else: ?>
+            	    <input type="text" name="language[<?= $i ?>][language]" value="<?= $this->specialLanguages[$i] ?>" size="8" maxlength="100">
+            	<?php endif ?>
+        	    <label>(&#37;/Wk)</label>
+        	    <input type="text" name="language[<?= $i ?>][percent_per_week]" value="<?= $this->language[$i]['percent_per_week'] ?>" size="4" maxlength="3">
+        	    <input type="hidden" name="language[<?= $i ?>][order]" value="<?= $i + 1 ?>" />
+        	    <p class="br"></p>
+        	<?php endfor; ?>
+		</td>
+	</tr>
+    <tr>
+        <td class="label">
             Address
         </td>
         <td>
@@ -191,26 +215,6 @@
         </td>
     </tr>
 -->
-    <tr>
-        <td class="label">
-            Languages
-        </td>
-        <td>
-            <?php // Spits out 3 entries for language ?>
-            <?php for ($i=0; $i < 3; $i++): ?>
-            	<label>Lang <?= $i+1 ?></label>
-            	<?php if ($this->action == "new"): ?>
-            	    <?= $this->formSelect("language[$i][language_id]", $this->language[$i]['language_id'], null, $this->languageOptions) ?>
-            	<?php else: ?>
-            	    <input type="text" name="language[<?= $i ?>][language]" value="<?= $this->specialLanguages[$i] ?>" size="8" maxlength="100">
-            	<?php endif ?>
-        	    <label>(&#37;/Wk)</label>
-        	    <input type="text" name="language[<?= $i ?>][percent_per_week]" value="<?= $this->language[$i]['percent_per_week'] ?>" size="4" maxlength="3">
-        	    <input type="hidden" name="language[<?= $i ?>][order]" value="<?= $i + 1 ?>" />
-        	    <p class="br"></p>
-        	<?php endfor; ?>
-		</td>
-	</tr>
     <tr>
         <td class="label">
             Issues

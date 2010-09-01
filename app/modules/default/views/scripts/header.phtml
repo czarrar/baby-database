@@ -37,7 +37,9 @@
     	<a href="<?= $this->sUrl('schedule', 'appointment2', null, true) ?>">Schedule Appointments</a> |
     	<a href="<?= $this->sUrl('confirm', 'appointment2', null, true) ?>">Change/Confirm Appointments</a> |
         <a href="<?= $this->sUrl('outcome', 'appointment2', null, true) ?>">Appointment Outcome</a> |
-        <a href="<?= $this->sUrl('search', 'baby-study', null, true) ?>">Search Schedule</a> |
+        <a href="<?= $this->sUrl('search', 'baby-study', null, true) ?>">Search Schedule</a>
+        <p class="br"></p>
+        <a href="<?= $this->sUrl('list', 'study-age', null, true) ?>" target="_blank">Study Age Ranges</a> |
         <a href="<?= $this->sUrl('calculator', 'index', null, true) ?>" target="_blank">Age Wizard</a> 
     </td>
   </tr>
@@ -55,7 +57,10 @@
         <a href="<?= $this->url(array('controller' => 'study', 'view_archive' => 2), null, true) ?>" target="_blank">Studies</a> |
         <a href="<?= $this->url(array('controller' => 'callers', 'view_archive' => 2), null, true) ?>" target="_blank">Callers</a> | 
         <a href="<?= $this->url(array('controller' => 'contact-source', 'view_archive' => 2), null, true) ?>" target="_blank">Contact Sources</a> |
-        <a href="<?= $this->url(array('controller' => 'r-list', 'view_archive' => 2), null, true) ?>" target="_blank">RList</a>
+        <a href="<?= $this->url(array('controller' => 'r-list', 'view_archive' => 2), null, true) ?>" target="_blank">List</a>
+        <p class="br"></p>
+        <a href="<?= $this->url(array('controller' => 'contact-outcome', 'view_archive' => 2), null, true) ?>" target="_blank">Contact Outcome</a> |
+        <a href="<?= $this->url(array('controller' => 'contact-type', 'view_archive' => 2), null, true) ?>" target="_blank">Contact Type</a>
     </td>
   </tr>
   <tr>
