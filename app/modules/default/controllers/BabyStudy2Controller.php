@@ -1194,7 +1194,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 			else {
 				$form->populate(array(
 					"baby_id"		=> $babyId,
-					"baby_dob"      => $this->_getBabyDob(),
+					"baby_dob"      => $this->_getBabyDob($babyId),
 					"study_id"		=> $studyId,
 					"caller_id"		=> $_SESSION["caller_id"],
 					"appt_date" 	=> array("my_date" => $bsInfo["appointment"]),
