@@ -802,14 +802,18 @@ class ImportController extends Zend_Controller_Action
         exit();
 	}
 	
+	
 	function createStudiesAction() {
 	    
 	    set_time_limit(300);
 	    
 	    $handle = fopen("/Users/zarrar/Sites/database_study_labs.csv", "r");
         
-        $studies = array();
-        $researchers = array();
+        $sTbl = new Study();
+        $rTbl = new Researcher();
+        $lTbl = new Lab();
+        
+        $a = $sTbl->getAdapter();
         
         $rowNum = 1;
         while (($data = fgetcsv($handle)) !== FALSE) {
@@ -824,33 +828,100 @@ class ImportController extends Zend_Controller_Action
                 $data[$c] = trim($data[$c]);
             }
             
+            print_r($data);
+            echo "<br />";
+            
+            $study = $data[0];
+            $lab = $data[1];
+            $researcher = $data[2];
+            
+            // Get lab id
+            $l = $lTbl->fetchRow($a->quoteInto("lab LIKE ?", $lab));
+            if (count($l)!=1) {
+                echo "ERROR";
+                echo "<br />";
+                continue;
+            } else {
+                $labId = $l->id;
+            }
+            
+            // Check that researcher exists
+            // get researcher id
+            $r = $rTbl->fetchRow($a->quoteInto("researcher LIKE ?", $researcher));
+            if (count($r)>0)
+                $rId = $r->id;
+            else {
+                $rId = $rTbl->insert(array(
+                    'researcher'    =>  $researcher,
+                    'lab_id'        =>  $labId
+                ));
+            }
+            
+            // Add study
+            $sTbl->insert(array(
+                'researcher_id'     =>  $rId,
+                'study'             =>  $study
+            ));
+            
+            echo "<br />";
+            
             // Cols 1: Study, 2: Lab, 3: Researcher
-            array_push($studies, $data[0]);
-            array_push($researchers, $data[1] . " - " . $data[2]);
+#            array_push($studies, $data[0]);
+#            array_push($researchers, $data[1] . " - " . $data[2]);
             
             $rowNum++;
         }
         
-        echo "<br />\n";
-        $uStudies = array_unique($studies);
-        print_r($uStudies);
-        echo "<br />\n";
-        echo "<br />\n";
-        $uResearchers = array_unique($researchers);
-        print_r($uResearchers);
+#        echo "<br />\n";
+#        $uStudies = array_unique($studies);
+#        print_r($uStudies);
+#        echo "<br />\n";
+#        echo "<br />\n";
+#        $uResearchers = array_unique($researchers);
+#        print_r($uResearchers);
         
-        exit();
-	    
-	    
+        exit();  
 	}
 	
 	
-	function getStudiesAction() {
+	function addStudyHistoryAction() {
 	    
 	    set_time_limit(300);
 	    
-	    #$handle = fopen("/Users/zarrar/Sites/database_exp.csv", "r");
-	    $handle = fopen("/Users/zarrar/Sites/database_study_labs.csv", "r");
+	    // Get old to new study relationship
+	    $handle = fopen("/Users/zarrar/Sites/database_studies.csv", "r");
+	    $old2new = array();
+        $rowNum = 1;
+        while (($data = fgetcsv($handle)) !== FALSE) {
+            if ($rowNum === 1) {
+                $rowNum++;
+                continue;
+            }
+
+            $num = count($data);
+            // Trim each column and print onto screen
+            for ($c=0; $c < $num; $c++) { 
+                $data[$c] = trim($data[$c]);
+            }
+            
+            $old2new[$data[0]] = array(
+                'study'         =>  $data[1],
+                'lab'           =>  $data[2],
+                'researcher'    =>  $data[3]
+            );
+            
+            #foreach ($studyCols as $col) {
+            #    array_push($studies, $data[$col]);
+            #}
+            
+            $rowNum++;
+        }
+        
+        print_r($old2new);
+        
+        exit();
+
+        $handle = fopen("/Users/zarrar/Sites/database_exp.csv", "r");
 
         # Save study names
         $studies = array();
@@ -870,9 +941,9 @@ class ImportController extends Zend_Controller_Action
             // Trim each column and print onto screen
             for ($c=0; $c < $num; $c++) { 
                 $data[$c] = trim($data[$c]);
-                echo $data[$c] . ", ";
             }
             
+            print_r($data);
             echo "<br >\n";
             
             #foreach ($studyCols as $col) {
