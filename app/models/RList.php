@@ -33,4 +33,21 @@ class RList extends Zarrar_Db_Table
 		
 		return $list;
 	}
+	
+	public function insert(array $data)
+    {
+		if (empty($data["is_permanent"]))
+		    $data["is_permanent"] = 0;
+		
+        return parent::insert($data);
+    }
+
+	// Cannot actually update the password, just erase old one and set new one
+	public function update(array $data, $where=array())
+    {
+        if (empty($data["is_permanent"]))
+            $data["is_permanent"] = 0;
+		
+        return parent::update($data, $where);
+    }
 }
