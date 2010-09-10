@@ -88,7 +88,7 @@ class ContactHistory extends Zarrar_Db_Table
 	
 	// Addition valid fields (on top of column names in table)
 	protected $_additionalFields = array(
-		"checkout", "activate", "inactivate"
+		"checkout", "activate", "inactivate", "to_callback"
 	);
 	
 	protected function _modifyData(array $data)
@@ -100,18 +100,28 @@ class ContactHistory extends Zarrar_Db_Table
 		$date = $dateFilter->filter($data["date"]);
 		
 		// Get time
-		$time = $data["time"];
+		$timeFilter = new Zarrar_Filter_ArrayToTime();
+		$time = $timeFilter->filter($data["time"]);
 			
 		// Merge date + time
 		$data['datetime'] = "{$date} {$time}";
 		
-		// Process callback date
-		$data["callback_date"] = $dateFilter->filter($data["callback_date"]);
-		
-		// Process time
-		$timeFilter = new Zarrar_Filter_ArrayToTime();
-		$data["callback_time_begin"] = $timeFilter->filter($data["callback_time_begin"]);
-		$data["callback_time_end"] = $timeFilter->filter($data["callback_time_end"]);
+		// Callback?
+		if ($data["to_callback"]) {
+		    // Process callback date
+    		$data["callback_date"] = $dateFilter->filter($data["callback_date"]);
+    		// Process time
+    		$data["callback_time_begin"] = $timeFilter->filter($data["callback_time_begin"]);
+    		$data["callback_time_end"] = $timeFilter->filter($data["callback_time_end"]);
+		} else {
+		    // Remove callback if given
+		    if (!empty($data["callback_date"]))
+		        unset($data["callback_date"]);
+		    if (!empty($data["callback_time_begin"]))
+		        unset($data["callback_time_begin"]);
+		    if (!empty($data["callback_time_end"]))
+		        unset($data["callback_time_end"]);
+		}
 		
 		// Delete unused date variables
 		unset($data['date']);
@@ -140,7 +150,7 @@ class ContactHistory extends Zarrar_Db_Table
 	function insert(array $data=array())
 	{
 		// Don't want checkout, activate, inactivate
-		unset($this->_data['checkout'], $this->_data['activate'], $this->_data['inactivate']);
+		unset($this->_data['checkout'], $this->_data['activate'], $this->_data['inactivate'], $this->_data['to_callback]);
 				
 		return parent::insert($data);
 	}

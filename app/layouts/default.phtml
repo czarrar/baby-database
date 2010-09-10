@@ -2,7 +2,7 @@
 
 <head>
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-    <script type="text/javascript" src="athena/public/scripts/dojo/dojo/dojo.js"
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojo/dojo.xd.js"
         djConfig="parseOnLoad: true"></script>
     <?= $this->headLink() ?>
         
@@ -14,7 +14,7 @@
     
     
 </head>
-<body bgcolor="#FFFFFF">
+<body bgcolor="#FFFFFF" class="claro">
 <img src="<?= "{$this->dir_images}/ajax-loader.gif" ?>" id="busy" style="display:none">
     <? $header = ($this->headerFile) ? $this->headerFile : 'header.phtml' ?>
     <?= $this->partial($header) ?>

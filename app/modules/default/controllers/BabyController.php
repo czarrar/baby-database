@@ -579,12 +579,12 @@ class BabyController extends Zend_Controller_Action
 			foreach ($statusOptions as $k => $v)
 				$statusOptions[$k]=strtoupper($v);
 			$this->view->statusOptions = $statusOptions;
-			
-			// List options
-			$lists = new RList();
-			$listOptions = $lists->getSelectOptions();
-			$this->view->listOptions = $listOptions;
 		}
+		
+		// List options
+		$lists = new RList();
+		$listOptions = $lists->getSelectOptions();
+		$this->view->listOptions = $listOptions;
 		
 		// Language options
 		$languages = new Language();

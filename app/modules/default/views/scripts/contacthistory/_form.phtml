@@ -1,3 +1,8 @@
+<script type="text/javascript">
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.form.TimeTextBox");
+</script>
+
 <script language="JavaScript">
 	function call_popup() {
 		window.open('<?=$this->sUrl("new", "contacthistory")  ?>', 'CallInfo', 'toolbar=no, location=no, directories=no, status=yes, menubar=no, resizable=yes, copyhistory=no, scrollbars=yes, width=800, height=500');
@@ -15,6 +20,9 @@
 
 <form action="<?= $this->sUrl('new', 'contacthistory') ?>" method="POST" accept-charset="utf-8" >
     
+    <label for="date1">
+        Drop down Date box. Click inside to display the calendar.
+    </label>
     <table border="0" cellspacing="0" cellpadding="5" class="form" width="75%">
         <tr>
             <td class="label">Serial No</td>
@@ -71,24 +79,20 @@
         <tr>
             <td class="label">Call Date</td>
             <td>
-                <label>Date</label>
-                <?= $this->formSelectDate(
-                    array(
-                        'contact[date][year]',
-                        'contact[date][month]',
-                        'contact[date][day]'
-                    ),
-                    $this->date,
-                    null,
-                    array(
-                        'year_start' => date('Y', strtotime($this->date))-1,
-                        'year_end' => date('Y')+2
-                    )
-                ) ?>
-                <em>(MM/DD/YY)</em>
-                <p class="br"></p>
-                <?= $this->formText("contact[time]", "Time", $this->time, array("size" => 6, "maxlength" => 6, "disabled" => "disabled")) ?>
-                <input type="hidden" name="contact[time]" value="<?= $this->time ?>" id="caller_id">
+                <?php if ($this->isAdminOrCoord): ?>
+                    <input type="text" name="contact[date]" id="contact-date" value="<?= $this->date ?>" dojoType="dijit.form.DateTextBox" required="true" />
+                    <input type="text" name="contact[time]" id="contact-time" 
+                        value="<?= "T" . $this->time . ":00" ?>" 
+                        dojoType="dijit.form.TimeTextBox"
+                        onChange="dojo.byId('val').value=arguments[0].toString().replace(/.*1970\s(\S+).*/,'T$1')"
+                        required="true" />
+                <?php else: ?>
+                    <input type="text" name="contact[date]" id="contact-date" value="<?= $this->date ?>" disabled="disabled" />
+                    <input type="hidden" name="contact[date]" value="<?= $this->date ?>" id="hidden-date">
+                    <p class="br"></p>
+                    <input type="text" name="contact[time]" id="contact-time" value="<?= $this->time ?>" disabled="disabled" />
+                    <input type="hidden" name="contact[time]" value="<?= $this->time ?>" id="hidden-time">
+                <?php endif ?>
             </td>
         </tr>
     </table>
@@ -141,50 +145,23 @@
                 Callback
             </td>
             <td>
-                <label>When should B&amp;C call back? </label>
+                <label>Should we call back at a specific date/time? </label>
+                <?= $this->formSelect("contact[to_callback]", $this->contact["to_callback"], null, $this->toCallbackOptions) ?>
                 <p class="br"></p>
-                <label></label>
-                <?= $this->formSelectDate(
-                    array(
-                        'contact[callback_date][year]',
-                        'contact[callback_date][month]',
-                        'contact[callback_date][day]'
-                    ),
-                    $this->callback_date,
-                    null,
-                    array(
-                        'year_start' => date('Y', strtotime($this->date)),
-                        'year_end' => date('Y')+2
-                    )
-                ) ?>
-                <em>(MM/DD/YY)</em>
+                <label>Date</label> &nbsp;
+                <input type="text" name="contact[callback_date]" id="contact-callback_date" value="<?= $this->callback_date ?>" dojoType="dijit.form.DateTextBox" />
                 <p class="br"></p>
-                <label></label>
-                <?= $this->formSelectTime(
-                    array(
-                        'contact[callback_time_begin][hour]',
-                        'contact[callback_time_begin][minute]'
-                    ),
-                    $this->callback_time_begin,
-                    null,
-                    array(
-                        'addBy' => 10,
-                        "limitTime" => array(6,23)
-                    )
-                ) ?>
-                 TO 
-                <?= $this->formSelectTime(
-                    array(
-                        'contact[callback_time_end][hour]',
-                        'contact[callback_time_end][minute]'
-                    ),
-                    $this->callback_time_begin,
-                    null,
-                    array(
-                        'addBy' => 10,
-                        "limitTime" => array(6,23)
-                    )
-                ) ?>
+                <label>From:</label>
+                <input type="text" name="contact[callback_time_begin]" id="contact-callback_time_begin" 
+                    value="<?= "T" . $this->callback_time_begin . ":00" ?>" 
+                    dojoType="dijit.form.TimeTextBox"
+                    onChange="dojo.byId('val').value=arguments[0].toString().replace(/.*1970\s(\S+).*/,'T$1')" />
+                &nbsp;
+                To:
+                <input type="text" name="contact[callback_time_end]" id="contact-callback_time_end" 
+                    value="<?= "T" . $this->callback_time_end . ":00" ?>" 
+                    dojoType="dijit.form.TimeTextBox"
+                    onChange="dojo.byId('val').value=arguments[0].toString().replace(/.*1970\s(\S+).*/,'T$1')" />
             </td>
         </tr>
         <tr>

@@ -12,11 +12,18 @@ class Zarrar_Filter_ArrayToTime implements Zend_Filter_Interface
      *
      * Returns the string $value, capitalizing words as necessary
      *
-     * @param  array $value
+     * @param  array/string $value
      * @return string
      */
     public function filter($value)
     {
+        if (is_string($value)) {
+            if (substr($value, 0, 1) == "T")
+                $value = substr($value, 1, 5);
+            
+            return $value;
+        }
+    
 		if (!(is_array($value)))
 			throw new Zend_Filter_Exception("Value '{$value}' must be an array with keys of 'hour', and 'minute'");
 			

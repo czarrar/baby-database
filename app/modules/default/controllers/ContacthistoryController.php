@@ -51,10 +51,6 @@ class ContacthistoryController extends Zend_Controller_Action
 		// Attach additional css file for table
 		$this->view->headLink()
 			->appendStylesheet("{$dirs->styles}/sortable_tables.css", "screen, projection");
-		// Attach scripts for dynamic sorting of table
-		$this->view->headScript()
-			->prependFile("{$dirs->scripts}/sortable_tables.js")
-			->prependFile("{$dirs->scripts}/MochiKit/MochiKit.js");
 		
 		// Get the baby id, if none then throw exception
 		if ($this->_getParam('baby_id')) {
@@ -375,7 +371,10 @@ class ContacthistoryController extends Zend_Controller_Action
 	{
 		// Disable header file
 		$this->view->headerFile = '_empty.phtml';
-		
+	
+        $this->view->headLink()->appendStylesheet(
+            "http://ajax.googleapis.com/ajax/libs/dojo/1.5/dijit/themes/claro/claro.css");
+        
 		$db = Zend_Registry::get('db');
 		
 		// Set the script action file
@@ -394,6 +393,13 @@ class ContacthistoryController extends Zend_Controller_Action
 		// Get studyId
 		$studyId = $this->_getParam('study_id');
 		$this->view->studyId = $studyId;
+		
+		// Ability to adjust record and scheduling status
+		if ($_SESSION["user_privelages"] == "admin" or $_SESSION["user_privelages"] == "coordinator") {
+			$this->view->isAdminOrCoord = True;
+		} else {
+		    $this->view->disableCallDate = NULL;
+		}
 		
 		// Get type
 		$type = $this->_getParam("type");
@@ -421,13 +427,10 @@ class ContacthistoryController extends Zend_Controller_Action
 		$temp = array("N/A", "AM", "PM", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec");
 		$this->view->callbackOptions = array_combine($temp, $temp);
 		
-		/* Process Form */
+		// To Callback Options
+		$this->view->toCallbackOptions = array("" => "No", "1" => "Yes");
 		
-		# x1) want to add baby_id as hidden field
-		# x2) want to modify datetime to be combined
-		#X3) want to take the researcher name and get the equivalent study name,
-		#		if study name already specified compare, if not then specify
-		# 4) check return value from insert
+		/* Process Form */
 		
 		$tableClasses = "ContactHistory";
 		
@@ -441,14 +444,12 @@ class ContacthistoryController extends Zend_Controller_Action
 			
 			// If set contact_outcome_id=4, then add to google calendar
 			$data = $formCreateRow->getData("contact");
-			if($data[contact_outcome_id] == 4) {
+			if($data["to_callback"]) {
 				$gCalResult = $this->_gCalCallback($data);
 				$this->view->addtlMessage = "<br />\n" . $gCalResult;
 			} else {
-				$this->view->addtlMessage = "<br />\n Callback outcome not selected, nothing added to Google Calendar.";
+				$this->view->addtlMessage = "<br />\n Callback option not selected, nothing added to Google Calendar.";
 			}
-			
-
 			
 			// Check baby out
 			// If activate or inactivate exist
@@ -516,17 +517,16 @@ class ContacthistoryController extends Zend_Controller_Action
 				$result = ($result[0]) ? $result[0]+1 : 1 ;
 								
 				// Set attempt number + checkout status
-				$formCreateRow->pushData("contact", "attempt", $result);
-				
-				// Set callback date
-				$this->view->callback_date = $datetime->get("YYYY-MM-dd");
+				$formCreateRow->pushData("contact", "attempt", $result);			
 			}
 			// Form with bad data
-			else {
-				$datetime = new Zend_Date($this->view->datetime, "YYYY-MM-dd HH:mm:ss");
+			else {			
+				$datetime = new Zend_Date($formData["datetime"], "YYYY-MM-dd HH:mm");
+				
 				$this->view->callback_date = $formData["callback_date"];
 				$this->view->callback_time_begin = $formData["callback_time_begin"];
 				$this->view->callback_time_end = $formData["callback_time_end"];
+				
 			}
 			
 			// Get if active or contacting
@@ -550,13 +550,13 @@ class ContacthistoryController extends Zend_Controller_Action
 			$this->view->isInactive = ($babyRow->checked_out == 0);
 			$this->view->isContacting = ($babyRow->status == "contacting");
 			
+			// Call Date/Time
+			$this->view->date = $datetime->get("YYYY-MM-dd");
+			$this->view->time = $datetime->get("HH:mm");
+			
 			// Add to form
 			$formCreateRow->pushData("contact", "checkout", $babyRow->checked_out);
 			$formCreateRow->setForm();
-			
-			// Commen processes for new and bad data
-			$this->view->date = $datetime->get("YYYY-MM-dd");
-			$this->view->time = $datetime->get("HH:mm");
 			
 			// Get family id and siblings
 			$familyTbl = new Family();
