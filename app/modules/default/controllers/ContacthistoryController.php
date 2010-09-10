@@ -372,8 +372,9 @@ class ContacthistoryController extends Zend_Controller_Action
 		// Disable header file
 		$this->view->headerFile = '_empty.phtml';
 	
+	    $dirs = Zend_Registry::get('dirs');
         $this->view->headLink()->appendStylesheet(
-            "http://ajax.googleapis.com/ajax/libs/dojo/1.5/dijit/themes/claro/claro.css");
+            "{$dirs->scripts}/dojo/dijit/themes/claro/claro.css");
         
 		$db = Zend_Registry::get('db');
 		

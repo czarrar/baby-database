@@ -69,6 +69,7 @@ class ContactHistory extends Zarrar_Db_Table
 		),
 		'callback_date'	=> array(
 			"Date",
+			'allowEmpty' => true,
 			"messages"	=> "Incorrect callback date entered '%value%'"
 		),
 		'study_id'		=> array(

@@ -443,6 +443,7 @@ class Zarrar_Scaffold extends Zend_Controller_Action {
 			$elementClass = "Zend_Form_Element_{$elementType}";
 			$element = new $elementClass($name);
 			
+			
 			// Set label (not if hidden)
 			if ($elementType != "Hidden")
 				$element->setLabel($this->_cols[$name]);
@@ -459,13 +460,14 @@ class Zarrar_Scaffold extends Zend_Controller_Action {
 			if ($selectOptions)
 				$element->setMultiOptions($selectOptions);
 			
-			// Check NULLABLE
-			if (!($info["NULLABLE"]))
-				$element->setRequired(true);
-			
 			// Check Default values
-			if ($info["DEFAULT"])
+			if ($info["DEFAULT"] || $info["DEFAULT"] === '0') {
 				$element->setValue($info["DEFAULT"]);
+			}
+			// Check NULLABLE
+    		elseif (!($info["NULLABLE"])) {
+    			$element->setRequired(true);
+			}
 			
 			// Check unsigned
 			if ($info["UNSIGNED"])
