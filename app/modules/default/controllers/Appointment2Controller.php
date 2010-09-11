@@ -793,7 +793,6 @@ class Appointment2Controller extends Zend_Controller_Action
 		} elseif ($data['list_id'] != -1) {
 		    $select->where("b.list_id = ?", $data['list_id']);
 		}
-		
 
 	 	/* 2. combined with date of study, get babies in specified age range */
 		if ($data["off_date_search"] != 1) {

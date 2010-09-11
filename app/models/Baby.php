@@ -19,7 +19,7 @@ class Baby extends Zarrar_Db_Table
 			),
 		'List'          => array(
     	    'columns'           => 'list_id',
-    	    'refTableClass'     => 'Lists',
+    	    'refTableClass'     => 'RList',
     	    'refColumns'        => 'id',
     		'refDisplayColumn'	=> 'list'
 		)
@@ -88,7 +88,18 @@ class Baby extends Zarrar_Db_Table
 	
 	
 	# Function to calculate the appropriate list id given a date of birth
-	public function dob2listid($dob) {
+	public function assignListId($dob, $familyId) {
+	    # check to see if have siblings
+	    # take list id from oldest sibling if exists
+	    if (!empty($familyId)) {
+	        $query = "SELECT babies.dob, babies.list_id FROM families LEFT JOIN babies ON families.id = babies.family_id WHERE families.id = ?";
+        	$stmt = $this->getAdapter()->query($query, $familyId);
+        	$results = $stmt->fetchAll();
+        	if (count($results) > 0)
+        	    return $results[0]['list_id'];
+	    }
+	    
+	
 	    # automatically assign the list ID of A, B, or C depending on date of
         # birth (first day of a month = A, second = B, third = C, fourth = A,
         # etc.)
@@ -213,8 +224,13 @@ class Baby extends Zarrar_Db_Table
             $data['last_update'] = new Zend_Db_Expr('NOW()');
 		
 		// default value for 'list'
-		if (empty($data['list_id']) && !empty($this->_data['dob']))
-		    $data['list_id'] = $this->dob2listid($this->_data['dob']);
+		if (empty($data['list_id']) && !empty($this->_data['dob'])) {
+		    if (!empty($this->_data['family_id']))
+		        $familyId = $this->_data['family_id'];
+		    else
+		        $familyId = $data['family_id'];
+		    $data['list_id'] = $this->assignListId($this->_data['dob'], $familyId);
+		}
 		
         return parent::insert($data);
     }
@@ -241,8 +257,13 @@ class Baby extends Zarrar_Db_Table
             $data['last_update'] = new Zend_Db_Expr('NOW()');
             
         // default value for 'list'
-		if (empty($data['list_id']) && !empty($this->_data['dob']))
-		    $data['list_id'] = $this->dob2listid($this->_data['dob']);
+		if (empty($data['list_id']) && !empty($this->_data['dob'])) {
+		    if (!empty($this->_data['family_id']))
+		        $familyId = $this->_data['family_id'];
+		    else
+		        $familyId = $data['family_id'];
+		    $data['list_id'] = $this->assignListId($this->_data['dob'], $familyId);
+		}
 		
         return parent::filterInsert($data);
     }

@@ -503,7 +503,7 @@ class BabyController extends Zend_Controller_Action
 		    // Get baby age today
 		    $calculator = new Zarrar_AgeCalculator();
     		$calculator->setDob($newData["baby"]["dob"])
-    				   ->setDate();
+    				   ->setDate(date('Y-m-d'));
 		    $this->view->babyAge = $calculator->getAge("full");
 		    
 			

@@ -354,6 +354,13 @@ class BabyStudy2Controller extends Zend_Controller_Action
 					// Commit db changes
 					$db->commit();
 					
+					# ARCHIVING?
+            		if ($formData["no_allow"]) {
+            			if($data["other_studies"]==1)
+            				throw new Exception("Cannot archive babies scheduled for multiple studies. You can only archive a baby when you have completed the outcome of all studies except one.");
+            			$this->_helper->redirector("archive", "baby", null, array("id" => $formData['baby_id']));
+            		}
+					
 					// Success, tell user
 					$this->_forward("success", "baby-study", null, array("message" => $message));
 				} catch(Exception $e) {
@@ -902,7 +909,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		$statusId = $form->createElement("select", "status_id");
 		$statusId->setLabel("Scheduling Status")
 			->setMultiOptions(array(
-					""				=> "ERROR",
+					""				=> "CHOOSE",
 					self::SCHEDULED	=> "SCHEDULED",
 					self::CONFIRMED	=> "CONFIRMED"
 				))
@@ -1264,7 +1271,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		$allow = new Zend_Form_Element_Submit("allow", "Allow Further Study");
 		$allow->setDecorators(array("ViewHelper"));
 		// Cancel
-		$noAllow = new Zend_Form_Element_Submit("no_allow", "Do Not Allow Further Study");
+		$noAllow = new Zend_Form_Element_Submit("no_allow", "Not Interested - Send to Archive");
 		$noAllow->setDecorators(array("ViewHelper"));
 			
 		# ADD TO COMMON ELEMENTS + GET FORM
@@ -1348,9 +1355,6 @@ class BabyStudy2Controller extends Zend_Controller_Action
 			switch ($data["study_outcome_id"]) {
 				case self::OUTCOME_RUN:
 					$babyData["status_id"] = self::RUN;
-					// Check that have enthusiasm
-					if (!isset($data["level_enthusiasm"]))
-						throw new Zend_Controller_Action_Exception("Level of enthusiasm must be given if baby has been run!");
 					break;
 				case self::OUTCOME_CANCELED:
 					$data["date_cancel"] = new Zend_Db_Expr("CURDATE()");
@@ -1369,13 +1373,6 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		# 3. ADD TO STUDY HISTORIES
 		$shTbl = new StudyHistory();
 		$shTbl->filterInsert($data);
-		
-		# 4. ARCHIVING?
-		if ($data["no_allow"]) {
-			if($data["other_studies"]==1)
-				throw new Exception("Cannot archive babies scheduled for multiple studies. You can only archive a baby when you have completed the outcome of all studies except one.");
-			$this->_forward("baby", "archive", null, array("id" => $data['baby_id']));		
-		}
 		
 		# 5. CHECK IN
 		if ($data["other_studies"]!=1 and $data["check_in"]) {

@@ -32,7 +32,7 @@ class Study extends Zarrar_Db_Table
     }
     
     public function getListIds($studyId) {
-		$query = "SELECT lists.id FROM lists LEFT JOIN labs ON lists.lab_id = labs.id LEFT JOIN researchers ON labs.id = researchers.lab_id LEFT JOIN studies ON studies.researcher_id = researchers.id WHERE studies.id = ?";
+		$query = "SELECT lists.id FROM lists LEFT JOIN lab_lists ON lists.id = lab_lists.list_id LEFT JOIN labs ON lab_lists.lab_id = labs.id LEFT JOIN researchers ON labs.id = researchers.lab_id LEFT JOIN studies ON studies.researcher_id = researchers.id WHERE studies.id = ?";
 		
 		// Execute
 		$stmt = $this->getAdapter()->query($query, $studyId);
