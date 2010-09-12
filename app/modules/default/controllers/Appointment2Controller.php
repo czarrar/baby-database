@@ -154,7 +154,7 @@ class Appointment2Controller extends Zend_Controller_Action
 				->setMultiOptions(array_combine($perPageOptions, $perPageOptions));
 				
 		$offRestrict = $form->createElement("select", "off_date_search");
-		$offRestrict->setLabel("Date Range")
+		$offRestrict->setLabel("Ignore Date Range")
 				->setAllowEmpty(true)
 				->setMultiOptions(array(
 					0 => "No",
@@ -666,6 +666,17 @@ class Appointment2Controller extends Zend_Controller_Action
 			$this->view->studyName = $studyRow->study;
 		}
 		
+		# Parent first and last name
+		$parentFirstName = $form->createElement("text", "parent_first_name");
+		$parentFirstName->setLabel("First Name")
+				->setAllowEmpty(true)
+				->setAttrib('size', 20)
+				->setAttrib('maxlength', 100);
+		$parentLastName = $form->createElement("text", "parent_last_name");
+		$parentLastName->setLabel("Last Name")
+				->setAllowEmpty(true)
+				->setAttrib('size', 20)
+				->setAttrib('maxlength', 100);
 		// Add age subforms
 		
 
@@ -712,7 +723,7 @@ class Appointment2Controller extends Zend_Controller_Action
 				->setMultiOptions($studyOptions);
 
 		# GET FORM (add non-common elements)
-		$formFields = array_merge(array($study, $callback, $scheduleStatus, $sex, $prevStudy, $lowerAge, $upperAge, $showActive, $listId, $ignoreList), $languageFields);
+		$formFields = array_merge(array($study, $callback, $scheduleStatus, $sex, $prevStudy, $lowerAge, $upperAge, $showActive, $listId, $ignoreList, $parentFirstName, $parentLastName), $languageFields);
 		$form = $this->_prepareForm($formFields, array(), array(), $form);
 
 		# Update study attributes to allow dynamic upload of page for study ages
@@ -874,6 +885,25 @@ class Appointment2Controller extends Zend_Controller_Action
 		}
 		if (!empty($data['last_name'])) {
 			$select->where("b.last_name LIKE ?", "%{$data['last_name']}%");
+		}
+		
+		# Parent Names
+		// First Name
+		$db = $this->_db;
+		if (!empty($data['parent_first_name'])) {
+		    $select->where(
+		        $db->quoteInto("f.mother_first_name LIKE ?", $data['parent_first_name']) .
+		        " OR " .
+		        $db->quoteInto("f.father_first_name LIKE ?", $data['parent_first_name'])
+		    );
+		}    		
+		// Last Name
+		if (!empty($data['parent_last_name'])) {
+		    $select->where(
+		        $db->quoteInto("f.mother_last_name LIKE ?", $data['parent_last_name']) .
+		        " OR " .
+		        $db->quoteInto("f.father_last_name LIKE ?", $data['parent_last_name'])
+		    );
 		}
 
 		# Languages

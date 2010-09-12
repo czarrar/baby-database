@@ -96,6 +96,19 @@ function updateAge(partialLink) {
             </td>
         </tr>
         <tr>
+            <td class="label"><label>Parent Details</label></td>
+            <td width="70%">
+                <?= $this->form->parent_first_name ?><?= $this->form->parent_last_name ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label"><?= $this->form->previous_study->label() ?></td>
+            <td width="70%">
+                <label></label>Participated in <?= $this->form->previous_study->field() ?>
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
             <td class="label"><label>Languages</label></td>
             <td width="70%">
                 <?= $this->form->language1->label() ?>

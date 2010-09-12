@@ -231,9 +231,9 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		$select = $db->select()
 			->distinct()
 			->from(array('b' => 'babies'),
-				array("first_name", "dob", "sex"))
+				array("first_name", "dob", "sex", "family_id"))
 			->joinLeft(array('f' => 'families'),
-				'f.id = b.family_id', array("mother_first_name"))
+				'f.id = b.family_id', array("mother_first_name", "mother_last_name"))
 			->where('b.id = ?', $this->_babyId);
 		$stmt = $db->query($select);
 		/// Fetch database query in array format
@@ -256,8 +256,41 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		$calculator->setDob($babyInfo["dob"])
 			->setDate($data['appt_date']);	
 		/// Get age
-		$babyInfo["age"] = $calculator->getAge("months");
-		$babyInfo["age"] = str_replace("-", ",", $babyInfo["age"]);
+#		$babyInfo["age"] = $calculator->getAge("months");
+#		$babyInfo["age"] = str_replace("-", ",", $babyInfo["age"]);
+		$babyInfo["age"] = $calculator->getAge("full");
+		
+		// Get study name
+		$sTbl = new Study();
+		$sRow = $sTbl->fetchRow($db->quoteInto("id = ?", $data['study_id']));
+		$babyInfo["study"] = $sRow->study;
+		
+		// Get caller name
+		$cTbl = new Callers();
+		$cRow = $cTbl->fetchRow($db->quoteInto("id = ?", $_SESSION['caller_id']));
+		$babyInfo['caller'] = $cRow->name;
+		
+		// Get baby siblings
+		$familyTbl = new Family();
+		$familyRowset = $familyTbl->find($babyInfo["family_id"]);
+		$familyRow = $familyRowset->current();
+		$familySelect = $familyTbl->select();
+		$familySelect->from(new Baby(), array('id'));
+		$familyBabies = $familyRow->findDependentRowset('Baby', 'Family', $familySelect);
+		if (count($familyBabies) > 1) {
+		    $siblingInfo = array();
+		    foreach ($familyBabies as $sibling) {
+    		    if ($this->_babyId != $sibling->id) {
+    		        $bTbl = new Baby();
+        		    $bRow = $bTbl->fetchRow($db->quoteInto("id = ?", $sibling->id));
+        		    $siblingInfo[] = $bRow->first_name . " " . $bRow->last_name;
+    		    }
+    		}
+    		$siblingInfo = implode(", ", $siblingInfo);
+		} else {
+		    $siblingInfo = "None";
+		}
+		$babyInfo["siblings"] = $siblingInfo;
 		
 		return $babyInfo;
  	}
@@ -341,6 +374,10 @@ class BabyStudy2Controller extends Zend_Controller_Action
 					//// and just tell user to manually enter gcal event
 					$gCalErrors = $this->_fetchGCal();
 					$message = "\n<br /><br />\n{$message}";
+					
+#					$babyInfo = $this->_fetchGCalBabyInfo($this->_form->getValues());
+#					print_r($babyInfo);
+#					exit();
 					
 					if(empty($gCalErrors)) {
 						$tmpMessage = call_user_func(array($this, "_gCal" . ucwords($actionType)), $this->_form->getValues(), $gCalInfo);
@@ -742,7 +779,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 			throw new Zend_Controller_Action_Exception("Please provide the study id!");
 	
 		# 1. INSANITY CHECKS
-	
+	    
 		// Check connection just in case
 		if(empty($this->_gCalService))
 			throw new Zend_Gdata_App_Exception("No google calendar connection!");
@@ -779,9 +816,10 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		
 			// Populate the event with the desired information
 			// Note that each attribute is created as an instance of a matching class
-			$event->title = $this->_gCalService->newTitle("{$babyInfo['mother_first_name']} / {$babyInfo['first_name']} ({$babyInfo['sex']}) {$this->_babyId} {$babyInfo['age']}");
+			$event->title = $this->_gCalService->newTitle("{$babyInfo['study']} - {$babyInfo['first_name']} - {$babyInfo['age']}");
 			$event->when = array($when);
-			$event->content = $this->_gCalService->newContent($data["comments"]);
+			$dayToday = date('Y-m-d');
+			$event->content = $this->_gCalService->newContent("Parent Name: {$babyInfo['mother_first_name']} {$babyInfo['mother_last_name']}\n Parent Contact: ? \n Age on date of study: {$babyInfo['age']}\n DOB: {$babyInfo['dob']}\n Gender: {$babyInfo['sex']}\n Which Visit: ?\n Siblings baby has and what names are {$babyInfo['siblings']}\n Who scheduled appt: {$babyInfo['caller']}\n When scheduled: {$dayToday}\n");
 			
 			// Upload the event to the calendar server
 			// A copy of the event as it is recorded on the server is returned
@@ -839,7 +877,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 			throw new Zend_Controller_Action_Exception("Please provide a study id!");
 
 		// Get form
-		$this->_confirmForm($babyId);
+		$this->_confirmForm($babyId);        
 		
 		// Process (if submitted)
 		$this->_processForm("confirm");
@@ -860,7 +898,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 			else {
 				$this->_form->populate(array(
 					"baby_id"	=> $babyId,
-					"baby_dob"      => $this->_getBabyDob($babyId),
+					"baby_dob"  => $this->_getBabyDob($babyId),
 					"study_id"	=> $studyId,
 					"caller_id"	=> $_SESSION["caller_id"],
 					"appt_date"	=> array("my_date" => $bsInfo["appointment"]),
@@ -870,7 +908,15 @@ class BabyStudy2Controller extends Zend_Controller_Action
 					"other_studies"	=> $this->view->hasOtherStudies
 				));
 			}
+			
+			// Set baby age on day of study
+    		$calculator = new Zarrar_AgeCalculator();
+    		$calculator->setDob($this->_getBabyDob($babyId))
+    				   ->setDate(substr($bsInfo["appointment"], 0, 10));
+    	    $this->view->babyAge = $calculator->getAge("full");
 		}
+		
+		
 		
 		// Set form and errors to view
 		$this->view->form = $this->_form;

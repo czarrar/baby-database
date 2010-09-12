@@ -95,6 +95,17 @@ class StudyHistoryController extends Zend_Controller_Action
 		else
 			$this->view->currentBabyStudies = FALSE;
 		
+        // Find out days since last visit (use age calculator)
+        if (count($result) > 0) {
+            $lastRow = count($result) - 1;
+            $calculator = new Zarrar_AgeCalculator();
+    		$calculator->setDob(substr($result[$lastRow]->appointment, 0, 10))
+    				   ->setDate(date('Y-m-d'));
+    	    $this->view->daysLastVisit = $calculator->getAge("full");
+        } else {
+            $this->view->daysLastVisit = FALSE;
+        }
+		
 		// Save into view
 		$this->view->assign("results", $result);
 	}

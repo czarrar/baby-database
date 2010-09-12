@@ -2,9 +2,13 @@
     <font face="verdana"><h1>Study History</h1></font>
     <h3 align="left">
         Serial No: <?= $this->babyId ?>
+        <?php if ($this->daysLastVisit): ?>
+            <br />
+            <div style='color: blue'><?= $this->daysLastVisit ?> since last visit</div>
+        <?php endif ?>
         <?php if ($this->currentBabyStudies): ?>
             <br />
-            Currently participating in <? echo (count($this->currentBabyStudies)==1) ? "1 study" : count($this->currentBabyStudies) . " studies" ?>
+            <div style='color: red'>Currently participating in <? echo (count($this->currentBabyStudies)==1) ? "1 study" : count($this->currentBabyStudies) . " studies" ?></div>
         <?php endif ?>
     </h3>
     <table id="sortable_table" class="datagrid">
