@@ -850,7 +850,7 @@ class ImportController extends Zend_Controller_Action
 	    set_time_limit(300);
 	    
 	    $handle = fopen(self::HOME_DIR . "/database_study_labs.csv", "r");
-        echo $handle . "<br>\n";
+        echo $self::HOME_DIR . "/database_study_labs.csv" . "<br>\n";
         
         $db = Zend_Registry::get('db');
         		
