@@ -235,7 +235,7 @@ class Baby extends Zarrar_Db_Table
             $data['last_update'] = new Zend_Db_Expr('NOW()');
 		
 		// default value for 'list'
-		if (empty($data['list_id']) && !empty($this->_data['dob'])) {
+		if (empty($data['list_id']) && empty($this->_data['list_id']) && !empty($this->_data['dob'])) {
 		    if (!empty($this->_data['family_id']))
 		        $familyId = $this->_data['family_id'];
 		    else
@@ -268,7 +268,7 @@ class Baby extends Zarrar_Db_Table
             $data['last_update'] = new Zend_Db_Expr('NOW()');
             
         // default value for 'list'
-		if (empty($data['list_id']) && !empty($this->_data['dob'])) {
+		if (empty($data['list_id']) && empty($this->_data['list_id']) && !empty($this->_data['dob'])) {
 		    if (!empty($this->_data['family_id']))
 		        $familyId = $this->_data['family_id'];
 		    else
