@@ -95,8 +95,19 @@ class Baby extends Zarrar_Db_Table
 	        $query = "SELECT babies.dob, babies.list_id FROM families LEFT JOIN babies ON families.id = babies.family_id WHERE families.id = ?";
         	$stmt = $this->getAdapter()->query($query, $familyId);
         	$results = $stmt->fetchAll();
-        	if (count($results) > 0)
-        	    return $results[0]['list_id'];
+        	
+        	$listId = NULL;
+        	foreach ($results as $arr) {
+        	    foreach ($arr as $key => $value) {
+        	        if($key == "dob" && $value == $dob)
+        	            continue;
+        	        elseif($key == "list_id" && !empty($value))
+        	            $listId = $value;
+        	   }
+        	}
+        	
+        	if (!empty($listId))
+        	    return($listId);
 	    }
 	    
 	

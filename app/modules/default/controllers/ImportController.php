@@ -379,20 +379,11 @@ class ImportController extends Zend_Controller_Action
     		    
     		    if (count($tmp)>1) {
     		        $uTmp = array_unique($tmp);
-    		        
     		        if (count($uTmp) != count($tmp)) {
     		            $newPhones = array();
     		            foreach ($uTmp as $i => $arr)
     		                $newPhones[] = $phones[$i];
     		            $phones = $newPhones;
-    		            
-    		            echo "<br>";
-            		    print_r($phones);
-            		    echo "<br>";
-            		    print_r($tmp);
-            		    echo "<br>";
-            		    print_r($uTmp);
-            		    exit();
     		        }                    
     		    }    		    
     		}
