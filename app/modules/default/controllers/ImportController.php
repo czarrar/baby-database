@@ -206,8 +206,12 @@ class ImportController extends Zend_Controller_Action
             "Hungarian" => 5,
             "norweigian" => 41
         );
+        
+        // Save baby ids
+        $myFile = "/Users/zarrar/Sites/babies_row2id.csv";
+        $fh = fopen($myFile, 'w') or die("can't open file");
 	    
-	    $handle = fopen("/Users/zarrar/Sites/database_exp.csv", "r");
+	    $handle = fopen("/Users/zarrar/Sites/database_exp2.csv", "r");
 	    
 	    # arrays to check for duplicates
 	    $arr1 = array();
@@ -297,6 +301,8 @@ class ImportController extends Zend_Controller_Action
     	            $fRow['zip'] = $zip;
     	        } elseif ($lenZip == 4) {
     	            $fRow['zip'] = "0" . $zip;
+    	        } elseif ($lenZip == 8) {
+    	            $data[99] = $data[99] . ", " . $zip;
     	        } else {
     	            echo "ERROR: zip code '{$zip}' has length {$lenZip}<br />\n";
     	        }
@@ -361,6 +367,36 @@ class ImportController extends Zend_Controller_Action
     		# 1 = home
     		if (!empty($data[99]))
     		    $phones = array_merge($phones, $this->formatPhone($data[99], 1));
+    		# remove any duplicate numbers
+    		if (!empty($phones)) {
+    		    $tmp = array();
+    		    foreach ($phones as $i => $arr) {
+    		        foreach ($arr as $key => $value) {
+    		            if ($key == "phone")
+        		            $tmp[$i] = $value;
+    		        }
+    		    }
+    		    
+    		    if (count($tmp)>1) {
+    		        $uTmp = array_unique($tmp);
+    		        
+    		        if (count($uTmp) != count($tmp)) {
+    		            $newPhones = array();
+    		            foreach ($uTmp as $i => $arr)
+    		                $newPhones[] = $phones[$i];
+    		            $phones = $newPhones;
+    		            
+    		            echo "<br>";
+            		    print_r($phones);
+            		    echo "<br>";
+            		    print_r($tmp);
+            		    echo "<br>";
+            		    print_r($uTmp);
+            		    exit();
+    		        }                    
+    		    }    		    
+    		}
+    		
     		
     		// Check email
     		if (!empty($emails)) {
@@ -398,7 +434,8 @@ class ImportController extends Zend_Controller_Action
     	    $whereData = $select->getPart(Zend_Db_Select::WHERE);
     	    if (!empty($whereData)) {
     	        $query = $select->__toString();
-    	        #print_r($query);
+#    	        print_r($query);
+#    	        echo "<br>";
     	        #exit();
     	        
     	        $stmt = $select->query();
@@ -510,8 +547,11 @@ class ImportController extends Zend_Controller_Action
                     			print_r($fpRow);
                     			echo "<br />\n";
                                 print_r($query);
+                                echo "<br />\n";
+                                print_r($result);
                     			echo "<br /><br />\n\n";
                     			$db->rollback();
+                    			exit();
                     		}
                         }
                     }
@@ -520,12 +560,16 @@ class ImportController extends Zend_Controller_Action
             # Duplicate
             else {
                 if (count($result) > 1) {
-                    echo "ERROR: found more than 1 duplicate<br />\n";
-                    exit();
-                } else {
-                    $row = $result[0];
-                    $familyId = $row['family_id'];
+                    echo "ERROR ERROR: found more than 1 duplicate<br />\n";
+                    print_r($data);
+                    echo "<br>";
+                    print_r($result);
+                    echo "<br><br>";
                 }
+                
+                $row = $result[count($result)-1];
+                $familyId = $row['family_id'];
+                
                 
                 $bad = FALSE;
                 foreach ($fRow as $key => $value) {
@@ -753,6 +797,9 @@ class ImportController extends Zend_Controller_Action
     			continue;
     		}
     		
+    		// Save babyId
+    		fwrite($fh, $rowNum . "," . $babyId . "\n");
+    		
     		# Baby Languages
             ## language_id <= 89 (need to search for the language and get the id)
             $blids = array();
@@ -799,6 +846,8 @@ class ImportController extends Zend_Controller_Action
             
         }
         
+        fclose($fh);
+        
         exit();
 	}
 	
@@ -808,12 +857,14 @@ class ImportController extends Zend_Controller_Action
 	    set_time_limit(300);
 	    
 	    $handle = fopen("/Users/zarrar/Sites/database_study_labs.csv", "r");
-        
+                
+        $db = Zend_Registry::get('db');
+        		
         $sTbl = new Study();
+        $a = $sTbl->getAdapter();
+        
         $rTbl = new Researcher();
         $lTbl = new Lab();
-        
-        $a = $sTbl->getAdapter();
         
         $rowNum = 1;
         while (($data = fgetcsv($handle)) !== FALSE) {
@@ -835,33 +886,45 @@ class ImportController extends Zend_Controller_Action
             $lab = $data[1];
             $researcher = $data[2];
             
-            // Get lab id
-            $l = $lTbl->fetchRow($a->quoteInto("lab LIKE ?", $lab));
-            if (count($l)!=1) {
-                echo "ERROR";
-                echo "<br />";
-                continue;
-            } else {
-                $labId = $l->id;
-            }
+            try {
+                // Begin transaction
+			    $db->beginTransaction();
             
-            // Check that researcher exists
-            // get researcher id
-            $r = $rTbl->fetchRow($a->quoteInto("researcher LIKE ?", $researcher));
-            if (count($r)>0)
-                $rId = $r->id;
-            else {
-                $rId = $rTbl->insert(array(
-                    'researcher'    =>  $researcher,
-                    'lab_id'        =>  $labId
+                // Get lab id
+                $l = $lTbl->fetchRow($a->quoteInto("lab LIKE ?", $lab));
+                if (count($l)!=1) {
+                    echo "ERROR";
+                    echo "<br />";
+                    continue;
+                } else {
+                    $labId = $l->id;
+                }
+            
+                // Get researcher id
+                $select = $rTbl->select();
+                $select->where("researcher LIKE ?", $researcher);
+                $select->where("lab_id = ?", $labId);
+                $r = $rTbl->fetchRow($select);
+                if (count($r)>0)
+                    $rId = $r->id;
+                else {
+                    $rId = $rTbl->insert(array(
+                        'researcher'    =>  $researcher,
+                        'lab_id'        =>  $labId
+                    ));
+                }
+            
+                // Add study
+                $sTbl->insert(array(
+                    'researcher_id'     =>  $rId,
+                    'study'             =>  $study
                 ));
-            }
-            
-            // Add study
-            $sTbl->insert(array(
-                'researcher_id'     =>  $rId,
-                'study'             =>  $study
-            ));
+                
+                $db->commit();
+            } catch(Exception $e) {
+				$db->rollback();
+				echo "ERROR: " . $e->getMessage() . "<br />";
+			}
             
             echo "<br />";
             
@@ -883,10 +946,42 @@ class ImportController extends Zend_Controller_Action
         exit();  
 	}
 	
+	protected function repString($value, $n) {
+	    $arr = array();
+	    for ($i=0; $i < $n; $i++)
+	       $arr[] = $value;
+	    return $arr;
+	}
+	
+	protected function isDate( $Str ) {
+      $Stamp = strtotime( $Str );
+      $Month = date( 'm', $Stamp );
+      $Day   = date( 'd', $Stamp );
+      $Year  = date( 'Y', $Stamp );
+
+      return checkdate( $Month, $Day, $Year );
+    }
+    
+    function testAction() {
+        echo date('Y-m-d', strtotime("7/22/05"));
+        echo "<br />";
+        echo date('Y-m-d', strtotime("2/7/05"));
+        echo "<br />";
+        exit();
+    }
+	
 	
 	function addStudyHistoryAction() {
 	    
 	    set_time_limit(300);
+	    
+	    $db = Zend_Registry::get('db');
+	    
+	    $sTbl = new Study();
+	    $rTbl = new Researcher();
+	    $lTbl = new Lab();
+	    $shTbl = new StudyHistory();
+        $a = $sTbl->getAdapter();
 	    
 	    // Get old to new study relationship
 	    $handle = fopen("/Users/zarrar/Sites/database_studies.csv", "r");
@@ -904,12 +999,97 @@ class ImportController extends Zend_Controller_Action
                 $data[$c] = trim($data[$c]);
             }
             
-            $old2new[$data[0]] = array(
-                'study'         =>  $data[1],
-                'lab'           =>  $data[2],
-                'researcher'    =>  $data[3]
-            );
+            // Get studies (check if exist)
+            $tmp = explode("/", $data[1]);
+            $labs = explode("/", $data[2]);
+            $researchers = explode("/", $data[3]);
+            $studies = array();
+            for ($i=0; $i < count($tmp); $i++) { 
+                $study = $tmp[$i];
+                if ($study == "NOTHING") {
+                    $studies[] = "NOTHING";
+                    continue;
+                }
+                
+                // Check if study exists
+                $sRow = $sTbl->fetchRow($a->quoteInto("study = ?", $study));
+                
+                // If not, then add study
+                if (count($sRow) < 1) {
+                    if (empty($researchers[0]) || empty($labs[0])) {
+                        $researchers = array("None");
+                        $labs = array("None");
+                    }
+                
+                    if ((count($tmp) != count($researchers)) || (count($researchers) != count($labs))) {
+                        if (count($researchers) == 1)
+                            $researchers = $this->repString($researchers[0], count($tmp));
+                        if (count($labs) == 1)
+                            $labs = $this->repString($labs[0], count($tmp));
+                    }
+                        
+                    
+                    if ((count($tmp) != count($researchers)) || (count($researchers) != count($labs))) {
+                        echo "ERROR {$rowNum}: inconsistent count <br />";
+                        print_r($data);
+                        echo "<br /><br />";
+                        continue;
+                    }
+                    
+                    // Add study
+                    $researcher = $researchers[$i];
+                    $lab = $labs[$i];
+                    try {
+        			    $db->beginTransaction();
+        			    
+        			    // Get lab id
+                        $l = $lTbl->fetchRow($a->quoteInto("lab LIKE ?", $lab));
+                        if (count($l)!=1)
+                            throw new Exception("lab {$lab} not found");
+                        else
+                            $labId = $l->id;
+        			    
+                        // Get researcher id
+                        $select = $rTbl->select();
+                        $select->where("researcher LIKE ?", $researcher);
+                        $select->where("lab_id = ?", $labId);
+                        $r = $rTbl->fetchRow($select);
+                        if (count($r)>0)
+                            $rId = $r->id;
+                        else {
+                            $rId = $rTbl->insert(array(
+                                'researcher'    =>  $researcher,
+                                'lab_id'        =>  $labId,
+                                'to_use'        => 0
+                            ));
+                            echo "Will add researcher: {$researcher} and {$lab}<br />";
+                        }        			    
+        			    
+        			    // Add study
+                        $sTbl->insert(array(
+                            'researcher_id'     => $rId,
+                            'study'             => $study,
+                            'to_use'            => 0
+                        ));
+        			    
+    			        $db->commit();
+    			        
+    			        echo "ADDED: {$study} - {$researcher} - {$lab}<br /><br />";
+                    } catch(Exception $e) {
+        				$db->rollback();
+        				echo "ERROR: " . $e->getMessage() . "<br />";
+        				echo $study . " - " . $researcher . " - " . $lab . "<br />";
+        				echo "<br />";
+        				continue;
+        			}
+                }
+                
+                // Study is good
+                $studies[] = $sRow->id;
+            }
             
+            $old2new[strtolower($data[0])] = $studies;
+                      
             #foreach ($studyCols as $col) {
             #    array_push($studies, $data[$col]);
             #}
@@ -917,21 +1097,33 @@ class ImportController extends Zend_Controller_Action
             $rowNum++;
         }
         
-        print_r($old2new);
         
-        exit();
-
-        $handle = fopen("/Users/zarrar/Sites/database_exp.csv", "r");
-
-        # Save study names
-        $studies = array();
+        // Get excel row to baby id link
+        $row2id = array();
+        $handle = fopen("/Users/zarrar/Sites/babies_row2id.csv", "r");
+        while (($data = fgetcsv($handle)) !== FALSE) {
+            // Trim each column and print onto screen
+            $num = count($data);
+            for ($c=0; $c < $num; $c++) { 
+                $data[$c] = trim($data[$c]);
+            }
+            
+            // Save relationship
+            $row2id[$data[0]-1] = $data[1];
+        }
         
+        // Ok now add study history
+
+        $handle = fopen("/Users/zarrar/Sites/database_exp2.csv", "r");
+                
         # Different columns from csv
         $studyCols = array(65, 43, 39, 37, 35, 33, 31, 29, 27, 63, 61, 59, 57, 55, 53, 51, 49, 47, 45, 41);
         $studyDateCols = array(64, 42, 38, 36, 34, 32, 30, 28, 26, 62, 60, 58, 56, 54, 52, 50, 48, 46, 44, 40);
+        $nStudyCols = count($studyCols);
         
-        $rowNum = 1;
+        $rowNum = 0;
         while (($data = fgetcsv($handle)) !== FALSE) {
+            $rowNum++;
             if ($rowNum === 1) {
                 $rowNum++;
                 continue;
@@ -943,24 +1135,244 @@ class ImportController extends Zend_Controller_Action
                 $data[$c] = trim($data[$c]);
             }
             
-            print_r($data);
-            echo "<br >\n";
+            # Check if row number exists
+            if (!array_key_exists($rowNum, $row2id)) {
+                echo "ERROR: row {$rowNum} not found<br />";
+                print_r($data);
+                echo "<br /><br />";
+                continue;
+            }
             
-            #foreach ($studyCols as $col) {
-            #    array_push($studies, $data[$col]);
-            #}
+            // FOR STUDY HISTORY
             
-            $rowNum++;
+            # Get baby id
+            $babyId = $row2id[$rowNum];
+            
+            # Outcome Id
+            $outcomeId = 1;
+            
+            # Get study names and dates
+            $studies = array();
+            $dates = array();
+            for ($i=0; $i < $nStudyCols; $i++) {
+                $study = strtolower($data[$studyCols[$i]]);
+                $appt = $data[$studyDateCols[$i]];
+                
+                if (!empty($study)) {
+                    // Find study in old2new list
+                    if (!array_key_exists($study, $old2new)) {
+                        echo "ERROR ERROR {$rowNum}: study '{$study}' was not found in old2new<br />";
+                        continue;
+                    }
+                    
+                    // Exclude any study with a nothing relationship
+                    if ($old2new[$study][0] == "NOTHING")
+                        continue;
+                    
+                    // Set appt if empty
+                    if (empty($appt))
+                        $appt = "1950-01-01";
+                    
+                    // Check that appt is a valid date
+                    if (!$this->isDate($appt)) {
+                        echo "ERROR ERROR {$rowNum}: study '{$study}' does not have a valid date '{$appt}'<br />";
+                        continue;
+                    }
+                    // Convert to a valid date format
+                    else {
+                        $appt = date('Y-m-d', strtotime($appt));
+                    }
+                    
+                   // Get study ids
+                   foreach ($old2new[$study] as $sId) {
+                       $studies[] = $sId;
+                       $dates[] = $appt;
+                   }
+                }
+            }
+            
+            # Add study histories
+            for ($i=0; $i < count($studies); $i++) { 
+                $studyId = $studies[$i];
+                $appointment = $dates[$i];
+                
+                // will need babyid, studies, dates, outcomeId
+                try {
+                    $shTbl->insert(array(
+                        "baby_id"           => $babyId,
+                        "study_id"          => $studyId,
+                        "appointment"       => $appointment,
+                        "study_outcome_id"  => $outcomeId
+                    ));
+                } catch(Exception $e) {
+    				echo "ERROR {$rowNum}: " . $e->getMessage() . "<br />";
+    				echo $studyId . " - " . $appointment . " - " . $babyId . "<br />";
+    				echo "<br />";
+    				continue;
+    			}
+            }
         }
-        
-        #echo "<br />\n";
-        #$uStudies = array_unique($studies);
-        #print_r($uStudies);
-        #echo "<br />\n";
-        #print_r(count($uStudies));
         
         exit();
 	    
+	    
+	}
+	
+	function addContactHistoryAction() {
+	
+	    set_time_limit(300);
+	    
+	    $db = Zend_Registry::get('db');
+	    
+	    $chTbl = new ContactHistory();
+        $a = $chTbl->getAdapter();
+	    
+	    // Figure out the row to id situation
+        $row2id = array();
+        $handle = fopen("/Users/zarrar/Sites/babies_row2id.csv", "r");
+        while (($data = fgetcsv($handle)) !== FALSE) {
+            // Trim each column and print onto screen
+            $num = count($data);
+            for ($c=0; $c < $num; $c++) { 
+                $data[$c] = trim($data[$c]);
+            }
+
+            // Save relationship
+            $row2id[$data[0]-1] = $data[1];
+        }
+        
+        // Do the contact history
+        $lines = file("/Users/zarrar/Sites/simplehtmldom/test1.htm");
+
+        $nTr = 0;
+        $nTh = 0;
+        $nTd = 0;
+        $inTr = FALSE;
+        $nRow = 0;
+
+        $clines = array(114, 127);
+
+        # Caller ID => Unknown
+        $callerId = 1;
+
+        foreach ($lines as $line) {
+            $nRow++;
+
+            // Start
+            if (strpos($line, "<TR>")!==FALSE) {
+                $inTr = TRUE;
+                $nTr++;
+                continue;
+            }
+            // End
+            if (strpos($line, "</TR>")!==FALSE) {
+                $inTr = FALSE;
+                $nTh = 0;
+                $nTd = 0;
+                continue;
+            }
+
+            if ($inTr && $nTr > 1) {
+                if (stripos($line, "<td>")!==FALSE)
+                    $nTd++;
+
+                // Got a contact log lines
+                if ($nTd == $clines[0] || $nTd == $clines[1]) {
+                    // Check if row even exists
+                    if (!array_key_exists($nTr, $row2id)) {
+                        echo "ERROR: row {$nTr} not found<br />";
+                        print_r($line);
+                        echo "<br /><br />\n\n";
+                        continue;
+                    }
+
+                    // Prepare line
+                    $line = str_replace("<TD>", "", $line);
+                    $line = str_replace("</TD>", "", $line);
+                    $line = trim($line);
+
+                    // Check if have anything
+                    if (empty($line) || $line == "<BR>")
+                        continue;
+
+                    // Split what you do have
+                    $items = explode("<BR>", $line);
+
+                    // Shout it out
+                    echo "CONTACT:<br />\n";
+                    print_r($items);
+                    echo "\n<br /><br />\n";
+
+                    // babyId
+                    $babyId = $row2id[$nTr];
+
+                    // Loop through contact info and add to db
+                    # need get babyId, callerId, DATETIME
+                    foreach ($items as $item) {
+                        $item = trim($item);
+
+                        // First get the call date
+                        $testDate = str_split(substr($item, 0, 13));
+                        $endPt = 10;
+                        $nSlashes = 0;
+                        for ($i=0; $i < count($testDate); $i++) {
+                            if ($testDate[$i] == " " || $testDate[$i] == "-") {
+                                if ($testDate[$i+1] == "-")
+                                    $endPt = $i + 2;
+                                else
+                                    $endPt = $i + 1;
+                                break;
+                            } elseif ($testDate[$i] != "/" && !ctype_digit($testDate[$i])) {
+                                $endPt = $i;
+                                break;
+                            }
+                            
+                            if ($testDate[$i] == "/")
+                                $nSlashes++;
+                        }
+                        # parse date
+                        $callDate = substr($item, 0, $i);
+                        echo "CALLDATE: {$callDate}<br /><br />";
+                        if ($nSlashes === 1 || $endPt < 6)
+                            $callDate = $callDate . "/1950";
+                        if ($nSlashes === 0 || !$this->isDate($callDate)) {
+                            $callDate = NULL;
+                            echo "{$nRow}: no calldate for {$item}<br />\n";
+                            $endPt = -1;
+                        } else {
+                            $callDate = date('Y-m-d', strtotime($callDate));
+                        }
+
+                        # get remaining item as comment
+                        $item = substr($item, $endPt);
+                        $comments = trim($item);
+                        
+                        # add to db!
+                        #
+                        
+                        try {
+                            $toInsert = array(
+                                "attempt"           => $chTbl->getAttemptNo($babyId),
+                                "baby_id"           => $babyId,
+                                "caller_id"         => $callerId
+                            );
+                            if (!empty($callDate))
+                                $toInsert["DATETIME"] = $callDate;
+                            if (!empty($comments))
+                                $toInsert["comments"] = $comments;
+                            $chTbl->insert($toInsert);
+                        } catch(Exception $e) {
+            				echo "ERROR {$nRow}: " . $e->getMessage() . "<br />";
+                            echo "baby - {$babyId}; call - {$callDate}<br />\n";
+                            echo "comments: {$comments}<br /><br />\n";
+            				continue;
+            			}
+                    }
+                }
+            }
+        }
+        
+        exit();
 	    
 	}
 	
@@ -971,7 +1383,7 @@ class ImportController extends Zend_Controller_Action
 	    $db = Zend_Registry::get('db');
 		$csTbl = new ContactSource();
 	
-	    $handle = fopen("/Users/zarrar/Sites/database_exp.csv", "r");
+	    $handle = fopen("/Users/zarrar/Sites/database_exp2.csv", "r");
 
         # 1. Setup contact_sources
         $newContactSources = array(
@@ -1020,7 +1432,7 @@ class ImportController extends Zend_Controller_Action
 	function uniqueContactsAction() {
 	    set_time_limit(300);
 	    
-	    $handle = fopen("/Users/zarrar/Sites/database_exp.csv", "r");
+	    $handle = fopen("/Users/zarrar/Sites/database_exp2.csv", "r");
 
         # 1. Find unique contact_source_id combos
         $contactSources = array();

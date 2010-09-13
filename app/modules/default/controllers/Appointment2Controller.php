@@ -801,6 +801,15 @@ class Appointment2Controller extends Zend_Controller_Action
 		        $listIds = implode(", ", $listIds);
 		        $select->where("b.list_id IN ({$listIds})");
 	        }
+	        // Otherwise look only within a lab's list
+	        elseif ($_SESSION["user_privelages"] != "admin" || $_SESSION["user_privelages"] != "coordinator") {
+	            $callerTbl = new Callers();
+	            $listIds = $callerTbl->getListIds();
+	            foreach ($listIds as $key => $value)
+		            $listIds[$key] = $this->_db->quote($value);
+		        $listIds = implode(", ", $listIds);
+		        $select->where("b.list_id IN ({$listIds})");
+	        }
 		} elseif ($data['list_id'] != -1) {
 		    $select->where("b.list_id = ?", $data['list_id']);
 		}

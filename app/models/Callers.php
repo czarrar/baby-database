@@ -36,4 +36,21 @@ class Callers extends Zarrar_Db_Table
 		
 		return $labName;
 	}
+	
+	public function getListIds($callerId=NULL) {
+	    if (empty($callerId))
+	        $callerId = $_SESSION['caller_id'];
+	    
+		$query = "SELECT lists.id FROM lists LEFT JOIN lab_lists ON lists.id = lab_lists.list_id LEFT JOIN labs ON lab_lists.lab_id = labs.id LEFT JOIN callers ON labs.id = callers.lab_id WHERE callers.id = ?";
+		
+		// Execute
+		$stmt = $this->getAdapter()->query($query, $callerId);
+		$results = $stmt->fetchAll(Zend_Db::FETCH_COLUMN);
+		
+		// Check
+		if (count($results) == 0)
+			throw new Exception("Could not find a list associated with current study");
+		
+		return $results;
+	}
 }

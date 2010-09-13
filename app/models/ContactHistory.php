@@ -92,6 +92,23 @@ class ContactHistory extends Zarrar_Db_Table
 		"checkout", "activate", "inactivate", "to_callback"
 	);
 	
+	public function getAttemptNo($babyId) {
+	    $query = "SELECT attempt FROM contact_histories WHERE baby_id = ?";
+		
+		// Execute
+		$stmt = $this->getAdapter()->query($query, $babyId);
+		$results = $stmt->fetchAll(Zend_Db::FETCH_COLUMN);
+		$nResults = count($results);
+		
+		// Check
+		if ($nResults == 0)
+			$num = 1;
+		else
+		    $num = $results[$nResults-1] + 1;
+		
+		return $num;
+	}
+	
 	protected function _modifyData(array $data)
 	{
 		/* Datetime of Entry */
