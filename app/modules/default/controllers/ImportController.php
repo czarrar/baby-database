@@ -26,7 +26,7 @@ class ImportController extends Zend_Controller_Action
 {
     const FIX_DUPLICATES = TRUE;
 	
-	const HOME_DIR = "/Applications/MAMP/htdocs/baby-database/app/etc";
+	const HOME_DIR = "/Applications/MAMP/htdocs";
 	#const HOME_DIR = "/Users/zarrar/Sites";
 	
 	function formatPhoneWorker($phone, $type, $extension) {
@@ -851,7 +851,6 @@ class ImportController extends Zend_Controller_Action
 	    
 	    $handle = fopen(self::HOME_DIR . "/database_study_labs.csv", "r");
         echo $handle . "<br>\n";
-        print_r($handle);
         
         $db = Zend_Registry::get('db');
         		
