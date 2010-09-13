@@ -1004,6 +1004,8 @@ class ImportController extends Zend_Controller_Action
                 if ($study == "NOTHING") {
                     $studies[] = "NOTHING";
                     continue;
+                } else if (empty($study)) {
+                    continue;
                 }
                 
                 // Check if study exists
@@ -1192,6 +1194,9 @@ class ImportController extends Zend_Controller_Action
             for ($i=0; $i < count($studies); $i++) { 
                 $studyId = $studies[$i];
                 $appointment = $dates[$i];
+                
+                if (empty($studyId))
+                    continue;
                 
                 // will need babyid, studies, dates, outcomeId
                 try {
