@@ -1,5 +1,7 @@
 <h3>: Changing/Confirming Baby</h3>
 
+<?= $this->partial('/baby-study2/_age.phtml', $this) ?>
+
 <?php
     if (!(empty($this->errors))) {
         echo $this->partial('_newErrorMsg.phtml', array('errors' => $this->errors));
@@ -82,7 +84,9 @@
             <em>(HH:MM)</em>
             <p></p>
             <label><em><strong>Age on date of study:</strong></em></label><?= $this->babyAge ?>
-            &nbsp;&nbsp;<a href="javascript:location.reload(true)">Refresh</a>
+            &nbsp;&nbsp;<a href="javascript:openAgeWizard('<?= $this->url(array('action' => 'calculator', 'controller' => 'index'), null, true) ?>')"><strong><em>
+                Click Here Age Wizard
+            </em></strong></a>
         </td>
     </tr>
     <tr>

@@ -473,7 +473,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		# 2. STUDY ID
 		// Get study options
 		$studyTbl = new Study();
-		$studyOptions = $studyTbl->getRecordOwners("short", false, array("" => "Choose"));
+		$studyOptions = $studyTbl->getRecordOwners("long", false, array("" => "Choose"));
 		// Create select field
 		$study = $form->createElement("select", "study_id");
 		$study->setLabel("Study")
@@ -916,8 +916,6 @@ class BabyStudy2Controller extends Zend_Controller_Action
     	    $this->view->babyAge = $calculator->getAge("full");
 		}
 		
-		
-		
 		// Set form and errors to view
 		$this->view->form = $this->_form;
 		$this->view->errors = $this->_errors;
@@ -1257,6 +1255,12 @@ class BabyStudy2Controller extends Zend_Controller_Action
 					"other_studies"	=> $this->view->hasOtherStudies
 				));
 			}
+			
+			// Set baby age on day of study
+    		$calculator = new Zarrar_AgeCalculator();
+    		$calculator->setDob($this->_getBabyDob($babyId))
+    				   ->setDate(substr($bsInfo["appointment"], 0, 10));
+    	    $this->view->babyAge = $calculator->getAge("full");
 		}
 		
 		// Set form and errors to view

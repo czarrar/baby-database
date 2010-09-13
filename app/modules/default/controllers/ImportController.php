@@ -1,5 +1,7 @@
 <?php
 
+ini_set("memory_limit","50M");
+
 
 #$origContactSources = array(
 #    "Ad"                         => 1,  
@@ -1114,10 +1116,11 @@ class ImportController extends Zend_Controller_Action
         
         $rowNum = 0;
         while (($data = fgetcsv($handle)) !== FALSE) {
-            $rowNum++;
-            if ($rowNum === 1) {
+            if ($rowNum === 0) {
                 $rowNum++;
                 continue;
+            } else {
+                $rowNum++;
             }
 
             $num = count($data);
@@ -1182,6 +1185,7 @@ class ImportController extends Zend_Controller_Action
                 }
             }
             
+            
             # Add study histories
             for ($i=0; $i < count($studies); $i++) { 
                 $studyId = $studies[$i];
@@ -1198,6 +1202,8 @@ class ImportController extends Zend_Controller_Action
                 } catch(Exception $e) {
     				echo "ERROR {$rowNum}: " . $e->getMessage() . "<br />";
     				echo $studyId . " - " . $appointment . " - " . $babyId . "<br />";
+#    				echo "<br />";
+    				print_r($studies);
     				echo "<br />";
     				continue;
     			}
@@ -1211,7 +1217,7 @@ class ImportController extends Zend_Controller_Action
 	
 	function addContactHistoryAction() {
 	
-	    set_time_limit(300);
+	    set_time_limit(600);
 	    
 	    $db = Zend_Registry::get('db');
 	    
@@ -1233,7 +1239,7 @@ class ImportController extends Zend_Controller_Action
         }
         
         // Do the contact history
-        $lines = file("/Users/zarrar/Sites/simplehtmldom/test1.htm");
+        $lines = file("/Users/zarrar/Sites/database_exp2.htm");
 
         $nTr = 0;
         $nTh = 0;
@@ -1299,8 +1305,11 @@ class ImportController extends Zend_Controller_Action
 
                     // Loop through contact info and add to db
                     # need get babyId, callerId, DATETIME
+                    $k = -1;
+                    $year = NULL;
                     foreach ($items as $item) {
                         $item = trim($item);
+                        $k++;
 
                         // First get the call date
                         $testDate = str_split(substr($item, 0, 13));
@@ -1313,33 +1322,47 @@ class ImportController extends Zend_Controller_Action
                                 else
                                     $endPt = $i + 1;
                                 break;
-                            } elseif ($testDate[$i] != "/" && !ctype_digit($testDate[$i])) {
+                            } elseif ($testDate[$i] != "/" && $testDate[$i] != "." && !ctype_digit($testDate[$i])) {
                                 $endPt = $i;
                                 break;
                             }
                             
-                            if ($testDate[$i] == "/")
+                            if ($testDate[$i] == "/" || $testDate[$i] == ".")
                                 $nSlashes++;
                         }
                         # parse date
                         $callDate = substr($item, 0, $i);
-                        echo "CALLDATE: {$callDate}<br /><br />";
-                        if ($nSlashes === 1 || $endPt < 6)
-                            $callDate = $callDate . "/1950";
+                        $callDate = str_replace(".", "/", $callDate);
+                        
+                        if ($nSlashes === 1 || $endPt < 6) {
+                            if (empty($year))
+                                $callDate = $callDate . "/1950";
+                            else
+                                $callDate = $callDate . "/${year}";
+                        }
+                        
                         if ($nSlashes === 0 || !$this->isDate($callDate)) {
                             $callDate = NULL;
-                            echo "{$nRow}: no calldate for {$item}<br />\n";
-                            $endPt = -1;
+                            echo "{$nRow}: no calldate {$callDate} for {$item} using {$i} and {$endPt}<br />\n";
+                            $endPt = 0;
                         } else {
                             $callDate = date('Y-m-d', strtotime($callDate));
+                            $year = date('Y', strtotime($callDate));
                         }
 
                         # get remaining item as comment
                         $item = substr($item, $endPt);
                         $comments = trim($item);
                         
+#                        echo $items[$k] . "<br />";
+#                        echo "$callDate - $item - $comments" . "<br />";
+#                        echo "<br>";
+                        
                         # add to db!
                         #
+                        
+                        if (empty($callDate) || empty($comments))
+                            continue;
                         
                         try {
                             $toInsert = array(

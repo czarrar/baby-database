@@ -795,6 +795,7 @@ class Appointment2Controller extends Zend_Controller_Action
 		if (empty($data['list_id'])) {
 		    // Auto set the list ids to use
 		    if (!empty($data['study_id'])) {
+		        echo "hey";
 		        $listIds = $studyTbl->getListIds($data['study_id']);
 		        foreach ($listIds as $key => $value)
 		            $listIds[$key] = $this->_db->quote($value);
@@ -802,7 +803,7 @@ class Appointment2Controller extends Zend_Controller_Action
 		        $select->where("b.list_id IN ({$listIds})");
 	        }
 	        // Otherwise look only within a lab's list
-	        elseif ($_SESSION["user_privelages"] != "admin" || $_SESSION["user_privelages"] != "coordinator") {
+	        elseif ($_SESSION["user_privelages"] != "admin" && $_SESSION["user_privelages"] != "coordinator") {
 	            $callerTbl = new Callers();
 	            $listIds = $callerTbl->getListIds();
 	            foreach ($listIds as $key => $value)
