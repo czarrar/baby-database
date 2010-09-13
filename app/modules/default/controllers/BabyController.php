@@ -64,7 +64,8 @@ class BabyController extends Zend_Controller_Action
 		$babyId = $this->_getParam('id');
 		if (empty($babyId))
 			throw new Zend_Controller_Action_Exception("Baby id must be given");
-			
+		
+		
 		// If submitted correctly, process form
 		if ($result == 0) {
 			// Add reason + caller to baby comments
@@ -678,7 +679,7 @@ class BabyController extends Zend_Controller_Action
 				$info = array(
 					"baby_id"			=> $result->baby_id,
 					"study_id"			=> $result->study_id,
-					"appointment"		=> $result->appoinment,
+					"appointment"		=> $result->appointment,
 					"study_outcome_id"	=> 3,
 					"allow_further"		=> 0,
 					"comments"			=> "{$result->comments}." . PHP_EOL . "  Baby was archived as parent was no longer interested (this sentence is an automatically generated comment)."

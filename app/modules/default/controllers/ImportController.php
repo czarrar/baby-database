@@ -1,5 +1,7 @@
 <?php
 
+/*
+
 ini_set("memory_limit","50M");
 ini_set('auto_detect_line_endings', true);  # solves issue of reading files
 
