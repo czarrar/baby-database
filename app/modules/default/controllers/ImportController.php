@@ -26,8 +26,8 @@ class ImportController extends Zend_Controller_Action
 {
     const FIX_DUPLICATES = TRUE;
 	
-	#const HOME_DIR = "/home/wpl/public_html/babydb/app/etc/";
-	const HOME_DIR = "/Users/zarrar/Sites";
+	const HOME_DIR = "/Applications/MAMP/htdocs/baby-database/app/etc/";
+	#const HOME_DIR = "/Users/zarrar/Sites";
 	
 	function formatPhoneWorker($phone, $type, $extension) {
 	    // if find c:, (c), or cell, assume it is a cell
@@ -210,10 +210,10 @@ class ImportController extends Zend_Controller_Action
         );
         
         // Save baby ids
-        $myFile = "/Users/zarrar/Sites/babies_row2id.csv";
+        $myFile = self::HOME_DIR . "/babies_row2id.csv";
         $fh = fopen($myFile, 'w') or die("can't open file");
 	    
-	    $handle = fopen("/Users/zarrar/Sites/database_exp2.csv", "r");
+	    $handle = fopen(self::HOME_DIR . "/database_exp2.csv", "r");
 	    
 	    # arrays to check for duplicates
 	    $arr1 = array();
@@ -849,7 +849,7 @@ class ImportController extends Zend_Controller_Action
 	    
 	    set_time_limit(300);
 	    
-	    $handle = fopen("/Users/zarrar/Sites/database_study_labs.csv", "r");
+	    $handle = fopen(self::HOME_DIR . "/database_study_labs.csv", "r");
                 
         $db = Zend_Registry::get('db');
         		
@@ -977,7 +977,7 @@ class ImportController extends Zend_Controller_Action
         $a = $sTbl->getAdapter();
 	    
 	    // Get old to new study relationship
-	    $handle = fopen("/Users/zarrar/Sites/database_studies.csv", "r");
+	    $handle = fopen(self::HOME_DIR . "/database_studies.csv", "r");
 	    $old2new = array();
         $rowNum = 1;
         while (($data = fgetcsv($handle)) !== FALSE) {
@@ -1093,7 +1093,7 @@ class ImportController extends Zend_Controller_Action
         
         // Get excel row to baby id link
         $row2id = array();
-        $handle = fopen("/Users/zarrar/Sites/babies_row2id.csv", "r");
+        $handle = fopen(self::HOME_DIR . "/babies_row2id.csv", "r");
         while (($data = fgetcsv($handle)) !== FALSE) {
             // Trim each column and print onto screen
             $num = count($data);
@@ -1107,7 +1107,7 @@ class ImportController extends Zend_Controller_Action
         
         // Ok now add study history
 
-        $handle = fopen("/Users/zarrar/Sites/database_exp2.csv", "r");
+        $handle = fopen(self::HOME_DIR . "/database_exp2.csv", "r");
                 
         # Different columns from csv
         $studyCols = array(65, 43, 39, 37, 35, 33, 31, 29, 27, 63, 61, 59, 57, 55, 53, 51, 49, 47, 45, 41);
@@ -1226,7 +1226,7 @@ class ImportController extends Zend_Controller_Action
 	    
 	    // Figure out the row to id situation
         $row2id = array();
-        $handle = fopen("/Users/zarrar/Sites/babies_row2id.csv", "r");
+        $handle = fopen(self::HOME_DIR . "/babies_row2id.csv", "r");
         while (($data = fgetcsv($handle)) !== FALSE) {
             // Trim each column and print onto screen
             $num = count($data);
@@ -1239,7 +1239,7 @@ class ImportController extends Zend_Controller_Action
         }
         
         // Do the contact history
-        $lines = file("/Users/zarrar/Sites/database_exp2.htm");
+        $lines = file(self::HOME_DIR . "/database_exp2.htm");
 
         $nTr = 0;
         $nTh = 0;
@@ -1397,7 +1397,7 @@ class ImportController extends Zend_Controller_Action
 	    $db = Zend_Registry::get('db');
 		$csTbl = new ContactSource();
 	
-	    $handle = fopen("/Users/zarrar/Sites/database_exp2.csv", "r");
+	    $handle = fopen(self::HOME_DIR . "/database_exp2.csv", "r");
 
         # 1. Setup contact_sources
         $newContactSources = array(
@@ -1446,7 +1446,7 @@ class ImportController extends Zend_Controller_Action
 	function uniqueContactsAction() {
 	    set_time_limit(300);
 	    
-	    $handle = fopen("/Users/zarrar/Sites/database_exp2.csv", "r");
+	    $handle = fopen(self::HOME_DIR . "/database_exp2.csv", "r");
 
         # 1. Find unique contact_source_id combos
         $contactSources = array();
