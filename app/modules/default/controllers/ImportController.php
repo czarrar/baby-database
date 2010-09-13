@@ -26,7 +26,7 @@ class ImportController extends Zend_Controller_Action
 {
     const FIX_DUPLICATES = TRUE;
 	
-	const HOME_DIR = "/Applications/MAMP/htdocs/baby-database/app/etc/";
+	const HOME_DIR = "/Applications/MAMP/htdocs/baby-database/app/etc";
 	#const HOME_DIR = "/Users/zarrar/Sites";
 	
 	function formatPhoneWorker($phone, $type, $extension) {
