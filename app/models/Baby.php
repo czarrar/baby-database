@@ -126,7 +126,7 @@ class Baby extends Zarrar_Db_Table
 	    $numIds = count($results);
 	    
 	    # Divide day by # of list ids and take the reminder
-	    $which = $day % $numIds;
+	    $which = ($day + $numIds - 1) % $numIds;
 	    $listId = $results[$which];
 	    
 	    return($listId);
