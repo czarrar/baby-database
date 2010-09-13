@@ -211,7 +211,7 @@ class ImportController extends Zend_Controller_Action
         );
         
         // Save baby ids
-        $myFile = self::HOME_DIR . "/babies_row2id.csv";
+        $myFile = "babies_row2id.csv";
         $fh = fopen($myFile, 'w') or die("can't open file");
 	    
 	    $handle = fopen(self::HOME_DIR . "/database_exp2.csv", "r");
@@ -1095,7 +1095,7 @@ class ImportController extends Zend_Controller_Action
         
         // Get excel row to baby id link
         $row2id = array();
-        $handle = fopen(self::HOME_DIR . "/babies_row2id.csv", "r");
+        $handle = fopen("babies_row2id.csv", "r");
         while (($data = fgetcsv($handle)) !== FALSE) {
             // Trim each column and print onto screen
             $num = count($data);
@@ -1228,7 +1228,7 @@ class ImportController extends Zend_Controller_Action
 	    
 	    // Figure out the row to id situation
         $row2id = array();
-        $handle = fopen(self::HOME_DIR . "/babies_row2id.csv", "r");
+        $handle = fopen("babies_row2id.csv", "r");
         while (($data = fgetcsv($handle)) !== FALSE) {
             // Trim each column and print onto screen
             $num = count($data);
