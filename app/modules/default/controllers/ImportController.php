@@ -1,5 +1,7 @@
 <?php
 
+/*
+
 ini_set("memory_limit","50M");
 ini_set('auto_detect_line_endings', true);  # solves issue of reading files
 
@@ -1320,6 +1322,8 @@ class ImportController extends Zend_Controller_Action
            );
     	   $babyTbl->update($what, $where);
        }
+       
+       exit();
 	}
 	
 	function addContactHistoryAction() {
