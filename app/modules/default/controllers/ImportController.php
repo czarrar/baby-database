@@ -1,7 +1,5 @@
 <?php
 
-/*
-
 ini_set("memory_limit","50M");
 ini_set('auto_detect_line_endings', true);  # solves issue of reading files
 
@@ -1244,7 +1242,7 @@ class ImportController extends Zend_Controller_Action
             }
 
             // Save relationship
-            $row2id[$data[0]-1] = $data[1];
+            $row2id[$data[0]-1] = $data[1]; # took out the -1
         }
         
         // Do the contact history
@@ -1254,7 +1252,7 @@ class ImportController extends Zend_Controller_Action
         $nTh = 0;
         $nTd = 0;
         $inTr = FALSE;
-        $nRow = 0;
+        $nRow = 1;
 
         $clines = array(114, 127);
 
@@ -1311,6 +1309,9 @@ class ImportController extends Zend_Controller_Action
 
                     // babyId
                     $babyId = $row2id[$nTr];
+                    
+                    echo $babyId . " - " . $nTr;
+                    exit();
 
                     // Loop through contact info and add to db
                     # need get babyId, callerId, DATETIME
