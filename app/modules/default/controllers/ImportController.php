@@ -1143,8 +1143,13 @@ class ImportController extends Zend_Controller_Action
             
             // FOR STUDY HISTORY
             
+            
             # Get baby id
             $babyId = $row2id[$rowNum];
+            
+            echo $babyId . " - " . $rowNum . "<br>";
+            print_r($row2id);
+            exit();
             
             # Outcome Id
             $outcomeId = 1;
