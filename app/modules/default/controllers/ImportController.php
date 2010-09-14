@@ -1284,7 +1284,7 @@ class ImportController extends Zend_Controller_Action
                 continue;
             }
 
-            if ($inTr && $nTr > 1) {
+            if ($inTr && $nTr > 2) {
                 if (stripos($line, "<td>")!==FALSE)
                     $nTd++;
 
@@ -1316,11 +1316,11 @@ class ImportController extends Zend_Controller_Action
                     echo "\n<br /><br />\n";
 
                     // babyId
-                    $babyId = $row2id[$nTr];
+                    $babyId = $row2id[$nTr-1];
                     
                     # Check if row number exists
                     if (!array_key_exists($nTr, $row2id)) {
-                        echo "ERROR: row {$rowNum} not found<br />";
+                        echo "ERROR: row {$nTr} not found<br />";
                         print_r($data);
                         echo "<br /><br />";
 //                        continue;
