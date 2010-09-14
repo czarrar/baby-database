@@ -757,11 +757,11 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		}
 		
 		// Set sex
-		if (!empty($row['baby_sex']) || $row['baby_sex'] === 0) {
-		    if ($row['baby_sex'] === 1)
-		        $row['baby_sex'] = "Male";
-		    else
+		if (!empty($row['baby_sex'])) {
+		    if ($row['baby_sex'] == 1)
 		        $row['baby_sex'] = "Female";
+		    else
+		        $row['baby_sex'] = "Male";
 		}
 		    
 		#print_r($row);

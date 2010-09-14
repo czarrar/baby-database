@@ -1230,6 +1230,98 @@ class ImportController extends Zend_Controller_Action
 	    
 	}
 	
+	function fixStuffAction()
+	{
+	   // Get excel row to baby id link
+       $row2id = array();
+       $handle = fopen("babies_row2id.csv", "r");
+       while (($data = fgetcsv($handle)) !== FALSE) {
+           // Trim each column and print onto screen
+           $num = count($data);
+           for ($c=0; $c < $num; $c++) { 
+               $data[$c] = trim($data[$c]);
+           }
+
+           // Save relationship
+           $row2id[$data[0]-1] = $data[1];
+       }
+
+       $handle = fopen(self::HOME_DIR . "/database_exp2.csv", "r");
+       $rowNum = 0;
+       while (($data = fgetcsv($handle)) !== FALSE) {
+           if ($rowNum === 0) {
+               $rowNum++;
+               continue;
+           } else {
+               $rowNum++;
+           }
+
+           $num = count($data);
+           // Trim each column and print onto screen
+           for ($c=0; $c < $num; $c++) { 
+               $data[$c] = trim($data[$c]);
+           }
+
+           # Check if row number exists
+           if (!array_key_exists($rowNum, $row2id)) {
+               echo "ERROR: row {$rowNum} not found<br />";
+               print_r($data);
+               echo "<br /><br />";
+               continue;
+           }
+    
+           $babyId = $row2id[$rowNum];  # change this for real db!
+       
+           $addComments = "";
+           ## comments <= 99, 69 and 70 sibs info
+           if (!empty($data[98]))
+               $addComments = $addComments . $data[98] . "\n";
+           if (!empty($data[69]))
+               $addComments = $addComments . "SIBS: " . $data[69] . "\n";
+           if (!empty($data[70]))
+               $addComments = $addComments . "SIBS DOB: " . $data[70] . "\n";
+           ## dob <= 122
+           if (!empty($data[122])) {
+               $bRow['dob'] = date("Y-m-d", strtotime($data[122]));
+
+               $goodDob = TRUE;
+           } else {
+               $bRow['dob'] = "1950-01-01";    # need to give some default;
+               $addComments = $addComments . "NO DATE OF BIRTH!\n";
+
+               $goodDob = FALSE;
+           }
+       
+           if (!empty($data[89])) {
+                $addComments = $addComments . "Languages Spoken: {$data[89]}";
+           }
+       
+           if (empty($babyId)) {
+                echo "ERROR ERROR: no baby id given!<br><br>";
+                continue;
+           }
+
+           // Setup baby db stuff
+           $babyTbl = new Baby();
+           $where = $babyTbl->getAdapter()->quoteInto("id = ?", $babyId);
+       
+           // Fetch comments from baby tbl
+           $curRow = $babyTbl->fetchRow($where);
+           if (count($curRow) != 1) {
+                echo "ERROR ERROR: baby {$babyId} not currently in db<br><br>\n";
+                continue;
+           } else {
+                $currentComments = $curRow->comments;
+           }
+       
+           // Update baby tbl
+           $what = array(
+                "comments"  => $currentComments . "\n" . $addComments
+           );
+    	   $babyTbl->update($what, $where);
+       }
+	}
+	
 	function addContactHistoryAction() {
 	
 	    set_time_limit(600);
