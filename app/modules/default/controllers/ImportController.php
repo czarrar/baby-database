@@ -1276,7 +1276,7 @@ class ImportController extends Zend_Controller_Action
                 continue;
             }
 
-            if ($inTr && $nTr > 2) {
+            if ($inTr && $nTr > 1) {
                 if (stripos($line, "<td>")!==FALSE)
                     $nTd++;
 
@@ -1310,7 +1310,8 @@ class ImportController extends Zend_Controller_Action
                     // babyId
                     $babyId = $row2id[$nTr];
                     
-                    echo $babyId . " - " . $nTr;
+                    echo $babyId . " - " . $nTr . <br>;
+                    print_r($row2id)
                     exit();
 
                     // Loop through contact info and add to db
