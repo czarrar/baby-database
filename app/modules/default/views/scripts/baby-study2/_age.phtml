@@ -10,7 +10,7 @@ function openAgeWizard(partialLink) {
     window.open(partialLink + '/baby_id/' + oForm.baby_id.value + "/date/" + appt_date, 'Age Calculator', 'toolbar=no, location=no, directories=no, status=yes, menubar=no, resizable=yes, scrollbars=yes, width=400, height=400');
 }
 
-function call_popup() {
+function print_popup() {
     window.open('<?= $this->url(array("action" => "print", "controller" => "baby-study2", "baby_id" => $this->babyId, "study_id" => $this->studyId), null, true) ?>', 'Print Subject Info', 'toolbar=no, location=no, directories=no, status=yes, menubar=no, resizable=yes, copyhistory=no, scrollbars=yes, width=800, height=600');
 }
 
