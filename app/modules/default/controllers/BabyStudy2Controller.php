@@ -570,6 +570,203 @@ class BabyStudy2Controller extends Zend_Controller_Action
  *	SCHEDULING BABY FUNCTIONS	*
  ********************************/
 
+    // Not really scheduling, just for printing
+    function printAction()
+	{
+	    // Disable header file
+    	$this->view->headerFile = '_empty.phtml';
+	
+		// Get id for baby table
+		$babyId = (int) $this->_babyId;
+		
+		// Get study id
+		$studyId = $this->_studyId;
+		
+		// DB setup
+		$db = Zend_Registry::get('db');
+		
+		// Baby/Family Info
+		$select = $db->select()
+			->distinct()
+			->from(array('b' => 'babies'),
+		        array(
+		            'baby_id'       => 'id', 
+		            'baby_name'     => new Zend_Db_Expr('CONCAT(first_name, " ", last_name)'), 
+		            'baby_dob'      => 'dob', 
+		            'baby_sex'      => 'sex', 
+		            'baby_term'     => 'term',
+		            'baby_comments' => 'comments'
+		        ))	    
+			->joinLeft(array('f' => 'families'),
+				'b.family_id = f.id', 
+				array(
+				    'family_id'     => 'id',
+				    'mother_name'   => new Zend_Db_Expr("CONCAT_WS(', ', mother_last_name, mother_first_name)"),
+				    'father_name'   => new Zend_Db_Expr("CONCAT_WS(', ', father_last_name, father_first_name)"),
+				    "address"       => new Zend_Db_Expr("CONCAT_WS(',', address_1, address_2)"), 
+				    "city", 
+				    "state", 
+				    "zip",
+				    "family_comments" => "comments"
+				))
+			->joinLeft(array('fp' => 'family_phones'),
+					'f.id = fp.family_id', 
+					array('telephone' => new Zend_Db_Expr("GROUP_CONCAT(DISTINCT fp.phone_number SEPARATOR ', ')")
+					))
+			->where("b.id = ?", $babyId);
+		
+		// If have study id, then get more info
+		if (!empty($studyId)) {
+		    // Get current study info
+		    $select
+		        ->joinLeft(array('bs' => 'baby_studies'),
+				    'b.id <=> bs.baby_id', 
+				    array(
+				        'appointment',
+				        'bs_comments' => 'comments'
+				    ))
+			    ->joinLeft(array('s' => 'studies'),
+				    'bs.study_id = s.id', 
+				    array(
+				        'study_name' => 'study'
+				    ))
+				->where("bs.study_id = ?", $studyId);
+		}
+		
+ //   	// We want the following info
+ //   	study # Study Name
+ //   	babystudy # Date: Time: of study
+ //   	baby # Subject Name
+ //   	baby # Subject ID
+ //   	baby # Birth Date: 
+ //   	babystudy # Test Age: 
+ //   	baby # Sex:
+ //   	family # Parent's names: mom and dad
+ //   	family # Street Address:
+ //   	family # City/State/Zip
+ //   	family_phones # Phone #s
+ //   	study_histories # Previous Studies
+ //   	families # Siblings? name (get from baby stuff)
+ //   	baby # Full-Term? (yes 40 or not)
+ //   	baby # Baby Comments:
+ //   	family # Family Comments:
+ //   	babystudy # Study Comments: (if study given)
+		
+		// Get query
+		$stmt = $select->query();
+		$stmt->execute();
+		$rows = $stmt->fetchAll();
+        
+        // Check row exists
+		if (count($rows) == 0)
+		    throw new Exception('Weird, no info on baby found');
+		elseif (count($rows) > 1)
+			throw new Exception('Weird, more than one baby found????');
+
+        $row = $rows[0];
+        
+        ####
+        // Add to row with siblings, current studies, and previous studies
+        ####
+        // Fetch siblings if any
+        $siblings = $db->select()
+		    ->from(array('b' => 'babies'), 
+		        array(
+		            'name' => new Zend_Db_Expr('CONCAT(first_name, " ", last_name)'), 
+		        ))
+		    ->joinLeft(array('f' => 'families'),
+				'b.family_id <=> f.id', array())
+			->where("f.id = ?", $row['family_id'])
+			->where("b.id != ?", $babyId);
+		$stmt = $siblings->query();
+		$stmt->execute();
+		$tmp = $stmt->fetchAll(Zend_Db::FETCH_COLUMN);
+		$row['siblings'] = $tmp[0];
+        
+        if (!empty($studyId)) {
+            // Get current studies info
+    		$curStudies = $db->select()
+    			->from(array('bs' => 'baby_studies'), array())
+    			->joinLeft(array('s' => 'studies'),
+    				'bs.study_id = s.id', 
+    				array(
+    				    "studies" => new Zend_Db_Expr("GROUP_CONCAT(DISTINCT s.study SEPARATOR ', ')")
+    				))
+    			->where("bs.baby_id = ?", $babyId)
+    			->where("bs.study_id != ?", $studyId);
+    		$stmt = $curStudies->query();
+    		$stmt->execute();
+    		$tmp = $stmt->fetchAll(Zend_Db::FETCH_COLUMN);
+    		$row['current_studies'] = $tmp[0];
+
+    		// Get previous studies
+    		$prevStudies = $db->select()
+    		    ->from(array('sh' => 'study_histories'), array())
+    		    ->joinLeft(array('s' => 'studies'),
+    				'sh.study_id <=> s.id', 
+    				array(
+    				    "studies" => new Zend_Db_Expr("GROUP_CONCAT(DISTINCT s.study SEPARATOR ', ')")
+    				))
+    			->where("sh.baby_id = ?", $babyId)
+    			->where("sh.study_id != ?", $studyId)
+    			->where("sh.study_outcome_id = ?", 1);
+    		$stmt = $prevStudies->query();
+    		$stmt->execute();
+    		$tmp = $stmt->fetchAll(Zend_Db::FETCH_COLUMN);
+    		$row['previous_studies'] = $tmp[0];
+        }
+		        
+        // Calculate baby age
+        if (!empty($row['baby_dob']) && !empty($studyId)) {
+            $calculator = new Zarrar_AgeCalculator();
+    		$calculator->setDob($row['baby_dob'])
+    				   ->setDate(substr($row["appointment"], 0, 10));
+    	    $row['test_age'] = $calculator->getAge("full");
+        }
+		
+		// If baby term is 40, then say yes otherwise no
+		if (!empty($row['baby_term'])) {
+		    if ($row['baby_term'] == 40)
+		        $row['baby_term'] = "Yes";
+		    else
+		        $row['baby_term'] = "No ({$row['baby_term']} weeks)";
+		}
+		
+		// Switch dates to mm/dd/yyyy format
+		if (!empty($row['baby_dob'])) {
+		    if ($row['baby_dob'] == "1950-01-01")
+		        $row["baby_dob"] = "Unknown";
+		    else
+		        $row['baby_dob'] = date('m/d/Y', strtotime($row['baby_dob']));
+		}
+		if (!empty($studyId) && !empty($row['appointment'])) {
+		    $row['appointment_date'] = date('m/d/Y', strtotime($row['appointment']));
+		    $row['appointment_time'] = date('h:i a', strtotime($row['appointment']));
+		    unset($row['appointment']);
+		}
+		
+		// Set sex
+		if (!empty($row['baby_sex']) || $row['baby_sex'] === 0) {
+		    if ($row['baby_sex'] === 1)
+		        $row['baby_sex'] = "Male";
+		    else
+		        $row['baby_sex'] = "Female";
+		}
+		    
+		#print_r($row);
+		#exit();
+		
+		// Save for viewing
+		foreach ($row as $key => $value) {
+		    if (empty($value))
+		        $value = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		    $this->view->$key = $value;
+		}
+		
+		$this->view->babyId = $babyId;
+		$this->view->studyId = $studyId;
+	}
+
 	/**
 	 * ACTION: Form to schedule a baby for study
 	 **/

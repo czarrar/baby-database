@@ -427,7 +427,7 @@ class BabyController extends Zend_Controller_Action
 	}
 	
 	function editAction()
-	{
+	{	    
 		$this->view->type = "edit";
 		
 		// Get id for baby table
@@ -564,6 +564,7 @@ class BabyController extends Zend_Controller_Action
 			}			
 		}
 					
+		
 		// Set new vars into view
 		$formUpdateRow->setForm();
 		
