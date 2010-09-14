@@ -1323,12 +1323,12 @@ class ImportController extends Zend_Controller_Action
                         echo "ERROR: row {$nTr} not found<br />";
                         print_r($data);
                         echo "<br /><br />";
-//                        continue;
+                        continue;
                     }
                     
-                    echo $babyId . " - " . $nTr . "<br>";
-                    print_r($row2id);
-                    exit();
+//                    echo $babyId . " - " . $nTr . "<br>";
+//                    print_r($row2id);
+//                    exit();
 
                     // Loop through contact info and add to db
                     # need get babyId, callerId, DATETIME
