@@ -1,0 +1,127 @@
+<div align="center">
+
+<font face="verdana"><h1>Subject Information</h1></font>
+
+<table border="1" cellspacing="0" cellpadding="10" class="form" width="75%" >
+    <tr>
+        <td class="label">Study Name</td>
+        <td>
+            <?= $this->study_name ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Appointment</td>
+        <td>
+            <em>Date:</em> <?= $this->appointment_date ?><span class="spacer"><span> <span class="spacer"><span><em>Time:</em> <?= $this->appointment_time ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Subject's</td>
+        <td>
+            <em>Name:</em> <?= $this->baby_name ?><span class="spacer"><span> <span class="spacer"><span><em>ID:</em> <?= $this->baby_id ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Birth Date</td>
+        <td>
+            <?= $this->baby_dob ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Test Age</td>
+        <td>
+            <?= $this->test_age ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Sex</td>
+        <td>
+            <?= $this->baby_sex ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Full Term?</td>
+        <td>
+            <?= $this->baby_term ?>
+        </td>
+    </tr>
+</table>
+
+<br>
+
+<table border="1" cellspacing="0" cellpadding="10" class="form" width="75%" >
+    <tr>
+        <td class="label">Parent's Names</td>
+        <td>
+            <?= $this->mother_name ?>
+            <span class="spacer"><span> &amp; <span class="spacer"><span>
+            <?= $this->father_name ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Street Address</td>
+        <td>
+            <?= $this->address ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">City/State/Zip</td>
+        <td>
+            <?= $this->city ?>, <?= $this->state ?>  <?= $this->zip ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Phone Number(s)</td>
+        <td>
+            <?= $this->telephone ?>
+        </td>
+    </tr>
+</table>
+
+<br>
+
+<table border="1" cellspacing="0" cellpadding="10" class="form" width="75%" >
+    <tr>
+        <td class="label">Other Current Studies</td>
+        <td>
+            <?= $this->current_studies?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Previous Studies</td>
+        <td>
+            <?= $this->previous_studies ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Siblings</td>
+        <td>
+            <?= $this->siblings ?>
+        </td>
+    </tr>
+</table>
+
+<br>
+
+<table border="1" cellspacing="0" cellpadding="10" class="form" width="75%" >
+    <tr>
+        <td class="label">Subject Comments</td>
+        <td>
+            <?= $this->baby_comments ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Family Comments</td>
+        <td>
+            <?= $this->family_comments ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Study Comments</td>
+        <td>
+            <?= $this->study_comments ?>
+        </td>
+    </tr>
+</table>
+
+</div>
