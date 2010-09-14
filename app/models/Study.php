@@ -22,6 +22,17 @@ class Study extends Zarrar_Db_Table
 		'where'	 	=> "to_use = 1"			
 	);
 	
+	public function getStudyName($id) {
+	    $query = "SELECT study FROM studies WHERE id = ?";
+	    $stmt = $this->getAdapter()->query($query, $id);
+	    $results = $stmt->fetchAll(Zend_Db::FETCH_COLUMN);
+	    
+	    if (count($results) == 0)
+	        return NULL;
+	    else
+	        return $results[0];
+	}
+	
 	public function insert(array $data=array())
     {
         // default value for 'date_of_entry' is the current data

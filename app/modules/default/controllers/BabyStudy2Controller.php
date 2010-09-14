@@ -615,24 +615,6 @@ class BabyStudy2Controller extends Zend_Controller_Action
 					))
 			->where("b.id = ?", $babyId);
 		
-		// If have study id, then get more info
-		if (!empty($studyId)) {
-		    // Get current study info
-		    $select
-		        ->joinLeft(array('bs' => 'baby_studies'),
-				    'b.id <=> bs.baby_id', 
-				    array(
-				        'appointment',
-				        'bs_comments' => 'comments'
-				    ))
-			    ->joinLeft(array('s' => 'studies'),
-				    'bs.study_id = s.id', 
-				    array(
-				        'study_name' => 'study'
-				    ))
-				->where("bs.study_id = ?", $studyId);
-		}
-		
  //   	// We want the following info
  //   	study # Study Name
  //   	babystudy # Date: Time: of study
@@ -684,6 +666,35 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		$row['siblings'] = $tmp[0];
         
         if (!empty($studyId)) {
+		    // Get current study info
+		    $currentStudy = $db->select()
+		        ->from(array('bs' => 'baby_studies'),
+				    array(
+				        'appointment',
+				        'bs_comments' => 'comments'
+				    ))
+			    ->joinLeft(array('s' => 'studies'),
+				    'bs.study_id = s.id', 
+				    array(
+				        'study_name' => 'study'
+				    ))
+				->where("bs.baby_id = ?", $babyId)
+				->where("bs.study_id = ?", $studyId);
+			$stmt = $currentStudy->query();
+    		$stmt->execute();
+    		$tmp = $stmt->fetchAll();
+    		if (!empty($tmp) || count($tmp) > 0) {
+    		    $currentStudy = $tmp[0];
+    		    $row = array_merge($row, $currentStudy);
+    		} else {
+    		    $sTbl = new Study();
+    		    $row = array_merge($row, array(
+    		        "appointment"   => "",
+    		        "bs_comments"   => "",
+    		        "study_name"    => $sTbl->getStudyName($studyId)
+    		    ));
+    		}
+    		
             // Get current studies info
     		$curStudies = $db->select()
     			->from(array('bs' => 'baby_studies'), array())
@@ -717,7 +728,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
         }
 		        
         // Calculate baby age
-        if (!empty($row['baby_dob']) && !empty($studyId)) {
+        if (!empty($row['baby_dob']) && !empty($row["appointment"])) {
             $calculator = new Zarrar_AgeCalculator();
     		$calculator->setDob($row['baby_dob'])
     				   ->setDate(substr($row["appointment"], 0, 10));
