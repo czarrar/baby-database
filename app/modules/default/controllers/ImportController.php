@@ -1310,7 +1310,7 @@ class ImportController extends Zend_Controller_Action
                     // babyId
                     $babyId = $row2id[$nTr];
                     
-                    echo $babyId . " - " . $nTr . <br>;
+                    echo $babyId . " - " . $nTr . "<br>";
                     print_r($row2id);
                     exit();
 
