@@ -1276,7 +1276,7 @@ class ImportController extends Zend_Controller_Action
                 continue;
             }
 
-            if ($inTr && $nTr > 1) {
+            if ($inTr && $nTr > 2) {
                 if (stripos($line, "<td>")!==FALSE)
                     $nTd++;
 
