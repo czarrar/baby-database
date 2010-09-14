@@ -1315,6 +1315,14 @@ class ImportController extends Zend_Controller_Action
                     // babyId
                     $babyId = $row2id[$nTr];
                     
+                    # Check if row number exists
+                    if (!array_key_exists($nTr, $row2id)) {
+                        echo "ERROR: row {$rowNum} not found<br />";
+                        print_r($data);
+                        echo "<br /><br />";
+//                        continue;
+                    }
+                    
                     echo $babyId . " - " . $nTr . "<br>";
                     print_r($row2id);
                     exit();
