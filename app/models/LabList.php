@@ -3,8 +3,7 @@
 class LabList extends Zarrar_Db_Table 
 { 
 	protected $_name = 'lab_lists';
-    protected $_primary = array("lab_id", "list_id");
-	protected $_sequence = false;
+    protected $_primary = array("id");
 	
 	protected $_referenceMap    = array(
 		'Lab' 		=> array(

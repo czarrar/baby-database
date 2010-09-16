@@ -188,14 +188,14 @@ class Zarrar_Scaffold extends Zend_Controller_Action {
 				$col = $ruleInfo["columns"];
 				$col = (is_array($col)) ? $col[0] : $col ;
 				
-				// Save parameters for join, for later
 				$joins[] = array(
 					"table" 	=> $refName,
 					"where" 	=> "{$refName}.{$refCol} = {$name}.{$col}",
 					"column"	=> $refDisplay
 				);
-								
-				unset($columns[$col]);
+				
+				if (!in_array($ruleInfo["columns"], $this->_primary))
+				    unset($columns[$col]);
 			}
 		}
 		
@@ -257,6 +257,13 @@ class Zarrar_Scaffold extends Zend_Controller_Action {
 			$this->view->columns = $this->sanitizeColumns(array_keys($this->view->items[0]));
 		
 			// Set primary key(s)
+			# For cases where primary key is a foreign key
+    		#foreach ($reference as $rule => $ruleInfo) {
+    		#    $key = array_search($ruleInfo["columns"], $this->_primary);
+    		#    if ($key !== FALSE)
+    		#        $this->_primary[$key] = $ruleInfo["refDisplayColumn"];
+    		#}
+    		
 			$this->view->primary = $this->_primary;
 		}
 		
@@ -287,6 +294,7 @@ class Zarrar_Scaffold extends Zend_Controller_Action {
 			} else {
 				throw new Zend_Controller_Action_Exception("Missing value for primary key '{$key}'");
 			}
+		
 		}
 		
 		if (count($this->_where) == 1) {
@@ -560,6 +568,7 @@ class Zarrar_Scaffold extends Zend_Controller_Action {
 	 **/
 	protected function _updateRow(array $data)
 	{
+	
 		// Take out submit
 		unset($data["submit"]);
 		// Update row
