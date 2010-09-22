@@ -430,7 +430,7 @@ class ContacthistoryController extends Zend_Controller_Action
 		// options for study, contact type, contact outcome
 		$contactHistory = new ContactHistory();
 		$study = new Study();
-		$this->view->studyOptions = $study->getStudies(array("" => "Choose"), FALSE, TRUE);
+		$this->view->studyOptions = $study->getRecordOwners("long", false, array("" => "Choose"))
 		$this->view->callerOptions = $contactHistory->getRefSelectOptions('Callers', 'Callers');
 		$this->view->typeOptions = $contactHistory->getRefSelectOptions("ContactType", "Type");
 		$this->view->outcomeOptions = $contactHistory->getRefSelectOptions('ContactOutcome', "Outcome");
