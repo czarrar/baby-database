@@ -279,7 +279,9 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		
 		// Get study name
 		$sTbl = new Study();
-		$sRow = $sTbl->fetchRow($db->quoteInto("id = ?", $data['study_id']));
+		if (empty($this->_studyId))
+		    $this->_studyId = $data['study_id'];
+		$sRow = $sTbl->fetchRow($db->quoteInto("id = ?", $this->_studyId));
 		$babyInfo["study"] = $sRow->study;
 		
 		// Get caller name
@@ -308,6 +310,9 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		    $siblingInfo = "None";
 		}
 		$babyInfo["siblings"] = $siblingInfo;
+		
+		// Confirmed?
+		$babyInfo["confirm"] = $data["confirm"];
 		
 		return $babyInfo;
  	}
@@ -492,11 +497,23 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		$studyTbl = new Study();
 		$studyOptions = $studyTbl->getRecordOwners("long", false, array("" => "Choose"));
 		// Create select field
-		$study = $form->createElement("select", "study_id");
-		$study->setLabel("Study")
-				#->setAttrib("disabled", "disabled")
-				->setMultiOptions($studyOptions);
-				
+		
+		// ghetto
+		$actionName = $this->getRequest()->getActionName();
+		if ($actionName == "confirm" || $actionName == "outcome") {
+		    $study = $form->createElement("select", "study_id");
+    		$study->setLabel("Study")
+    				->setAttrib("disabled", "disabled")
+    				->setMultiOptions($studyOptions);
+		    $studyHidden = $form->createElement("hidden", "study_id");
+		    $studyHidden->setRequired(true);
+		} else {
+		    $study = $form->createElement("select", "study_id");
+    		$study->setLabel("Study")
+    				->setMultiOptions($studyOptions);
+		}
+
+		
 		# 3. COMMENTS
 		$comments = $form->createElement("textarea", "comments");
 		$comments->setLabel("Comments")
@@ -1128,6 +1145,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 					"baby_id"	=> $babyId,
 					"baby_dob"  => $this->_getBabyDob($babyId),
 					"study_id"	=> $studyId,
+					"study"	=> $studyId,
 					"caller_id"	=> $_SESSION["caller_id"],
 					"appt_date"	=> array("my_date" => $bsInfo["appointment"]),
 					"appt_time" => array("my_time" => $bsInfo["appointment"]),
@@ -1373,6 +1391,11 @@ class BabyStudy2Controller extends Zend_Controller_Action
 			// Get baby/family info for event
 			$babyInfo = $this->_fetchGCalBabyInfo($data);
 			
+			if (empty($babyInfo["confirm"]))
+			    $confirmOrChange = "confimed";
+			else
+			    $confirmOrChange = "changed";
+			
 			// Create start and end time for event
 			$when = $this->_gCalService->newWhen();
 			$when->startTime = "{$data['appt_date']}T{$data['appt_time']}:00.000";
@@ -1394,6 +1417,9 @@ class BabyStudy2Controller extends Zend_Controller_Action
 					continue;
 				}
 				
+				// Check if same study
+				// $g["study"] == $babyInfo["study"];
+				
 				// Create gcal query to find event
 				$query = $this->_gCalService->newEventQuery();
 				$query->setUser($g["gcal_calendar_id"]);
@@ -1410,20 +1436,25 @@ class BabyStudy2Controller extends Zend_Controller_Action
 					$message .= "Succesfully removed Google Calendar event for study ({$g['study']})";
 					$message .= "<br />\n";
 				} else {
-					// Populate the event with the desired information
-					// Populate the event with the desired information
-        			// Note that each attribute is created as an instance of a matching class
-        			#$event->title = $this->_gCalService->newTitle("{$babyInfo['study']} - {$babyInfo['first_name']} - {$babyInfo['age']}");
-        			#$event->when = array($when);
-        			#$dayToday = date('Y-m-d');
-        			#$event->content = $this->_gCalService->newContent("Parent Name: {$babyInfo['mother_first_name']} {$babyInfo['mother_last_name']}\n Parent Contact: ? \n Age on date of study: {$babyInfo['age']}\n DOB: {$babyInfo['dob']}\n Gender: {$babyInfo['sex']}\n Which Visit: ?\n Siblings baby has and what names are {$babyInfo['siblings']}\n Who scheduled appt: {$babyInfo['caller']}\n When scheduled: {$dayToday}\n");
-					
-					$event->title = $this->_gCalService->newTitle("{$babyInfo['mother_first_name']} / {$babyInfo['first_name']} ({$babyInfo['sex']}) {$this->_babyId} {$babyInfo['age']}");
-					$event->when = array($when);
-					$event->content = $this->_gCalService->newContent($data["comments"]);
+        			# Get study name
+        			$tmp = explode(" - ", $event->title);
+        			$sName = $tmp[0];
+        			
+        			# Get originally who scheduled appt and when scheduled
+        			$tmp = explode("\n ", $event->content);
+        			$n = count($tmp);
+        			$oldWho = $tmp[$n - 2];
+        			$oldWhen = $tmp[$n - 1];
+        			
+        			# Set calendar title
+        			$event->title = $this->_gCalService->newTitle("{$sName} - {$babyInfo['first_name']} - {$babyInfo['age']}");
+        			$event->when = array($when);
+        			$dayToday = date('Y-m-d');
+        			$event->content = $this->_gCalService->newContent("Parent Name: {$babyInfo['mother_first_name']} {$babyInfo['mother_last_name']}\n Parent Contact: ? \n Age on date of study: {$babyInfo['age']}\n DOB: {$babyInfo['dob']}\n Gender: {$babyInfo['sex']}\n Which Visit: ?\n Siblings baby has and what names are {$babyInfo['siblings']}\n Who {$confirmOrChange} appt: {$babyInfo['caller']}\n When {$confirmOrChange}: {$dayToday}\n \n {$oldWho}\n {$oldWhen}");
 				
 					// Save Event
 					$event->save();
+					
 					// Message
 					$message .= "Succesfully updated Google Calendar event for study ({$g['study']})";
 					$message .= "<br />\n";
@@ -1747,10 +1778,21 @@ class BabyStudy2Controller extends Zend_Controller_Action
 			$event = $this->_gCalService->getCalendarEventEntry($query);
 			
 			if($outcome) {
-				// Populate the event with the desired information
-				$event->title = $this->_gCalService->newTitle("{$babyInfo['mother_first_name']} / {$babyInfo['first_name']} ({$babyInfo['sex']}) {$this->_babyId} {$babyInfo['age']} - {$outcome}");
-				$event->when = array($when);
-				$event->content = $this->_gCalService->newContent($data["comments"]);
+				# Get study name
+    			$tmp = explode(" - ", $event->title);
+    			$sName = $tmp[0];
+    			
+    			# Get originally who scheduled appt and when scheduled
+    			$tmp = explode("\n ", $event->content);
+    			$n = count($tmp);
+    			$oldWho = $tmp[$n - 2];
+    			$oldWhen = $tmp[$n - 1];
+    			
+    			# Set calendar title
+    			$event->title = $this->_gCalService->newTitle("{$sName} - {$babyInfo['first_name']} - {$babyInfo['age']}");
+    			$event->when = array($when);
+    			$dayToday = date('Y-m-d');
+    			$event->content = $this->_gCalService->newContent("Parent Name: {$babyInfo['mother_first_name']} {$babyInfo['mother_last_name']}\n Parent Contact: ? \n Age on date of study: {$babyInfo['age']}\n DOB: {$babyInfo['dob']}\n Gender: {$babyInfo['sex']}\n Which Visit: ?\n Siblings baby has and what names are {$babyInfo['siblings']}\n Who filled out outcome: {$babyInfo['caller']}\n When filled out outcome: {$dayToday}\n \n {$oldWho}\n {$oldWhen}");
 			
 				// Save Event
 				$event->save();
