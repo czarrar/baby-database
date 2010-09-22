@@ -88,6 +88,23 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		$this->_studyId = $this->_getParam("study_id");
 		#if (empty($this->_studyId))
 		#	throw new Zend_Controller_Action_Exception("Please provide the study id!");
+		
+		// Siblings
+		$db = Zend_Registry::get('db');
+		$bTbl = new Baby();
+		$familyTbl = new Family();
+		$bRow = $bTbl->fetchRow("id = {$this->_babyId}");
+		$familyId = $bRow->family_id;
+		if (empty($familyId))   
+		    throw new Zend_Controller_Action_Exception("Baby {$this->_babyId} does not have a family id");        
+		$familyRowset = $familyTbl->find($familyId);
+		$familyRow = $familyRowset->current();
+		$familySelect = $familyTbl->select();
+		$familySelect->from($bTbl, array('id'));
+		$familyBabies = $familyRow->findDependentRowset('Baby', 'Family', $familySelect);
+		$this->view->siblings = $familyBabies;
+		$this->view->numSiblings = count($familyBabies) - 1;
+		$this->view->babyId = $this->_babyId;
 	}
 	
 	
@@ -791,9 +808,12 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		// Get study id
 		$studyId = $this->_getParam("study_id");
 		
+		#var_dump($this->getRequest()->getActionName());
+		$session = new Zend_Session_Namespace("schedule");
+		
 		// Get start and end age of study
-		$startDate = $this->_getParam("start_date");
-		$endDate = $this->_getParam("end_date");
+		$startDate = $session->params["start_date"];
+		$endDate = $session->params["end_date"];
 		if (!empty($startDate) or !empty($endDate)) {
 			// Get dob
 			$babyTbl = new Baby();

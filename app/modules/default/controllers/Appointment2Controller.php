@@ -444,6 +444,8 @@ class Appointment2Controller extends Zend_Controller_Action
 			$session->count = $count;
 			$session->params = $defaultParams;
 			$session->studyId = $this->_formData["study_id"];
+			$session->params["begin_date"] = $this->_formData["begin_date"];
+			$session->params["end_date"] = $this->_formData["end_date"];
 			#@todo: $session->perPage = $this->_form->perPage->getValue();
 
 			// Send query, etc to list action
@@ -519,7 +521,7 @@ class Appointment2Controller extends Zend_Controller_Action
 		
 		// Process
 		$formGood = $this->_processForm($defaults);
-
+        
 		# 2. SEARCH
 		if ($formGood) {
 		    try {
@@ -551,7 +553,7 @@ class Appointment2Controller extends Zend_Controller_Action
     			$this->_errors["ERROR"] = array("info" => $e->getMessage());
     		}
 		}
-
+        
 		# 3. PREPARE VIEW
 		$this->_prepareAction();
 	}
@@ -795,7 +797,6 @@ class Appointment2Controller extends Zend_Controller_Action
 		if (empty($data['list_id'])) {
 		    // Auto set the list ids to use
 		    if (!empty($data['study_id'])) {
-		        echo "hey";
 		        $listIds = $studyTbl->getListIds($data['study_id']);
 		        foreach ($listIds as $key => $value)
 		            $listIds[$key] = $this->_db->quote($value);
@@ -855,7 +856,7 @@ class Appointment2Controller extends Zend_Controller_Action
 						   ->setAge($upperAge);
 				$earlyDob = $calculator->calculateDob("YYYY-MM-dd");
 				$earlyTimestamp = $calculator->getDob("YYYY-MM-dd");
-	// heys			
+				
 				// Compare the two dob (must be: $earlyDob < $lateDob)
 				if ($earlyTimestamp >= $lateTimestamp)
 					throw new Zend_Controller_Action_Exception("Cannot find babies who will be in this age range ({$lowerAge} to {$upperAge}) because study dates ({$data['begin_date']} to {$data["end_date"]}) are too far apart");

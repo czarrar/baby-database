@@ -37,6 +37,7 @@ class ContacthistoryController extends Zend_Controller_Action
 	{
 		// Leave header out
 		$this->view->headerFile = '_empty.phtml';
+		$this->view->addDojo = True;
 	}
 	
 	function indexAction()
@@ -46,11 +47,22 @@ class ContacthistoryController extends Zend_Controller_Action
 	
 	public function listAction()
 	{
+	    $this->view->addDojo = False;
+	
 		$dirs = Zend_Registry::get('dirs');
 	
 		// Attach additional css file for table
 		$this->view->headLink()
 			->appendStylesheet("{$dirs->styles}/sortable_tables.css", "screen, projection");
+		
+		// Attach scripts for dynamic sorting of table
+		$this->view->headScript()
+			->prependFile("{$dirs->scripts}/sortable_tables.js")
+			->prependFile("{$dirs->scripts}/MochiKit/MochiKit.js");
+#			->prependFile("{$dirs->scripts}/dojo/dojo.js", "text/javascript", array("djConfig" => "parseOnLoad: true"));
+		
+		#	<script type="text/javascript" src="/baby-database/public/scripts/dojo/dojo/dojo.js"
+        #        djConfig="parseOnLoad: true"></script>
 		
 		// Get the baby id, if none then throw exception
 		if ($this->_getParam('baby_id')) {
@@ -96,7 +108,8 @@ class ContacthistoryController extends Zend_Controller_Action
 		// Want only rows with given baby_id
 		->where("ch.baby_id = ?", $babyId)
 		// Order the rows by the datetime of their entry
-		->order("ch.datetime DESC");
+		->order("ch.attempt DESC");
+#		->order("ch.datetime DESC");
 		
 		/* Execute Query */
 		$db->setFetchMode(Zend_Db::FETCH_OBJ);
@@ -417,7 +430,7 @@ class ContacthistoryController extends Zend_Controller_Action
 		// options for study, contact type, contact outcome
 		$contactHistory = new ContactHistory();
 		$study = new Study();
-		$this->view->studyOptions = $study->getStudies(array("" => "Choose"), TRUE, TRUE);
+		$this->view->studyOptions = $study->getStudies(array("" => "Choose"), FALSE, TRUE);
 		$this->view->callerOptions = $contactHistory->getRefSelectOptions('Callers', 'Callers');
 		$this->view->typeOptions = $contactHistory->getRefSelectOptions("ContactType", "Type");
 		$this->view->outcomeOptions = $contactHistory->getRefSelectOptions('ContactOutcome', "Outcome");

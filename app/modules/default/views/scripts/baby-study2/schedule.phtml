@@ -23,29 +23,48 @@
     <?= $this->form->other_studies->field() ?>
     
 <table cellspacing="0" cellpadding="5" class="form">
+    <tr>
+        <td class="label">
+            <label>Sibling(s)</label>
+        </td>
+        <td>
+            <label></label>
+            <? if ($this->numSiblings == 0): ?>
+            	NONE
+            <? else: ?>
+            	<? foreach ($this->siblings as $sibling): ?>
+            		<? if ($sibling->id != $this->babyId): ?>
+            		    <a href="<?= $this->url(array("controller" => "baby", "action" => "common", "baby_id" => $sibling->id, "type" => "schedule"), null, true) ?>" target="_blank">
+            		        <?= $sibling->id ?>
+            		    </a>
+            		<? endif ?>
+            	<? endforeach ?>
+            <? endif ?>
+        </td>
+    </tr>
     <?php if ($this->startAge and $this->endAge): ?>
-        <tr>
-            <td class="label">
-                <label>Start of Study</label>
-            </td>
-            <td>
-                <label></label><?= $this->startDate ?>
-                <label></label><i>(baby's age: <?= $this->startAge ?>)</i>
-            </td>
-        </tr>
-        <tr>
-            <td class="label">
-                <label>End of Study</label>
-            </td>
-            <td>
-                <label></label><?= $this->endDate ?>
-                <label></label> 
-                <i>(baby's age: <?= $this->endAge ?>)</i>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2"></td>
-        </tr>
+    <tr>
+        <td class="label">
+            <label>Search Start</label>
+        </td>
+        <td>
+            <label></label><?= $this->startDate ?>
+            <label></label><i>(baby's age: <?= $this->startAge ?>)</i>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+            <label>Search End</label>
+        </td>
+        <td>
+            <label></label><?= $this->endDate ?>
+            <label></label> 
+            <i>(baby's age: <?= $this->endAge ?>)</i>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"></td>
+    </tr>
     <?php endif ?>
     
     <tr>

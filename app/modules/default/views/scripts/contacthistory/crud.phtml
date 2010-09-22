@@ -15,5 +15,8 @@
     endswitch;
     ?>
     <hr />
-    <?= $this->action('list', "contacthistory", null, array("baby_id" => $this->babyId, "dir_styles" => $this->dir_styles)) ?>
+    
+    <iframe src ='<?= $this->url(array("controller" => "contacthistory", "action" => "list")); ?>' width="100%" height="100%" frameborder="0">
+      <p>Your browser does not support iframes.</p>
+    </iframe>
 </div>

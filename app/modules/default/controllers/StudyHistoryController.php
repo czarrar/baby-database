@@ -7,6 +7,7 @@ class StudyHistoryController extends Zend_Controller_Action
 	{
 		// Leave header out
 		$this->view->headerFile = '_empty.phtml';
+		
 	}
 	
 	function indexAction()
@@ -21,6 +22,11 @@ class StudyHistoryController extends Zend_Controller_Action
 		// Attach additional css file for table
 		$this->view->headLink()
 			->appendStylesheet("{$dirs->styles}/sortable_tables.css", "screen, projection");
+		
+		// Attach scripts for dynamic sorting of table
+		$this->view->headScript()
+			->prependFile("{$dirs->scripts}/sortable_tables.js")
+			->prependFile("{$dirs->scripts}/MochiKit/MochiKit.js");
 		
 		// Display the list with crud.phtml script
 		// but only if is_crud is not set (which prevents infinite loop)
