@@ -444,7 +444,7 @@ class Appointment2Controller extends Zend_Controller_Action
 			$session->count = $count;
 			$session->params = $defaultParams;
 			$session->studyId = $this->_formData["study_id"];
-			$session->params["begin_date"] = $this->_formData["begin_date"];
+			$session->params["start_date"] = $this->_formData["begin_date"];
 			$session->params["end_date"] = $this->_formData["end_date"];
 			#@todo: $session->perPage = $this->_form->perPage->getValue();
 
