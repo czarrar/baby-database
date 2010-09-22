@@ -1108,7 +1108,7 @@ class BabyStudy2Controller extends Zend_Controller_Action
 		$this->_confirmForm($babyId);        
 		
 		// Process (if submitted)
-		$this->_processForm("confirm");
+		$didProcess = $this->_processForm("confirm");
 		
 		// Set default values (if new form)
 		if (!$didProcess) {
@@ -1411,6 +1411,13 @@ class BabyStudy2Controller extends Zend_Controller_Action
 					$message .= "<br />\n";
 				} else {
 					// Populate the event with the desired information
+					// Populate the event with the desired information
+        			// Note that each attribute is created as an instance of a matching class
+        			#$event->title = $this->_gCalService->newTitle("{$babyInfo['study']} - {$babyInfo['first_name']} - {$babyInfo['age']}");
+        			#$event->when = array($when);
+        			#$dayToday = date('Y-m-d');
+        			#$event->content = $this->_gCalService->newContent("Parent Name: {$babyInfo['mother_first_name']} {$babyInfo['mother_last_name']}\n Parent Contact: ? \n Age on date of study: {$babyInfo['age']}\n DOB: {$babyInfo['dob']}\n Gender: {$babyInfo['sex']}\n Which Visit: ?\n Siblings baby has and what names are {$babyInfo['siblings']}\n Who scheduled appt: {$babyInfo['caller']}\n When scheduled: {$dayToday}\n");
+					
 					$event->title = $this->_gCalService->newTitle("{$babyInfo['mother_first_name']} / {$babyInfo['first_name']} ({$babyInfo['sex']}) {$this->_babyId} {$babyInfo['age']}");
 					$event->when = array($when);
 					$event->content = $this->_gCalService->newContent($data["comments"]);
